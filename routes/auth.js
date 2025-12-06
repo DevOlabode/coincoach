@@ -8,4 +8,8 @@ router.get('/register', controller.registerForm);
 
 router.post('/register', controller.register);
 
+router.get('/login', controller.loginForm);
+
+router.post('/login', controller.login);
+
 module.exports = router;

@@ -16,4 +16,8 @@ module.exports.register = async (req, res) => {
 
 module.exports.loginForm = (req, res) => {
     res.render('auth/login');
+};
+
+module.exports.login = (req, res) =>{
+    res.send(req.body)
 }

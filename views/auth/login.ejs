@@ -1,2 +1,10 @@
 <% layout('layout/boilerplate.ejs') %>
-<form action="/post" method="post"></form>
+<form action="/login" method="post" class="needs-validation" novalidate>
+    <label for="username" class="form-label">Email</label>
+    <input type="email" class="form-control" name="email" id="email" required>
+
+    <label for="password" class="form-label">Password</label>
+    <input type="password" name="password"  class="form-control">
+
+    <button type="submit">Login</button>
+</form>
