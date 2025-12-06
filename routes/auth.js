@@ -6,4 +6,6 @@ const User = require('../models/user');
 
 router.get('/register', controller.registerForm);
 
+router.post('/register', controller.register);
+
 module.exports = router;
