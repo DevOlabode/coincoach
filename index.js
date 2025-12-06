@@ -38,6 +38,8 @@ app.use((req, res, next)=>{
     next();
 });
 
+app.use('/', authRoutes);
+
 app.get('/', (req, res) => {
     req.flash('success', 'Welcome to the Home Page!');
     res.render('home');
