@@ -27,6 +27,8 @@ app.engine('ejs', ejsMate);
 
 require('./config/db')();
 
+const authRoutes = require('./routes/auth');
+
 app.use((req, res, next)=>{
     // res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
