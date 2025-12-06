@@ -19,5 +19,8 @@ module.exports.loginForm = (req, res) => {
 };
 
 module.exports.login = (req, res) =>{
-    res.send(req.body)
-}
+    req.flash('success', 'Welcome back To CoinCoach!');
+    const redirectUrl = res.locals.returnTo || '/';
+    delete req.session.returnTo;
+    res.redirect(redirectUrl);
+};

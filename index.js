@@ -10,6 +10,10 @@ const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
 
+const passport = require('passport');
+const localStrategy = require('passport-local');
+const User = require('./models/user');
+
 const {sessionConfig} = require('./config/session');
 
 app.use(session(sessionConfig));
@@ -24,6 +28,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(express.urlencoded({extended : true}));
 app.engine('ejs', ejsMate);
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new localStrategy(User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 require('./config/db')();
 

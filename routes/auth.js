@@ -4,12 +4,14 @@ const router = express.Router();
 const controller = require('../controllers/auth');
 const User = require('../models/user');
 
+const { loginAuthenticate, redirectIfLoggedIn, storeReturnTo } = require('../middleware');
+
 router.get('/register', controller.registerForm);
 
 router.post('/register', controller.register);
 
 router.get('/login', controller.loginForm);
 
-router.post('/login', controller.login);
+router.post('/login',storeReturnTo, loginAuthenticate, controller.login);
 
 module.exports = router;
