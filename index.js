@@ -27,8 +27,17 @@ app.engine('ejs', ejsMate);
 
 require('./config/db')();
 
+app.use((req, res, next)=>{
+    // res.locals.currentUser = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    res.locals.info = req.flash('info');
+    res.locals.warning = req.flash('warning')
+    next();
+});
 
 app.get('/', (req, res) => {
+    req.flash('success', 'Welcome to the Home Page!');
     res.render('home');
 });
 
