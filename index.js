@@ -18,9 +18,11 @@ const ExpressError = require('./utils/ExpressError');
 
 const {sessionConfig} = require('./config/session');
 
+// IMPORTANT: Session must come before passport
 app.use(session(sessionConfig));
 app.use(flash());
 
+// IMPORTANT: Body parser must come BEFORE routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -28,35 +30,59 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({extended : true}));
 app.engine('ejs', ejsMate);
 
+// Connect to database
 require('./config/db')();
 
+// Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CRITICAL: Do NOT pass {usernameField: 'email'} here
-// It's already configured in the User model
-passport.use(new LocalStrategy(User.authenticate()));
+// CRITICAL FIX: Use the authenticate method with proper async handling
+passport.use(new LocalStrategy(
+    { 
+        usernameField: 'email',
+        passwordField: 'password'
+    },
+    async (email, password, done) => {
+        try {
+            const user = await User.findOne({ email: email });
+            if (!user) {
+                return done(null, false, { message: 'Incorrect email or password.' });
+            }
+            
+            // Use passport-local-mongoose's authenticate method
+            const result = await user.authenticate(password);
+            if (result.user) {
+                return done(null, result.user);
+            } else {
+                return done(null, false, { message: 'Incorrect email or password.' });
+            }
+        } catch (err) {
+            return done(err);
+        }
+    }
+));
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-const authRoutes = require('./routes/auth');
-
+// Flash messages middleware
 app.use((req, res, next)=>{
     res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.info = req.flash('info');
-    res.locals.warning = req.flash('warning')
+    res.locals.warning = req.flash('warning');
     next();
 });
 
+// Routes
+const authRoutes = require('./routes/auth');
 app.use('/', authRoutes);
 
 app.get('/', (req, res) => {
-    req.flash('success', 'Welcome to the Home Page!');
     res.render('home');
 });
 
