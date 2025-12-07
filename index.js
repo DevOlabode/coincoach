@@ -18,11 +18,9 @@ const ExpressError = require('./utils/ExpressError');
 
 const {sessionConfig} = require('./config/session');
 
-// IMPORTANT: Session must come before passport
 app.use(session(sessionConfig));
 app.use(flash());
 
-// IMPORTANT: Body parser must come BEFORE routes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -32,14 +30,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.engine('ejs', ejsMate);
 
-// Connect to database
 require('./config/db')();
 
-// Passport configuration
 app.use(passport.initialize());
 app.use(passport.session());
 
-// CRITICAL FIX: Use the authenticate method with proper async handling
 passport.use(new LocalStrategy(
     { 
         usernameField: 'email',
