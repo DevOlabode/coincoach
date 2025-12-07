@@ -1,8 +1,9 @@
 const passport = require('passport');
 
 module.exports.loginAuthenticate = passport.authenticate('local', {
-    failureFlash : true,
-    failureRedirect : '/login'
+    failureFlash: true,
+    failureRedirect: '/login',
+    successFlash: false // We'll handle success flash in the controller
 });
 
 module.exports.isLoggedIn = (req, res, next)=>{

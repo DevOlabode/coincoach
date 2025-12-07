@@ -36,7 +36,9 @@ require('./config/db')();
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
+// CRITICAL: Do NOT pass {usernameField: 'email'} here
+// It's already configured in the User model
+passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
