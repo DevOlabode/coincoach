@@ -14,6 +14,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
+const ExpressError = require('./utils/ExpressError');
+
 const {sessionConfig} = require('./config/session');
 
 app.use(session(sessionConfig));
@@ -54,6 +56,18 @@ app.use('/', authRoutes);
 app.get('/', (req, res) => {
     req.flash('success', 'Welcome to the Home Page!');
     res.render('home');
+});
+
+app.all(/(.*)/, (req, res, next) => {
+    next(new ExpressError('Page not found', 404))
+});
+
+app.use((err, req, res, next)=>{
+    const {statusCode = 500} = err;
+    if(!err.message){
+        err.message = 'Something Went Wrong!'
+    }
+    res.status(statusCode).render('error', {err})
 });
 
 const PORT = process.env.PORT || 3000;

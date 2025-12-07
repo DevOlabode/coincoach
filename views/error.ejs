@@ -1,0 +1,10 @@
+<%- layout('./layout/boilerplate.ejs') %>
+<h1>Error</h1>
+<p><strong>Message:</strong>
+	<%= err.message %>
+</p>
+
+<% if (typeof error !== 'undefined' && error && error.stack) { %>
+	<h3>Stack trace</h3>
+	<pre><%= error.stack %></pre>
+<% } %>
