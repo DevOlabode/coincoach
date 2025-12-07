@@ -11,7 +11,7 @@ const session = require('express-session');
 const flash = require('connect-flash');
 
 const passport = require('passport');
-const localStrategy = require('passport-local');
+const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 
 const {sessionConfig} = require('./config/session');
@@ -31,17 +31,18 @@ app.engine('ejs', ejsMate);
 
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new localStrategy(User.authenticate()));
 
+passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 
 require('./config/db')();
 
 const authRoutes = require('./routes/auth');
 
 app.use((req, res, next)=>{
-    // res.locals.currentUser = req.user;
+    res.locals.currentUser = req.user;
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
     res.locals.info = req.flash('info');

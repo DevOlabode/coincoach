@@ -1,4 +1,6 @@
 const passport = require('passport');
+
+
 module.exports.loginAuthenticate = passport.authenticate('local', {
     failureFlash : true,
     failureRedirect : '/login'
@@ -20,7 +22,7 @@ module.exports.storeReturnTo = (req, res, next) => {
     else if (req.session.returnTo) {
         res.locals.returnTo = req.session.returnTo;
     }
-    
+
     else if (req.get('referer')) {
         res.locals.returnTo = req.get('referer');
     }

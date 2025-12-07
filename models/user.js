@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const passportLocalMongoose = require('passport-local-mongoose').default; 
+const _plm = require('passport-local-mongoose');
+const passportLocalMongoose = (typeof _plm === 'function') ? _plm : (_plm && _plm.default) ? _plm.default : _plm;
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
