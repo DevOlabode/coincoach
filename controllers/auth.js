@@ -8,16 +8,21 @@ module.exports.register = async (req, res) => {
     const { username, password, email } = req.body;
 
     const user = new User({ email });
-    await User.register(user, password);
+    const registeredUser = await User.register(user, password);
 
-    req.flash('success', 'Registration successful! You can now log in.');
-    res.redirect('/');
+    req.login(registeredUser, err =>{
+        if(err) return next(err);
+        req.flash('success', 'Welcome to EduVision AI');
+        res.redirect('/');
+    });
 };
 
 module.exports.loginForm = (req, res) => {
     res.render('auth/login');
 };
 
-module.exports.login = (req, res) => {
-    
+module.exports.login = async(req, res) =>{
+    req.flash('success', 'Welcome back to CoinCoach!');
+    const returnUrl = res.locals.returnTo || '/'
+    res.redirect(returnUrl)
 };

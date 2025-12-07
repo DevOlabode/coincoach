@@ -1,6 +1,5 @@
 const passport = require('passport');
 
-
 module.exports.loginAuthenticate = passport.authenticate('local', {
     failureFlash : true,
     failureRedirect : '/login'
@@ -8,23 +7,19 @@ module.exports.loginAuthenticate = passport.authenticate('local', {
 
 module.exports.isLoggedIn = (req, res, next)=>{
     if(!req.isAuthenticated()){
+        if (req.path.startsWith('/api/')) {
+            return res.status(401).json({ error: 'Authentication required' });
+        }
         req.session.returnTo = req.originalUrl;
         req.flash('error', 'You must be signed in first');
         return res.redirect('/login')
     }
     next()
-}
+};
 
-module.exports.storeReturnTo = (req, res, next) => {
-    if (req.body.returnTo) {
-        res.locals.returnTo = req.body.returnTo;
-    } 
-    else if (req.session.returnTo) {
-        res.locals.returnTo = req.session.returnTo;
-    }
-
-    else if (req.get('referer')) {
-        res.locals.returnTo = req.get('referer');
+module.exports.storeReturnTo = (req, res, next)=>{
+    if(req.session.returnTo){
+        res.locals.returnTo = req.session.returnTo
     }
     next();
 };
@@ -34,5 +29,4 @@ module.exports.redirectIfLoggedIn = (req, res, next)=>{
         return res.redirect('/');
     }
     next();
-
-}
+};
