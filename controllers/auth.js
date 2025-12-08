@@ -56,6 +56,22 @@ module.exports.login = (req, res) => {
     res.redirect(returnUrl);
 };
 
-module.exports.forgottenPasswordForm = (req, res) =>{
-    res.render('auth/forgottenPassword');
-}
+module.exports.enterEmail = (req, res) =>{
+    res.render('auth/enterEmail');
+};
+
+module.exports.confirmEmail = async(req, res) =>{
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if(!user){
+        req.flash('error', 'No account with that email found.');
+        return res.redirect('/forgotten-password');
+    }
+
+    res.redirect('/reset-password');
+};
+
+module.exports.resetCodeForm = (req, res) =>{
+    res.render('auth/resetCode');
+};

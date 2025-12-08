@@ -15,6 +15,10 @@ router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
-router.get('/forgotten-password', controller.forgottenPasswordForm);
+router.get('/forgotten-password', controller.enterEmail);
+
+router.post('/forgotten-password', catchAsync(controller.confirmEmail));
+
+router.get('/reset-password',  controller.resetCodeForm)
 
 module.exports = router;
