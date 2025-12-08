@@ -55,3 +55,7 @@ module.exports.login = (req, res) => {
     const returnUrl = res.locals.returnTo || '/';
     res.redirect(returnUrl);
 };
+
+module.exports.forgottenPasswordForm = (req, res) =>{
+    res.render('auth/forgottenPassword');
+}
