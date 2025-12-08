@@ -15,4 +15,6 @@ router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
+router.get('/logout', controller.logout);
+
 module.exports = router;

@@ -26,3 +26,11 @@ module.exports.login = (req, res) => {
     const returnUrl = res.locals.returnTo || '/';
     res.redirect(returnUrl);
 };
+
+module.exports.logout = async(req, res)=>{
+    req.logout(err=>{
+        if(err) return next(err);
+        req.flash('success', "Successfully Signed Out");
+        res.redirect('/')
+    })
+};
