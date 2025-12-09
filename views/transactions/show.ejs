@@ -12,5 +12,7 @@
 
 
 <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
-    <button class="btn btn-danger">Delete Transaction</button>
+    <button class="btn btn-danger m-2">Delete Transaction</button>
 </form>
+
+<a href="/transactions/<%= transaction._id %>/edit" class="btn btn-warning m-2">Edit Transaction</a>
