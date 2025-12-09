@@ -7,6 +7,10 @@ const transactionSchema = new Schema({
         ref: 'User',
         required: true
     },
+    name : {
+        type : String,
+        required : true
+    },
     type : {
         type : String,
         enum : ['expense', 'income'],
