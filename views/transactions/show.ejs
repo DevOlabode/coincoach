@@ -1,3 +1,16 @@
 <% layout('layout/boilerplate.ejs') %>
 
 <h1><%= transaction.name %></h1>
+
+<ul>
+    <li><%= transaction.category %></li>
+    <li><%= transaction.date %></li>
+    <li><%= transaction.amount %></li>
+    <li><%= transaction.type %></li>
+    <li><%= transaction.description %></li>
+</ul>
+
+
+<form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
+    <button class="btn btn-danger">Delete Transaction</button>
+</form>

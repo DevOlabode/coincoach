@@ -12,4 +12,7 @@ router.post('/', catchAsync(controller.createTransaction));
 router.get('/', catchAsync(controller.getTransactions));
 
 router.get('/:id', catchAsync(controller.getTransactionById));
+
+router.delete('/:id', catchAsync(controller.deleteTransaction));
+
 module.exports = router;

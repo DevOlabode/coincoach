@@ -7,6 +7,8 @@ const path = require('path');
 
 const ejsMate = require('ejs-mate');
 
+const methodOverride = require('method-override');
+
 const session = require('express-session');
 const flash = require('connect-flash');
 
@@ -23,6 +25,14 @@ app.use(flash());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(methodOverride('_method'));
+
+// Simple request logger for debugging routes/methods
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} --> ${req.method} ${req.originalUrl}`);
+    next();
+});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
