@@ -24,7 +24,11 @@ const transactionSchema = new Schema({
     category : {
         type : String,
         required : true
-    }    
+    },
+    description : {
+        type : String,
+        required : false
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Transaction', transactionSchema);
