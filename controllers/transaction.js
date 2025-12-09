@@ -17,7 +17,7 @@ module.exports.createTransaction = async (req, res) => {
     });
     await transaction.save();
     req.flash('success', 'Transaction recorded successfully!');
-    res.redirect('/'); 
+    res.redirect(`/transactions/${transaction._id}`); 
 };
 
 module.exports.getTransactions = async (req, res) => {
@@ -81,4 +81,4 @@ module.exports.updateTransaction = async(req, res) =>{
 
     req.flash('success', 'Transaction updated successfully');
     res.redirect(`/transactions/${transaction._id}`);
-}
+};
