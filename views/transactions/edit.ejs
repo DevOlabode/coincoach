@@ -2,15 +2,18 @@
 
 <h2>Edit Transaction</h2>
 
-<form action="/transactions/<%= transaction._id %>/edit" method="post">
+<form action="/transactions/<%= transaction._id %>?_method=patch" method="post">
     <label for="name" class="form-label">Transaction Name</label>
     <input type="text" class="form-control" name="name" placeholder="Transaction Name" value="<%= transaction.name %>">
     
     <label for="type" class="form-label">Transaction Type</label>
     <div class="form-control">
-        <input type="radio" name="type" value="income"> Income
-        <input type="radio" name="type" value="expense"> Expense
+        <input type="radio" name="type" value="income" 
+            <%= transaction.type === 'income' ? 'checked' : '' %>> Income
+        <input type="radio" name="type" value="expense" 
+            <%= transaction.type === 'expense' ? 'checked' : '' %>> Expense
     </div>
+
 
     <label for="amount" class="form-label">Amount</label>
     <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount In $" value="<%= transaction.amount %>">

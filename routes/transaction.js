@@ -17,4 +17,6 @@ router.delete('/:id', catchAsync(controller.deleteTransaction));
 
 router.get('/:id/edit', catchAsync(controller.editTransactionsForm));
 
+router.patch('/:id', catchAsync(controller.updateTransaction));
+
 module.exports = router;

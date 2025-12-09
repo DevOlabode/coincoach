@@ -52,7 +52,7 @@ module.exports.deleteTransaction = async (req, res) =>{
 
 module.exports.editTransactionsForm = async(req, res) =>{
     const { id } = req.params;
-    const transaction = await transaction.findById(id);
+    const transaction = await Transaction.findById(id);
 
     if(!transaction){
         req.flash('error', 'Transaction not found');
@@ -64,4 +64,21 @@ module.exports.editTransactionsForm = async(req, res) =>{
         return res.redirect('/transactions');
     }
     res.render('transactions/edit', { transaction });
+};
+
+
+module.exports.updateTransaction = async(req, res) =>{
+    const { id } = req.params;
+    const { amount, type, date, description, category, name } = req.body;
+    const transaction = await Transaction.findByIdAndUpdate(id, {
+        amount,
+        type,
+        date,
+        description,
+        category,
+        name
+    }, { new: true });
+
+    req.flash('success', 'Transaction updated successfully');
+    res.redirect(`/transactions/${transaction._id}`);
 }
