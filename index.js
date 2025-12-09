@@ -75,7 +75,10 @@ app.use((req, res, next)=>{
 
 // Routes
 const authRoutes = require('./routes/auth');
+const transactionRoutes = require('./routes/transaction');
+
 app.use('/', authRoutes);
+app.use('/transactions', transactionRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
