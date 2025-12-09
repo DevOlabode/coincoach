@@ -45,7 +45,6 @@ module.exports.getTransactionById = async (req, res) =>{
 
 module.exports.deleteTransaction = async (req, res) =>{
     const { id } = req.params;
-    console.log('deleteTransaction called. Method:', req.method, 'Params:', req.params, 'Body:', req.body);
     await Transaction.findByIdAndDelete(id);
     req.flash('success', 'Transaction deleted successfully');
     res.redirect('/transactions');

@@ -28,11 +28,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(methodOverride('_method'));
 
-// Simple request logger for debugging routes/methods
-app.use((req, res, next) => {
-    console.log(`${new Date().toISOString()} --> ${req.method} ${req.originalUrl}`);
-    next();
-});
 
 app.use(express.static(path.join(__dirname, 'public')));
 
