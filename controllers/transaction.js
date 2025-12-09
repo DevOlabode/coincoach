@@ -48,4 +48,20 @@ module.exports.deleteTransaction = async (req, res) =>{
     await Transaction.findByIdAndDelete(id);
     req.flash('success', 'Transaction deleted successfully');
     res.redirect('/transactions');
+};
+
+module.exports.editTransactionsForm = async(req, res) =>{
+    const { id } = req.params;
+    const transaction = await transaction.findById(id);
+
+    if(!transaction){
+        req.flash('error', 'Transaction not found');
+        return res.redirect('/transactions');
+    }
+
+    if(!transaction.userId.equals(req.user._id)){
+        req.flash('error', 'You do not have permission to edit this transaction');
+        return res.redirect('/transactions');
+    }
+    res.render('transactions/edit', { transaction });
 }

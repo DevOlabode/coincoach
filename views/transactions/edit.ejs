@@ -1,0 +1,28 @@
+<% layout('layout/boilerplate.ejs') %>
+
+<h2>Edit Transaction</h2>
+
+<form action="/transactions/<%= transaction._id %>/edit" method="post">
+    <label for="name" class="form-label">Transaction Name</label>
+    <input type="text" class="form-control" name="name" placeholder="Transaction Name" value="<%= transaction.name %>">
+    
+    <label for="type" class="form-label">Transaction Type</label>
+    <div class="form-control">
+        <input type="radio" name="type" value="income"> Income
+        <input type="radio" name="type" value="expense"> Expense
+    </div>
+
+    <label for="amount" class="form-label">Amount</label>
+    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount In $" value="<%= transaction.amount %>">
+
+    <label for="date" class="form-label">Date</label>
+    <input type="date" class="form-control" name="date" id="date" value="<%= transaction.date %>">
+
+    <label for="category" class="form-label">Category</label>
+    <input type="text" name="category" class="form-control" placeholder="Enter the transaction category" id="category" value="<%= transaction.category %>">
+
+    <label for="description" class="form-label">Description</label>
+    <textarea name="description" id="description" class="form-control" placeholder="Description"><%= transaction.description %></textarea>
+
+    <button class="btn btn-primary m-2" type="submit">Enter</button>
+</form>
