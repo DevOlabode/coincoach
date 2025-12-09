@@ -9,4 +9,6 @@ router.get('/new', controller.newTransactionForm);
 
 router.post('/', catchAsync(controller.createTransaction));
 
+router.get('/', catchAsync(controller.getTransactions));
+
 module.exports = router;
