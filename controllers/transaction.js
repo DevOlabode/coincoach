@@ -5,14 +5,15 @@ module.exports.newTransactionForm = (req, res) => {
 };
 
 module.exports.createTransaction = async (req, res, next) => {
-    const { amount, type, date, description, category } = req.body;
+    const { amount, type, date, description, category, name } = req.body;
     const transaction = new Transaction({
         userId: req.user._id,
         amount,
         type,
         date,
         description,
-        category
+        category, 
+        name
     });
     await transaction.save();
     req.flash('success', 'Transaction recorded successfully!');

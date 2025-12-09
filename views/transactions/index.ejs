@@ -1,12 +1,13 @@
 <% layout('layout/boilerplate.ejs') %>
 
-<div>
-    <ul>
-        <% for(let transaction of transactions){ %>
-            <li><%= transaction.name %></li>
-            <li><%= transaction.type %></li>
-            <li><%= transaction.category %></li>
-            <li><%= transaction.description %></li>
-        <% } %>
-    </ul>
-</div>
+<% for(let transaction of transactions){ %>
+    <div>
+        <h3>Transaction Name : <%= transaction.name %></h3>
+        <ul>
+                <li><%= transaction.type %></li>
+                <li><%= transaction.category %></li>
+                <li><%= transaction.amount %></li>
+                <li><%= transaction.description %></li>
+        </ul>
+    </div>
+<% } %>
