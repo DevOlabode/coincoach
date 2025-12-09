@@ -2,7 +2,7 @@
 
 <% for(let transaction of transactions){ %>
     <div>
-        <h3>Transaction Name : <%= transaction.name %></h3>
+        <a href="/transactions/<%= transaction._id %>"><h3>Transaction Name : <%= transaction.name %></h3></a>
         <ul>
                 <li><%= transaction.type %></li>
                 <li><%= transaction.category %></li>
