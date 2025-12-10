@@ -157,7 +157,8 @@ module.exports.bulkUpload = async(req, res) => {
                 type: row[1],
                 category: row[2],
                 amount: row[3],
-                description: row[4]
+                description: row[4],
+                name: row[5]
             }));
         } else {
             throw new Error('Unsupported file format. Please upload CSV or Excel files.');
@@ -176,7 +177,7 @@ module.exports.bulkUpload = async(req, res) => {
                     category: (row.category || '').trim(),
                     amount: parseFloat(row.amount),
                     description: (row.description || '').trim(),
-                    name: `${row.category || 'Transaction'} - ${row.amount || 0}`
+                    name: row.name || `${row.category || 'Transaction'} - ${row.amount || 0}`
                 };
                 
                 if (!transaction.date || isNaN(transaction.date.getTime())) {
