@@ -88,6 +88,7 @@ module.exports.updateTransaction = async(req, res) =>{
     res.redirect(`/transactions/${transaction._id}`);
 };
 
+
 // Helper function to parse dates from Excel
 function parseExcelDate(value) {
     if (!value) return null;
@@ -99,14 +100,26 @@ function parseExcelDate(value) {
     
     // If it's an Excel serial number (numeric)
     if (typeof value === 'number') {
-        // Excel dates are days since 1900-01-01 (with a leap year bug)
         const excelEpoch = new Date(1899, 11, 30);
         const date = new Date(excelEpoch.getTime() + value * 86400000);
         return date;
     }
     
-    // If it's a string, try to parse it
+    // If it's a string (like "12/12/2025" or "12/8/2025")
     if (typeof value === 'string') {
+        // Try parsing MM/DD/YYYY or M/D/YYYY format
+        const parts = value.trim().split('/');
+        if (parts.length === 3) {
+            const month = parseInt(parts[0]) - 1; // JS months are 0-indexed
+            const day = parseInt(parts[1]);
+            const year = parseInt(parts[2]);
+            const date = new Date(year, month, day);
+            if (!isNaN(date.getTime())) {
+                return date;
+            }
+        }
+        
+        // Fallback to general Date parsing
         const date = new Date(value);
         if (!isNaN(date.getTime())) {
             return date;
@@ -135,10 +148,10 @@ module.exports.bulkUpload = async(req, res) => {
                     .on('error', reject);
             });
         } else if (fileExt === 'xlsx' || fileExt === 'xls') {
-            // Parse Excel with date handling
-            const workbook = XLSX.readFile(filePath, { cellDates: true });
+            // Parse Excel - don't use cellDates, keep as strings
+            const workbook = XLSX.readFile(filePath);
             const sheetName = workbook.SheetNames[0];
-            data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { raw: false });
+            data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
         } else {
             throw new Error('Unsupported file format. Please upload CSV or Excel files.');
         }
@@ -149,26 +162,26 @@ module.exports.bulkUpload = async(req, res) => {
                 const row = data[i];
                 
                 // Parse date with helper function
-                const parsedDate = parseExcelDate(row.date || row.Date);
+                const parsedDate = parseExcelDate(row.date);
                 
                 const transaction = {
                     userId: req.user._id,
                     date: parsedDate,
-                    type: (row.type || row.Type || '').toLowerCase().trim(),
-                    category: (row.category || row.Category || '').trim(),
-                    amount: parseFloat(row.amount || row.Amount),
-                    description: (row.description || row.Description || '').trim()
+                    type: (row.type || '').toLowerCase().trim(),
+                    category: (row.category || '').trim(),
+                    amount: parseFloat(row.amount),
+                    description: (row.description || '').trim()
                 };
                 
                 // Validate date
                 if (!transaction.date || isNaN(transaction.date.getTime())) {
-                    errors.push(`Row ${i + 2}: Invalid or missing date (got: ${row.date || row.Date})`);
+                    errors.push(`Row ${i + 2}: Invalid or missing date (got: "${row.date}")`);
                     continue;
                 }
                 
                 // Validate required fields
                 if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
-                    errors.push(`Row ${i + 2}: Missing required fields (type: ${transaction.type}, amount: ${row.amount})`);
+                    errors.push(`Row ${i + 2}: Missing type or amount`);
                     continue;
                 }
                 
