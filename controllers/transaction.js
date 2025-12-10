@@ -127,7 +127,11 @@ function parseExcelDate(value) {
     }
     
     return null;
-}
+};
+
+module.exports.bulkUploadForm = (req, res) => {
+    res.render('transactions/bulkUpload');
+};
 
 module.exports.bulkUpload = async(req, res) => {
     const results = [];
@@ -218,8 +222,4 @@ module.exports.bulkUpload = async(req, res) => {
         req.flash('error', `Upload failed: ${err.message}`);
         res.redirect('/transactions/bulk-upload');
     }
-};
-
-module.exports.bulkUploadForm = (req, res) => {
-    res.render('transactions/bulkUpload');
 };
