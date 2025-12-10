@@ -1,6 +1,7 @@
 TODO
 
 - work on the JSON type of transaction bulk upload.
+- Display the schema changes to the frontend.
 
 DONE/COMPLETED
 - Add CSV bulk transaction upload to the codebase.
