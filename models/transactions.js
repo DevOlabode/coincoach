@@ -20,6 +20,11 @@ const transactionSchema = new Schema({
         type : Number,
         required : true
     },
+    currency : {
+        type : String,
+        required : true,
+        default : 'CAD'
+    },
     date : {
         type : Date,
         required : true,
@@ -32,6 +37,15 @@ const transactionSchema = new Schema({
     description : {
         type : String,
         required : false
+    },
+    recurrring : {
+        type : Boolean,
+        default : false
+    },
+    recurrence : {
+        type : String,
+        enum : ['daily', 'weekly', 'monthly', 'yearly'],
+        required : function() { return this.recurrring; }
     }
 }, { timestamps: true });
 
