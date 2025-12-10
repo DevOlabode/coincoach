@@ -88,6 +88,34 @@ module.exports.updateTransaction = async(req, res) =>{
     res.redirect(`/transactions/${transaction._id}`);
 };
 
+// Helper function to parse dates from Excel
+function parseExcelDate(value) {
+    if (!value) return null;
+    
+    // If it's already a Date object
+    if (value instanceof Date) {
+        return value;
+    }
+    
+    // If it's an Excel serial number (numeric)
+    if (typeof value === 'number') {
+        // Excel dates are days since 1900-01-01 (with a leap year bug)
+        const excelEpoch = new Date(1899, 11, 30);
+        const date = new Date(excelEpoch.getTime() + value * 86400000);
+        return date;
+    }
+    
+    // If it's a string, try to parse it
+    if (typeof value === 'string') {
+        const date = new Date(value);
+        if (!isNaN(date.getTime())) {
+            return date;
+        }
+    }
+    
+    return null;
+}
+
 module.exports.bulkUpload = async(req, res) => {
     const results = [];
     const errors = [];
@@ -107,10 +135,10 @@ module.exports.bulkUpload = async(req, res) => {
                     .on('error', reject);
             });
         } else if (fileExt === 'xlsx' || fileExt === 'xls') {
-            // Parse Excel
-            const workbook = XLSX.readFile(filePath);
+            // Parse Excel with date handling
+            const workbook = XLSX.readFile(filePath, { cellDates: true });
             const sheetName = workbook.SheetNames[0];
-            data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+            data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { raw: false });
         } else {
             throw new Error('Unsupported file format. Please upload CSV or Excel files.');
         }
@@ -120,30 +148,33 @@ module.exports.bulkUpload = async(req, res) => {
             try {
                 const row = data[i];
                 
+                // Parse date with helper function
+                const parsedDate = parseExcelDate(row.date || row.Date);
+                
                 const transaction = {
                     userId: req.user._id,
-                    date: new Date(row.date || row.Date),
-                    type: row.type || row.Type,
-                    category: row.category || row.Category,
+                    date: parsedDate,
+                    type: (row.type || row.Type || '').toLowerCase().trim(),
+                    category: (row.category || row.Category || '').trim(),
                     amount: parseFloat(row.amount || row.Amount),
-                    description: row.description || row.Description || ''
+                    description: (row.description || row.Description || '').trim()
                 };
                 
                 // Validate date
                 if (!transaction.date || isNaN(transaction.date.getTime())) {
-                    errors.push(`Row ${i + 2}: Invalid or missing date`);
+                    errors.push(`Row ${i + 2}: Invalid or missing date (got: ${row.date || row.Date})`);
                     continue;
                 }
                 
                 // Validate required fields
                 if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
-                    errors.push(`Row ${i + 2}: Missing required fields (type or amount)`);
+                    errors.push(`Row ${i + 2}: Missing required fields (type: ${transaction.type}, amount: ${row.amount})`);
                     continue;
                 }
                 
-                // Optional: Validate type is either 'income' or 'expense'
+                // Validate type
                 if (transaction.type !== 'income' && transaction.type !== 'expense') {
-                    errors.push(`Row ${i + 2}: Type must be 'income' or 'expense'`);
+                    errors.push(`Row ${i + 2}: Type must be 'income' or 'expense', got '${transaction.type}'`);
                     continue;
                 }
                 
