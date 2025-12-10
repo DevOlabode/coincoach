@@ -29,6 +29,7 @@ module.exports.getTransactionById = async (req, res) =>{
     const { id } = req.params;
 
     const transaction = await Transaction.findById(id);
+    
 
     if(!transaction){
         req.flash('error', 'Transaction not found');
