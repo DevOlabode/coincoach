@@ -1,5 +1,9 @@
 const Transaction = require('../models/transactions');
 
+const csv = require('csv-parser');
+const fs = require('fs');
+const XLSX = require('xlsx');
+
 module.exports.newTransactionForm = (req, res) => {
     res.render('transactions/new');
 };
@@ -82,4 +86,94 @@ module.exports.updateTransaction = async(req, res) =>{
 
     req.flash('success', 'Transaction updated successfully');
     res.redirect(`/transactions/${transaction._id}`);
+};
+
+module.exports.bulkUpload = async(req, res) => {
+    const results = [];
+    const errors = [];
+    const filePath = req.file.path;
+    const fileExt = req.file.originalname.split('.').pop().toLowerCase();
+    
+    try {
+        let data = [];
+        
+        if (fileExt === 'csv') {
+            // Parse CSV
+            await new Promise((resolve, reject) => {
+                fs.createReadStream(filePath)
+                    .pipe(csv())
+                    .on('data', (row) => data.push(row))
+                    .on('end', resolve)
+                    .on('error', reject);
+            });
+        } else if (fileExt === 'xlsx' || fileExt === 'xls') {
+            // Parse Excel
+            const workbook = XLSX.readFile(filePath);
+            const sheetName = workbook.SheetNames[0];
+            data = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        } else {
+            throw new Error('Unsupported file format. Please upload CSV or Excel files.');
+        }
+        
+        // Process each row
+        for (let i = 0; i < data.length; i++) {
+            try {
+                const row = data[i];
+                
+                const transaction = {
+                    userId: req.user._id,
+                    date: new Date(row.date || row.Date),
+                    type: row.type || row.Type,
+                    category: row.category || row.Category,
+                    amount: parseFloat(row.amount || row.Amount),
+                    description: row.description || row.Description || ''
+                };
+                
+                // Validate date
+                if (!transaction.date || isNaN(transaction.date.getTime())) {
+                    errors.push(`Row ${i + 2}: Invalid or missing date`);
+                    continue;
+                }
+                
+                // Validate required fields
+                if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
+                    errors.push(`Row ${i + 2}: Missing required fields (type or amount)`);
+                    continue;
+                }
+                
+                // Optional: Validate type is either 'income' or 'expense'
+                if (transaction.type !== 'income' && transaction.type !== 'expense') {
+                    errors.push(`Row ${i + 2}: Type must be 'income' or 'expense'`);
+                    continue;
+                }
+                
+                await Transaction.create(transaction);
+                results.push(transaction);
+                
+            } catch (err) {
+                errors.push(`Row ${i + 2}: ${err.message}`);
+            }
+        }
+        
+        // Clean up uploaded file
+        fs.unlinkSync(filePath);
+        
+        req.flash('success', `Imported ${results.length} transactions successfully`);
+        if (errors.length > 0) {
+            req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
+        }
+        res.redirect('/transactions');
+        
+    } catch (err) {
+        // Clean up file on error
+        if (fs.existsSync(filePath)) {
+            fs.unlinkSync(filePath);
+        }
+        req.flash('error', `Upload failed: ${err.message}`);
+        res.redirect('/transactions/bulk-upload');
+    }
+};
+
+module.exports.bulkUploadForm = (req, res) => {
+    res.render('transactions/bulkUpload');
 };
