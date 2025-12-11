@@ -9,7 +9,7 @@ module.exports.newTransactionForm = (req, res) => {
 };
 
 module.exports.createTransaction = async (req, res) => {
-    const { amount, type, date, description, category, name } = req.body;
+    const { amount, type, date, description, category, name,recurrence, recurring, currency } = req.body;
     const transaction = new Transaction({
         userId: req.user._id,
         amount,
@@ -17,7 +17,10 @@ module.exports.createTransaction = async (req, res) => {
         date,
         description,
         category, 
-        name
+        name,
+        recurring,
+        recurrence,
+        currency
     });
     await transaction.save();
     req.flash('success', 'Transaction recorded successfully!');

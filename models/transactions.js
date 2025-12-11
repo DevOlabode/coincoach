@@ -38,13 +38,14 @@ const transactionSchema = new Schema({
         type : String,
         required : false
     },
-    recurrring : {
+    recurring : {
         type : Boolean,
+        required : false,
         default : false
     },
     recurrence : {
         type : String,
-        enum : ['daily', 'weekly', 'monthly', 'yearly'],
+        enum : ['daily', 'weekly', 'monthly', 'yearly', 'hourly'],
         required : function() { return this.recurrring; }
     }
 }, { timestamps: true });
