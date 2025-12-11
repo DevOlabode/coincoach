@@ -1,0 +1,41 @@
+{
+  "transactions": [
+    { 
+        "name" : "Simple Snacks",
+        "date": "12/6/2025",
+        "type": "expense",
+        "category": "food",
+        "amount": 20,
+        "description": "Bought some snacks at dollarama on friday",
+        "recurring" : false
+    },
+    {
+        "name" : "Weekly Pay",
+        "date": "12/7/2025",
+        "type": "income",
+        "category": "salary",
+        "amount": 5000,
+        "description": "Get paid at my day job every week",
+        "recurring" : true,
+        "recurrence" : "weekly"
+    },
+    {
+        "name" : "New Laptop Purchase",
+        "date": "10/23/2025",
+        "type": "expense",
+        "category": "purchase",
+        "amount": 1200,
+        "description": "Needed a new laptop so i got one. A macbook pro",
+        "recurring" : false
+    },
+    {
+        "name" : "Old Laptop Sale",
+        "date": "10/30/2025",
+        "type": "income",
+        "category": "sale",
+        "amount": 1000,
+        "description": "Sold my last laptop on ebay",
+        "recurring" : false
+    }
+  ]
+}
