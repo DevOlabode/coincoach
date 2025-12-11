@@ -165,7 +165,10 @@ module.exports.bulkUpload = async(req, res) => {
                 category: row[2],
                 amount: row[3],
                 description: row[4],
-                name: row[5]
+                name: row[5],
+                recurring: row[6],
+                recurrence: row[7],
+                currency: row[8]
             }));
         } else {
             throw new Error('Unsupported file format. Please upload CSV or Excel files.');
@@ -184,7 +187,10 @@ module.exports.bulkUpload = async(req, res) => {
                     category: (row.category || '').trim(),
                     amount: parseFloat(row.amount),
                     description: (row.description || '').trim(),
-                    name: row.name || `${row.category || 'Transaction'} - ${row.amount || 0}`
+                    name: row.name || `${row.category || 'Transaction'} - ${row.amount || 0}`,
+                    recurring: row.recurring ? String(row.recurring).toLowerCase().trim() === 'true' : false,
+                    recurrence: row.recurrence ? row.recurrence.toLowerCase().trim() : undefined,
+                    currency: row.currency ? row.currency.trim() : 'CAD'
                 };
                 
                 if (!transaction.date || isNaN(transaction.date.getTime())) {
