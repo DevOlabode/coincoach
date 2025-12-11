@@ -260,7 +260,10 @@ module.exports.bulkUploadJSON = async(req, res) => {
                 category: (t.category || '').trim(),
                 amount: parseFloat(t.amount),
                 description: (t.description || '').trim(),
-                name: t.name || `${t.category || 'Transaction'} - ${t.amount || 0}`
+                name: t.name || `${t.category || 'Transaction'} - ${t.amount || 0}`,
+                recurring: t.recurring ? String(t.recurring).toLowerCase().trim() === 'true' : false,
+                recurrence: t.recurrence ? t.recurrence.toLowerCase().trim() : undefined,
+                currency: t.currency ? t.currency.trim() : 'CAD'
             };
             
             if (!transaction.date || isNaN(transaction.date.getTime())) {
@@ -286,9 +289,10 @@ module.exports.bulkUploadJSON = async(req, res) => {
         }
     }
     
-    req.flash('success', `Imported ${results.length} transactions successfully`);
     if (errors.length > 0) {
         req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
     }
+
+    req.flash('success', `Imported ${results.length} transactions successfully`);
     res.redirect('/transactions');
 };
