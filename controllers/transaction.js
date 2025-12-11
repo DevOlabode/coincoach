@@ -108,12 +108,12 @@ function parseExcelDate(value) {
         return date;
     }
     
-    // If it's a string (like "12/12/2025" or "12/8/2025")
+
     if (typeof value === 'string') {
-        // Try parsing MM/DD/YYYY or M/D/YYYY format
+
         const parts = value.trim().split('/');
         if (parts.length === 3) {
-            const month = parseInt(parts[0]) - 1; // JS months are 0-indexed
+            const month = parseInt(parts[0]) - 1;
             const day = parseInt(parts[1]);
             const year = parseInt(parts[2]);
             const date = new Date(year, month, day);
@@ -122,7 +122,6 @@ function parseExcelDate(value) {
             }
         }
         
-        // Fallback to general Date parsing
         const date = new Date(value);
         if (!isNaN(date.getTime())) {
             return date;
@@ -158,7 +157,6 @@ module.exports.bulkUpload = async(req, res) => {
             const sheetName = workbook.SheetNames[0];
             const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
             
-            // Convert array format to object format manually
             data = rawData.slice(1).map(row => ({
                 date: row[0],
                 type: row[1],

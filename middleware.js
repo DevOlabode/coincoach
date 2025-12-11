@@ -1,9 +1,21 @@
 const passport = require('passport');
+const ExpressError = require('./utils/ExpressError');
+const {transactionSchema} = require('./schema');
+
+module.exports.validateTransaction = (req, res, next) => {
+    const { error } = transactionSchema.validate(req.body);
+    if(error){
+        const message = error.details.map(el => el.message).join(',');
+        throw new ExpressError(message, 400)
+    }else{
+        next();
+    }
+};
 
 module.exports.loginAuthenticate = passport.authenticate('local', {
     failureFlash: true,
     failureRedirect: '/login',
-    successFlash: false // We'll handle success flash in the controller
+    successFlash: false 
 });
 
 module.exports.isLoggedIn = (req, res, next)=>{
