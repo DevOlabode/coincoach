@@ -19,6 +19,8 @@ router.get('/bulk-upload', controller.bulkUploadForm);
 
 router.post('/bulk-upload', upload.single('csvFile'), catchAsync(controller.bulkUpload));
 
+router.get('/bulk-json', controller.bulkUploadJSONFrontend);
+
 router.get('/:id', catchAsync(controller.getTransactionById));
 
 router.delete('/:id', catchAsync(controller.deleteTransaction));
@@ -26,5 +28,7 @@ router.delete('/:id', catchAsync(controller.deleteTransaction));
 router.get('/:id/edit', catchAsync(controller.editTransactionsForm));
 
 router.patch('/:id', catchAsync(controller.updateTransaction));
+
+router.post('/bulk-json', express.json(), catchAsync(controller.bulkUploadJSON));
 
 module.exports = router;

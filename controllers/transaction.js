@@ -232,3 +232,63 @@ module.exports.bulkUpload = async(req, res) => {
         res.redirect('/transactions/bulk-upload');
     }
 };
+
+module.exports.bulkUploadJSONFrontend = (req, res) => {
+    res.render('transactions/bulkUploadJSON');
+}
+
+module.exports.bulkUploadJSON = async(req, res) => {
+    const { transactions } = req.body;
+    const errors = [];
+    const results = [];
+    
+    if (!transactions || !Array.isArray(transactions)) {
+        req.flash('error', 'Invalid JSON format. Expected { "transactions": [...] }');
+        return res.redirect('/transactions/bulk-upload');
+    }
+    
+    for (let i = 0; i < transactions.length; i++) {
+        try {
+            const t = transactions[i];
+            
+            const parsedDate = parseExcelDate(t.date);
+            
+            const transaction = {
+                userId: req.user._id,
+                date: parsedDate,
+                type: (t.type || '').toLowerCase().trim(),
+                category: (t.category || '').trim(),
+                amount: parseFloat(t.amount),
+                description: (t.description || '').trim(),
+                name: t.name || `${t.category || 'Transaction'} - ${t.amount || 0}`
+            };
+            
+            if (!transaction.date || isNaN(transaction.date.getTime())) {
+                errors.push(`Transaction ${i + 1}: Invalid date`);
+                continue;
+            }
+            
+            if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
+                errors.push(`Transaction ${i + 1}: Missing type or amount`);
+                continue;
+            }
+            
+            if (transaction.type !== 'income' && transaction.type !== 'expense') {
+                errors.push(`Transaction ${i + 1}: Type must be 'income' or 'expense'`);
+                continue;
+            }
+            
+            await Transaction.create(transaction);
+            results.push(transaction);
+            
+        } catch (err) {
+            errors.push(`Transaction ${i + 1}: ${err.message}`);
+        }
+    }
+    
+    req.flash('success', `Imported ${results.length} transactions successfully`);
+    if (errors.length > 0) {
+        req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
+    }
+    res.redirect('/transactions');
+};

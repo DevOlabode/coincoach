@@ -1,0 +1,70 @@
+<% layout('layout/boilerplate.ejs') %>
+
+<h3>Bulk Upload Transactions</h3>
+
+<!-- CSV/Excel Upload -->
+<h4>Upload CSV or Excel File</h4>
+<form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data">
+    <input type="file" name="csvFile" accept=".csv,.xlsx,.xls" required>
+    <button type="submit">Upload File</button>
+</form>
+
+<p><strong>File Format:</strong> Must have headers: date, type, category, amount, description</p>
+<p><strong>Example:</strong></p>
+<pre>
+date       | type    | category | amount | description
+12/6/2025  | expense | food     | 25.50  | Groceries
+12/7/2025  | income  | salary   | 5000   | Monthly pay
+</pre>
+
+<hr>
+
+<!-- JSON Upload -->
+<h4>Upload JSON</h4>
+<form action="/transactions/bulk-json" method="POST" id="jsonForm">
+    <textarea name="jsonData" id="jsonData" rows="10" cols="60" placeholder='Paste JSON here' required></textarea>
+    <button type="submit">Upload JSON</button>
+</form>
+
+<p><strong>JSON Format:</strong></p>
+<pre>
+{
+  "transactions": [
+    {
+      "date": "12/6/2025",
+      "type": "expense",
+      "category": "food",
+      "amount": 25.50,
+      "description": "Groceries"
+    },
+    {
+      "date": "12/7/2025",
+      "type": "income",
+      "category": "salary",
+      "amount": 5000,
+      "description": "Monthly pay"
+    }
+  ]
+}
+</pre>
+
+<script>
+document.getElementById('jsonForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const jsonData = document.getElementById('jsonData').value;
+    
+    try {
+        JSON.parse(jsonData); // Validate JSON
+        
+        const response = await fetch('/transactions/bulk-json', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: jsonData
+        });
+        
+        window.location.href = '/transactions';
+    } catch (err) {
+        alert('Invalid JSON format: ' + err.message);
+    }
+});
+</script>
