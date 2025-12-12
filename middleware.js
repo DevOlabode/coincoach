@@ -1,6 +1,6 @@
 const passport = require('passport');
 const ExpressError = require('./utils/ExpressError');
-const {transactionSchema} = require('./schema');
+const {transactionSchema, userSchema} = require('./schema');
 
 module.exports.validateTransaction = (req, res, next) => {
     const { error } = transactionSchema.validate(req.body);

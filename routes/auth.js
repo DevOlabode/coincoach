@@ -13,7 +13,7 @@ router.post('/register', validateUser, redirectIfLoggedIn, catchAsync(controller
 
 router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
-router.post('/login', validateUser, storeReturnTo, loginAuthenticate, controller.login);
+router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
 router.get('/logout', controller.logout);
 

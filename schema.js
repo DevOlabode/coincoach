@@ -19,5 +19,5 @@ module.exports.transactionSchema = joi.object({
 module.exports.userSchema = joi.object({
     email : joi.string().email().required(),
     password : joi.string().min(6).required(),
-    confirmPassword : joi.any().valid(joi.ref('password')).required().messages({'any.only': 'Passwords do not match'})
-})
+    username : joi.string().alphanum().min(3).max(30).allow('').optional()
+});
