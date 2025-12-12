@@ -19,5 +19,6 @@ module.exports.transactionSchema = joi.object({
 module.exports.userSchema = joi.object({
     email : joi.string().email().required(),
     password : joi.string().min(6).required(),
-    username : joi.string().alphanum().min(3).max(30).allow('').optional()
+    displayName : joi.string().allow('').optional(),
+    preferredCurrency : joi.string().optional()
 });

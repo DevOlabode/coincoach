@@ -8,6 +8,15 @@ const userSchema = new Schema({
     type: String,
     required: true,
     unique: true
+  },
+  displayName : {
+    type: String,
+    required: false
+  },
+  preferredCurrency : {
+    type: String,
+    required: false,
+    default: 'CAD'
   }
 });
 

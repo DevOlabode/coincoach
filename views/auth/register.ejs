@@ -1,14 +1,18 @@
 <% layout('layout/boilerplate.ejs') %>
 <h3>Register</h3>
 <form action="/register" method="post" class="needs-validation" novalidate>
-    <label for="username" class="form-label">Username</label>
-    <input type="text" class="form-control" name="username" id="username" required>
 
     <label for="email" class="form-label">Email</label>
     <input type="email" class="form-control" name="email" id="email" required>
 
+    <label for="displayName" class="form-label">Display Name</label>
+    <input type="text" name="displayName" class="form-control" id="displayName">
+
+    <label for="preferredCurrency" class="form-label">Preferred Currency</label>
+    <input type="text" name="preferredCurrency" id="preferredCurrency" class="form-control">
+
     <label for="password" class="form-label">Password</label>
-    <input type="password" name="password"  class="form-control">
+    <input type="password" name="password"  class="form-control" id="password">
 
     <button type="submit" class="mt-2">Register</button>
 </form>
