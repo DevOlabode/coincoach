@@ -15,3 +15,9 @@ module.exports.transactionSchema = joi.object({
         otherwise: joi.optional()
     })
 });
+
+module.exports.userSchema = joi.object({
+    email : joi.string().email().required(),
+    password : joi.string().min(6).required(),
+    confirmPassword : joi.any().valid(joi.ref('password')).required().messages({'any.only': 'Passwords do not match'})
+})
