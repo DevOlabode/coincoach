@@ -1,16 +1,15 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const chatMessageSchema = new Schema(
-  {
-    sessionId: {
-      type: Schema.Types.ObjectId,
-      ref: "ChatSession",
-      required: true,
-      index: true,
-    },
+const chatMessageSchema = new Schema({
+  sessionId: {
+    type: Schema.Types.ObjectId,
+    ref: "ChatSession",
+    required: true,
+    index: true,
+  },
 
-    role: {
+  role: {
       type: String,
       enum: ["user", "assistant", "system"],
       required: true,
@@ -33,9 +32,6 @@ const chatMessageSchema = new Schema(
       default: null,
     },
   },
-  {
-    timestamps: { createdAt: true, updatedAt: false },
-  }
-);
+  {timestamps: { createdAt: true, updatedAt: false },});
 
 module.exports = mongoose.model("ChatMessage", chatMessageSchema);

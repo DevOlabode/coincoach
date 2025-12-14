@@ -81,9 +81,13 @@ app.use((req, res, next)=>{
 // Routes
 const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
+const chatSessionRoutes = require('./routes/chatSession');
+const chatMessageRoutes = require('./routes/chatMessage');
 
 app.use('/', authRoutes);
 app.use('/transactions', transactionRoutes);
+app.use('/chat', chatSessionRoutes);
+app.use('/chat', chatMessageRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
