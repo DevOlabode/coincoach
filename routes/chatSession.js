@@ -4,9 +4,7 @@ const router = express.Router();
 const controller = require('../controllers/chatSession');
 
 // Route to display the chat interface
-router.get('/', (req, res) => {
-    res.render('chat/index');
-});
+router.get('/', controller.index);
 
 // Route to get all chat sessions for the user
 router.get('/sessions', controller.getSessions);

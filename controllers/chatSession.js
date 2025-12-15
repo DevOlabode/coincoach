@@ -1,5 +1,9 @@
 const ChatSession  = require('../models/chatSession');
 
+module.exports.index = (req, res) =>{
+    res.render('chat/index');
+}
+
 module.exports.createSession = async (req, res )=>{
     const { userMessage } = req.body;
     
