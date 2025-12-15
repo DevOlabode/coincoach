@@ -1,4 +1,11 @@
-TODO
+TOMORROW TODO
+- add the delete session to the frontend.
+- Add the edit session to the frontend
+- Make the enter button send message to the AI. 
+- Refactor the frontend of the chatbot a little bit.
+
+
+FUTURE TODO
 
 - Add the AI Chatbot to the codebase (Check copilot last chat)
 - Add User profile page
