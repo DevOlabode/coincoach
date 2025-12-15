@@ -87,7 +87,7 @@ const chatMessageRoutes = require('./routes/chatMessage');
 app.use('/', authRoutes);
 app.use('/transactions', transactionRoutes);
 app.use('/chat', chatSessionRoutes);
-app.use('/chat', chatMessageRoutes);
+
 
 app.get('/', (req, res) => {
     res.render('home');

@@ -1,0 +1,47 @@
+<% layout('layout/boilerplate') %>
+
+<div class="container mt-5">
+    <h1 class="mb-4">AI Chatbot</h1>
+    <div class="card">
+        <div class="card-body">
+            <div id="chat-messages" class="mb-3" style="height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px;">
+                <!-- Chat messages will be displayed here -->
+            </div>
+            <form id="chat-form">
+                <div class="input-group">
+                    <input type="text" id="message-input" class="form-control" placeholder="Type your message..." required>
+                    <button type="submit" class="btn btn-primary">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message-input');
+    const chatMessages = document.getElementById('chat-messages');
+
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = messageInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessage('user', message);
+        messageInput.value = '';
+
+        // Simulate AI response (replace with actual API call)
+        setTimeout(() => {
+            addMessage('assistant', 'This is a placeholder response from the AI.');
+        }, 1000);
+    });
+
+    function addMessage(role, content) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${role}`;
+        messageDiv.innerHTML = `<strong>${role === 'user' ? 'You' : 'AI'}:</strong> ${content}`;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+</script>
