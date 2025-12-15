@@ -7,7 +7,7 @@ TOMORROW TODO
 
 FUTURE TODO
 
-- Add the AI Chatbot to the codebase (Check copilot last chat)
+- Add the AI Chatbot to the codebase (Ongoing)
 - Add User profile page
 - Use sendgrid for email sending and recieving.
 - Add the following to the user experience :  
