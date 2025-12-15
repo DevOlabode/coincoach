@@ -1,14 +1,26 @@
 const express = require('express');
 const router = express.Router();
-
 const controller = require('../controllers/chatSession');
+const { isLoggedIn } = require('../middleware');
 
-// Route to display the chat interface
+router.use(isLoggedIn);
+
+// Display chat interface
 router.get('/', controller.index);
 
-// Route to get all chat sessions for the user
+// Get all sessions
 router.get('/sessions', controller.getSessions);
 
+// Create new session
 router.post('/sessions', controller.createSession);
+
+// Get specific session
+router.get('/sessions/:sessionId', controller.getSessionById);
+
+// Update session title
+router.patch('/sessions/:sessionId', controller.updateSessionTitle);
+
+// Delete session
+router.delete('/sessions/:sessionId', controller.deleteSession);
 
 module.exports = router;
