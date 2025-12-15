@@ -9,4 +9,6 @@ router.get('/', controller.index);
 // Route to get all chat sessions for the user
 router.get('/sessions', controller.getSessions);
 
+router.post('/sessions', controller.createSession);
+
 module.exports = router;
