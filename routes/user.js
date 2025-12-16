@@ -6,6 +6,6 @@ const { isLoggedIn } = require('../middleware');
 
 router.use(isLoggedIn);
 
-router.get('/profile', controller.userProfile);
+router.get('/:displayName', controller.userProfile);
 
 module.exports = router;
