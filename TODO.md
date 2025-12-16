@@ -1,11 +1,5 @@
+
 TOMORROW TODO
-- add the delete session to the frontend.
-- Add the edit session to the frontend
-- Make the enter button send message to the AI. 
-- Refactor the frontend of the chatbot a little bit.
-
-
-FUTURE TODO
 
 - Add the AI Chatbot to the codebase (Ongoing)
 - Add User profile page
@@ -27,7 +21,19 @@ DONE/COMPLETED
 - Add the following to the user schema
     - Display Name
     - preferred currency
+- add the delete session to the frontend.
+- Add the edit session to the frontend
+- Make the enter button send message to the AI. 
+- Refactor the frontend of the chatbot a little bit.    
 
 
-url to watch for styling :
+url to watch for styling :  
 - https://solabode499.bubbleapps.io/version-test/profile_settings?debug_mode=true
+
+
+PAGES TO ADD TO THE APPLICATION.
+- DASHBOARD
+- INSIGHTS
+- COACH
+- PROFILE
+- HELP (Help users understand the app easier)
