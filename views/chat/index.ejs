@@ -62,6 +62,24 @@
         padding: 1rem;
         border-bottom: 1px solid #dee2e6;
         background: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    .chat-header-title-wrapper {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .chat-header-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+    .chat-header-actions button {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
     }
     .messages-container {
         flex: 1;
@@ -191,7 +209,17 @@
     <!-- Main Chat Area -->
     <div class="chat-main">
         <div class="chat-header">
-            <h5 id="chat-title" contenteditable="false">Select or create a chat</h5>
+            <div class="chat-header-title-wrapper">
+                <h5 id="chat-title" contenteditable="false" style="margin: 0;">Select or create a chat</h5>
+            </div>
+            <div class="chat-header-actions" id="chat-header-actions" style="display: none;">
+                <button class="btn btn-sm btn-outline-primary" onclick="editSessionTitle()" title="Edit Session Title">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-sm btn-outline-danger" onclick="deleteCurrentSession()" title="Delete Session">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
         </div>
         
         <div class="messages-container" id="messages-container">
@@ -294,11 +322,6 @@ function renderSessions() {
              data-id="${session._id}"
              onclick="loadSession('${session._id}')">
             <span class="session-title">${escapeHtml(session.title)}</span>
-            <div class="session-actions">
-                <button class="btn btn-sm btn-link" onclick="event.stopPropagation(); deleteSession('${session._id}')" title="Delete">
-                    <i class="fas fa-trash"></i>
-                </button>
-            </div>
         </div>
     `).join('');
 }
@@ -313,6 +336,7 @@ async function createNewSession() {
         sessions.unshift(session);
         await loadSession(session._id);
         renderSessions();
+        // Buttons will be shown in loadSession
     } catch (error) {
         console.error('Failed to create session:', error);
     }
@@ -329,6 +353,9 @@ async function loadSession(sessionId) {
         const titleEl = document.getElementById('chat-title');
         titleEl.textContent = session.title;
         titleEl.contentEditable = 'true';
+        
+        // Show header actions buttons
+        document.getElementById('chat-header-actions').style.display = 'flex';
         
         renderMessages();
         renderSessions();
@@ -434,16 +461,45 @@ async function updateSessionTitle(sessionId, title) {
             body: JSON.stringify({ title })
         });
         const session = sessions.find(s => s._id === sessionId);
-        if (session) session.title = title;
+        if (session) {
+            session.title = title;
+            // Update the displayed title if it's the current session
+            if (currentSessionId === sessionId) {
+                const titleEl = document.getElementById('chat-title');
+                titleEl.textContent = title;
+            }
+        }
         renderSessions();
     } catch (error) {
         console.error('Failed to update title:', error);
     }
 }
 
-async function deleteSession(sessionId) {
+async function editSessionTitle() {
+    if (!currentSessionId) return;
+    
+    const session = sessions.find(s => s._id === currentSessionId);
+    if (!session) return;
+    
+    const newTitle = prompt('Enter new session title:', session.title);
+    if (newTitle === null || newTitle.trim() === '') return;
+    
+    await updateSessionTitle(currentSessionId, newTitle.trim());
+    
+    // Update the displayed title
+    const titleEl = document.getElementById('chat-title');
+    titleEl.textContent = newTitle.trim();
+}
+
+async function deleteCurrentSession() {
+    if (!currentSessionId) return;
+    
     if (!confirm('Delete this chat session?')) return;
     
+    await deleteSession(currentSessionId);
+}
+
+async function deleteSession(sessionId) {
     try {
         await fetch(`/chat/sessions/${sessionId}`, { method: 'DELETE' });
         sessions = sessions.filter(s => s._id !== sessionId);
@@ -455,6 +511,9 @@ async function deleteSession(sessionId) {
             document.getElementById('empty-state').style.display = 'flex';
             document.getElementById('chat-title').textContent = 'Select or create a chat';
             document.getElementById('chat-title').contentEditable = 'false';
+            
+            // Hide header actions buttons
+            document.getElementById('chat-header-actions').style.display = 'none';
         }
         
         renderSessions();
