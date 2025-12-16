@@ -83,8 +83,8 @@ const authRoutes = require('./routes/auth');
 const transactionRoutes = require('./routes/transaction');
 const chatSessionRoutes = require('./routes/chatSession');
 const chatMessageRoutes = require('./routes/chatMessage');
-// Add after existing route imports
 const chatAIRoutes = require('./routes/chatAI');
+const userRoutes = require('./routes/user');
 
 // Add after existing route uses
 app.use('/chat', chatSessionRoutes);
@@ -93,8 +93,7 @@ app.use('/api/ai', chatAIRoutes);
 
 app.use('/', authRoutes);
 app.use('/transactions', transactionRoutes);
-// app.use('/chat', chatSessionRouj
-
+app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
