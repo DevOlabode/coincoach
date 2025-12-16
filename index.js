@@ -93,7 +93,7 @@ app.use('/api/ai', chatAIRoutes);
 
 app.use('/', authRoutes);
 app.use('/transactions', transactionRoutes);
-app.use('/', userRoutes);
+app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
     res.render('home');
