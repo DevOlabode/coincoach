@@ -7,6 +7,8 @@ const catchAsync = require('../utils/catchAsync');
 
 const { loginAuthenticate, redirectIfLoggedIn, storeReturnTo, validateUser } = require('../middleware');
 
+router.get('/', controller.home);
+
 router.get('/register', redirectIfLoggedIn, controller.registerForm);
 
 router.post('/register', validateUser, redirectIfLoggedIn, catchAsync(controller.register));

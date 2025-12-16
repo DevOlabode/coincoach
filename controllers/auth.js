@@ -1,5 +1,9 @@
 const User = require('../models/user');
 
+module.exports.home = (req, res)=>{
+    res.render('home');
+}
+
 module.exports.registerForm = (req, res) => {
     res.render('auth/register');
 };
