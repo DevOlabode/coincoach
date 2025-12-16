@@ -26,7 +26,7 @@
         margin-bottom: 0.5rem;
         border-radius: 0.5rem;
         cursor: pointer;
-        transition: background 0.2s;
+        transition: 0.2s;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -233,11 +233,12 @@
         <div class="input-container">
             <form id="chat-form">
                 <div class="input-wrapper">
-                    <textarea 
+                    <input 
+                    class="form-control"
                         id="message-input" 
                         placeholder="Ask about your spending, budgeting, or get financial advice..."
                         rows="1"
-                    ></textarea>
+                    ></input>
                     <button type="submit" class="btn btn-primary">Enter</button>
                 </div>
             </form>
