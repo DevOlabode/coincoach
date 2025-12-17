@@ -29,6 +29,15 @@ const userSchema = new Schema({
     required : false,
     default: ''
   },
+  accountCreatedAt : {
+    type: Date,
+    default: Date.now
+  },
+  theme : {
+    type : String,
+    enum : ['light', 'dark'],
+    default : 'light'
+  }
 });
 
 userSchema.plugin(passportLocalMongoose, { 
@@ -39,11 +48,9 @@ module.exports = mongoose.model('User', userSchema);
 
 /*
 Potential Things to add to the schema :
-- theme preferences (dark/light mode)
 - profile picture upload or take picture from webcam
 - social media links
 - badges /achievement
 - transaction history (could be in a separate model)
 - notification preferences
-- account creation date.
 */
