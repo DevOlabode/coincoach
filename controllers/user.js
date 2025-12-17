@@ -24,7 +24,7 @@ module.exports.editProfileForm = async(req, res)=>{
 
 module.exports.editAccount = async (req, res) =>{
   const user = await User.findByIdAndUpdate(req.user._id);
-  res.render('user/editAccount', {user});
+  res.render('user/editAcct', {user});
 };
 
 module.exports.deleteAcct = async (req, res)=>{
