@@ -4,7 +4,7 @@
 
 <!-- CSV/Excel Upload -->
 <h4>Upload CSV or Excel File</h4>
-<form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data">
+<form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
     <input type="file" name="csvFile" accept=".csv,.xlsx,.xls" required>
     <button type="submit">Upload File</button>
 </form>

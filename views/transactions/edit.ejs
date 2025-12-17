@@ -2,27 +2,27 @@
 
 <h2>Edit Transaction</h2>
 
-<form action="/transactions/<%= transaction._id %>?_method=patch" method="post">
+<form action="/transactions/<%= transaction._id %>?_method=patch" method="post" class="needs-validation" novalidate>
     <label for="name" class="form-label">Transaction Name</label>
-    <input type="text" class="form-control" name="name" placeholder="Transaction Name" value="<%= transaction.name %>">
-    
+    <input type="text" class="form-control" name="name" placeholder="Transaction Name" value="<%= transaction.name %>" required>
+
     <label for="type" class="form-label">Transaction Type</label>
     <div class="form-control">
-        <input type="radio" name="type" value="income" 
+        <input type="radio" name="type" value="income"
             <%= transaction.type === 'income' ? 'checked' : '' %>> Income
-        <input type="radio" name="type" value="expense" 
+        <input type="radio" name="type" value="expense"
             <%= transaction.type === 'expense' ? 'checked' : '' %>> Expense
     </div>
 
 
     <label for="amount" class="form-label">Amount</label>
-    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount In $" value="<%= transaction.amount %>">
+    <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount In $" value="<%= transaction.amount %>" required>
 
     <label for="date" class="form-label">Date</label>
-    <input type="date" class="form-control" name="date" id="date" value="<%= transaction.date %>">
+    <input type="date" class="form-control" name="date" id="date" value="<%= transaction.date %>" required>
 
     <label for="category" class="form-label">Category</label>
-    <input type="text" name="category" class="form-control" placeholder="Enter the transaction category" id="category" value="<%= transaction.category %>">
+    <input type="text" name="category" class="form-control" placeholder="Enter the transaction category" id="category" value="<%= transaction.category %>" required>
 
     <label for="description" class="form-label">Description</label>
     <textarea name="description" id="description" class="form-control" placeholder="Description"><%= transaction.description %></textarea>
