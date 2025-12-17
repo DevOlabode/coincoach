@@ -1,0 +1,11 @@
+<% layout('layout/boilerplate.ejs') %>
+
+<form action="/user/edit-account" method="post" class="needs-validation" novalidate>
+    <label for="password" class="form-label">New Password</label>
+    <input type="password" class="form-control" placeholder="New Password">
+
+    <label for="confirmPassword" class="form-label">Confirm New Password</label>
+    <input type="password" class="form-control" placeholder="Retype New Password">
+
+    <button class="btn btn-primary">Change Password</button>
+</form>

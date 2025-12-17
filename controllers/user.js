@@ -20,7 +20,12 @@ module.exports.userProfile = async (req, res) => {
 module.exports.editProfileForm = async(req, res)=>{
   const user = await User.findById(req.user._id);
   res.render('user/editProfile', {user});
-}
+};
+
+module.exports.editAccount = async (req, res) =>{
+  const user = await User.findByIdAndUpdate(req.user._id);
+  res.render('user/editAccount', {user});
+};
 
 module.exports.deleteAcct = async (req, res)=>{
     const displayName = req.params.displayName;
@@ -31,4 +36,4 @@ module.exports.deleteAcct = async (req, res)=>{
         req.flash('success', "Your account has been successfully deleted");
         res.redirect('/')
     })
-}
+};
