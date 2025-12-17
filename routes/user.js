@@ -4,14 +4,18 @@ const router = express.Router();
 const controller = require('../controllers/user');
 const { isLoggedIn } = require('../middleware');
 
+const catchAsync = require('../utils/catchAsync');
+
 router.use(isLoggedIn);
 
-router.get('/edit-profile', controller.editProfileForm);
+router.get('/edit-profile', catchAsync(controller.editProfileForm));
 
-router.get('/edit-account', controller.editAccount);
+router.get('/edit-account', catchAsync(controller.editAccount));
 
-router.get('/:displayName', controller.userProfile);
+router.post('/edit-account', catchAsync(controller.editAccount));
 
-router.delete('/:displayName/delete', controller.deleteAcct);
+router.get('/:displayName', catchAsync(controller.userProfile));
+
+router.delete('/:displayName/delete', catchAsync(controller.deleteAcct));
 
 module.exports = router;

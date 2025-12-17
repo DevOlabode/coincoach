@@ -22,10 +22,30 @@ module.exports.editProfileForm = async(req, res)=>{
   res.render('user/editProfile', {user});
 };
 
-module.exports.editAccount = async (req, res) =>{
-  const user = await User.findByIdAndUpdate(req.user._id);
+module.exports.editAccountForm = async (req, res) =>{
+  const user = await User.findById(req.user._id);
   res.render('user/editAcct', {user});
 };
+
+module.exports.editAccount = async( req, res)=>{
+  const {currentPassword, newPassword, confirmNewPassword} = req.body;
+  const user = await User.findById(req.user._id);
+
+  if(newPassword !== confirmNewPassword){
+    req.flash('error', 'New password and confirmation do not match');
+    return res.redirect('/user/edit-account');
+  }
+
+  const result = await user.changePassword(currentPassword, newPassword);
+  if(result){
+    await user.save();
+    req.flash('success', 'Password updated successfully');
+    res.redirect('/user/edit-account');
+  } else{
+    req.flash('error', 'Current password is incorrect');
+    res.redirect('/user/edit-account');
+  }
+}
 
 module.exports.deleteAcct = async (req, res)=>{
     const displayName = req.params.displayName;
