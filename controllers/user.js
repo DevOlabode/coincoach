@@ -54,8 +54,8 @@ module.exports.editAccount = async( req, res)=>{
 
 module.exports.deleteAcct = async (req, res)=>{
     const displayName = req.params.displayName;
+    await Transaction.deleteMany({userId: req.user._id});
     await User.findByIdAndDelete(req.user._id);
-    await Transaction.deleteMany({user: req.user._id});
     req.logout(err=>{
         if(err) return next(err);
         req.flash('success', "Your account has been successfully deleted");

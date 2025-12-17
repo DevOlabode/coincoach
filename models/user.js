@@ -11,13 +11,24 @@ const userSchema = new Schema({
   },
   displayName : {
     type: String,
-    required: true
+    required: true,
+    unique: true
   },
   preferredCurrency : {
     type: String,
     required: false,
     default: 'CAD'
-  }
+  },
+  bio : {
+    type: String,
+    required : false,
+    default: ''
+  },
+  location : {
+    type: String,
+    required : false,
+    default: ''
+  },
 });
 
 userSchema.plugin(passportLocalMongoose, { 
@@ -25,3 +36,14 @@ userSchema.plugin(passportLocalMongoose, {
 });
 
 module.exports = mongoose.model('User', userSchema);
+
+/*
+Potential Things to add to the schema :
+- theme preferences (dark/light mode)
+- profile picture upload or take picture from webcam
+- social media links
+- badges /achievement
+- transaction history (could be in a separate model)
+- notification preferences
+- account creation date.
+*/

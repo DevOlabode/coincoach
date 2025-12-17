@@ -1,7 +1,11 @@
 <% layout('layout/boilerplate.ejs') %>
 
 <form action="/logout" method="post">
-    <button class="btn btn-danger">Logout</button>
+    <button class="btn btn-warning">Logout</button>
+</form>
+
+<form action="/user/<%= user.displayName %>/delete?_method=delete" method="post">
+    <button class="btn btn-danger">Delete Acount</button>
 </form>
 <h1>User Profile</h1>
 
