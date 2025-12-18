@@ -15,8 +15,7 @@ const userSchema = new Schema({
   },
   displayName : {
     type: String,
-    required: true,
-    unique: true
+    required: false,
   },
   preferredCurrency : {
     type: String,

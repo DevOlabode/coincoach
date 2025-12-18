@@ -64,6 +64,10 @@ module.exports.completeProfile = async (req, res) =>{
   user.preferredCurrency = preferredCurrency;
   user.location = location;
   user.bio = bio;
+
+  await user.save();
+  req.flash('success', 'Profile completed successfully');
+  res.redirect('/');
 };
 
 module.exports.deleteAcct = async (req, res)=>{

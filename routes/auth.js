@@ -11,7 +11,7 @@ router.get('/', controller.home);
 
 router.get('/register', redirectIfLoggedIn, controller.registerForm);
 
-router.post('/register', validateUser, redirectIfLoggedIn, catchAsync(controller.register));
+router.post('/register', redirectIfLoggedIn, catchAsync(controller.register));
 
 router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
