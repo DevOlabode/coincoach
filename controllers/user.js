@@ -50,7 +50,12 @@ module.exports.editAccount = async( req, res)=>{
     req.flash('error', 'Current password is incorrect');
     res.redirect('/user/edit-account');
   }
-}
+};
+
+module.exports.completeProfileForm = async (req, res) =>{
+  const user = await User.findById(req.user._id);
+  res.render('user/completeProfile', {user});
+};
 
 module.exports.deleteAcct = async (req, res)=>{
     const displayName = req.params.displayName;

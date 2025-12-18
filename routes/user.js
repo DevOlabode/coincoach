@@ -10,6 +10,8 @@ router.use(isLoggedIn);
 
 router.get('/edit-profile', catchAsync(controller.editProfileForm));
 
+router.get('/complete-profile', catchAsync(controller.completeProfileForm));
+
 router.get('/edit-account', catchAsync(controller.editAccountForm));
 
 router.post('/edit-account', catchAsync(controller.editAccount));
