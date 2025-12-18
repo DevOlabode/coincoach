@@ -12,6 +12,8 @@ router.get('/edit-profile', catchAsync(controller.editProfileForm));
 
 router.get('/complete-profile', catchAsync(controller.completeProfileForm));
 
+router.post('/complete-profile', catchAsync(controller.completeProfile));
+
 router.get('/edit-account', catchAsync(controller.editAccountForm));
 
 router.post('/edit-account', catchAsync(controller.editAccount));

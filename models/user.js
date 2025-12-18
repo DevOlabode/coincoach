@@ -37,11 +37,6 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now
   },
-  theme : {
-    type : String,
-    enum : ['light', 'dark'],
-    default : 'light'
-  }
 });
 
 userSchema.plugin(passportLocalMongoose, { 

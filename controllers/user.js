@@ -57,6 +57,15 @@ module.exports.completeProfileForm = async (req, res) =>{
   res.render('user/completeProfile', {user});
 };
 
+module.exports.completeProfile = async (req, res) =>{
+  const {displayName, preferredCurrency, location, bio} = req.body;
+  const user = await User.findById(req.user._id);
+  user.displayName = displayName;
+  user.preferredCurrency = preferredCurrency;
+  user.location = location;
+  user.bio = bio;
+};
+
 module.exports.deleteAcct = async (req, res)=>{
     const displayName = req.params.displayName;
     await Transaction.deleteMany({userId: req.user._id});
