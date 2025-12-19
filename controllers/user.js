@@ -38,7 +38,7 @@ module.exports.editProfile = async(req, res)=>{
   await user.save();
   req.flash('success', 'Profile updated successfully');
   res.redirect(`/user/${user.displayName}`);
-}
+};
 
 module.exports.editAccount = async( req, res)=>{
   const {currentPassword, newPassword, confirmPassword} = req.body;
