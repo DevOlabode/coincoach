@@ -12,7 +12,6 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
 
-const csurf = require('csurf');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -80,7 +79,6 @@ app.use((req, res, next)=>{
     next();
 });
 
-app.use(csurf());
 
 // Routes
 const authRoutes = require('./routes/auth');
