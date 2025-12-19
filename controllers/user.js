@@ -27,6 +27,19 @@ module.exports.editAccountForm = async (req, res) =>{
   res.render('user/editAcct', {user});
 };
 
+module.exports.editProfile = async(req, res)=>{
+  const {displayName, preferredCurrency, location, bio} = req.body;
+  const user = await User.findById(req.user._id);
+  user.displayName = displayName;
+  user.preferredCurrency = preferredCurrency;
+  user.location = location;
+  user.bio = bio;
+
+  await user.save();
+  req.flash('success', 'Profile updated successfully');
+  res.redirect(`/user/${user.displayName}`);
+}
+
 module.exports.editAccount = async( req, res)=>{
   const {currentPassword, newPassword, confirmPassword} = req.body;
   const user = await User.findById(req.user._id);

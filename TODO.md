@@ -2,11 +2,12 @@
 TODO :
 - Edit Profile
 - forgotten Password
-- Change password
-- 
+
+- Edit full name and email.
 
 
-url to watch for styling :  
+
+Potential Look alike
 - https://solabode499.bubbleapps.io/version-test/profile_settings?debug_mode=true
 
 
