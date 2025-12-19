@@ -53,3 +53,10 @@ module.exports.redirectIfLoggedIn = (req, res, next)=>{
     }
     next();
 };
+
+module.exports.redirectIfCompletedProfile = (req, res, next)=>{
+    if (req.user && req.user.displayName && req.user.location && req.user.bio) {
+        return res.redirect('/');
+    }
+    next();
+};
