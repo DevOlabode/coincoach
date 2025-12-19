@@ -1,9 +1,7 @@
 
 TODO :
-- Edit Profile
 - forgotten Password
-
-- Edit full name and email.
+- edit Email (controller, routes and frontend)
 
 
 

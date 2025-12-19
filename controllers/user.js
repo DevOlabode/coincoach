@@ -28,12 +28,13 @@ module.exports.editAccountForm = async (req, res) =>{
 };
 
 module.exports.editProfile = async(req, res)=>{
-  const {displayName, preferredCurrency, location, bio} = req.body;
+  const {displayName, preferredCurrency, location, bio, fullName} = req.body;
   const user = await User.findById(req.user._id);
   user.displayName = displayName;
   user.preferredCurrency = preferredCurrency;
   user.location = location;
   user.bio = bio;
+  user.fullName = fullName;
 
   await user.save();
   req.flash('success', 'Profile updated successfully');
