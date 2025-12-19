@@ -9,6 +9,7 @@ module.exports.registerForm = (req, res) => {
 };
 
 module.exports.register = async (req, res, next) => {
+    const {sendWelcomeEmail} = require('../services/emailService');
     const { displayName, preferredCurrency, password, email, fullName } = req.body;
 
     const user = new User({ email, displayName, preferredCurrency, fullName });

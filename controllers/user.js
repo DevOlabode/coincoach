@@ -72,6 +72,7 @@ module.exports.completeProfileForm = async (req, res) =>{
 };
 
 module.exports.completeProfile = async (req, res) =>{
+  const {sendWelcomeEmail} = require('../services/emailService'); 
   const {displayName, preferredCurrency, location, bio} = req.body;
   const user = await User.findById(req.user._id);
   user.displayName = displayName;
@@ -80,6 +81,8 @@ module.exports.completeProfile = async (req, res) =>{
   user.bio = bio;
 
   await user.save();
+  
+  sendWelcomeEmail(user.email, user.displayName);
   req.flash('success', 'Profile completed successfully');
   res.redirect('/');
 };
