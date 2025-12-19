@@ -10,7 +10,7 @@ copilot TODO
 - [ ] Error pages (404, 500).
 - [ ] Email verification + password reset flow.
 - [ ] Confirmation step for account deletion.
-- [ ] Responsive + accessible EJS templates.
+- [] Responsive + accessible EJS templates.
 
 
 Potential Look alike
