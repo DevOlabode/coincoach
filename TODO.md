@@ -3,6 +3,14 @@ TODO :
 - forgotten Password
 - edit Email (controller, routes and frontend)
 
+copilot TODO
+- [ ] Input validation + sanitization middleware.
+- [ ] CSRF protection.
+- [ ] Rate limiting for auth routes.
+- [ ] Error pages (404, 500).
+- [ ] Email verification + password reset flow.
+- [ ] Confirmation step for account deletion.
+- [ ] Responsive + accessible EJS templates.
 
 
 Potential Look alike
