@@ -39,3 +39,45 @@ module.exports.logout = async(req, res)=>{
         res.redirect('/')
     })
 };
+
+function generateCode(length = 7) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let code = '';
+    for (let i = 0; i < length; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return code;
+};
+
+module.exports.enterEmail = (req, res) => {
+    res.render('auth/enterEmail');
+};
+
+module.exports.sendResetCode = async (req, res, next) => {
+    const { sendPasswordResetEmail } = require('../services/emailService');
+    const { email } = req.body;
+
+    const user = await User.findOne({ email});
+
+    if(!user){
+        req.flash('error', 'No account found with that email address.');    
+        return res.redirect('/enter-email');
+    }   
+    const resetCode = generateCode(8);
+    const expires = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+
+    user.resetCode= resetCode
+    user.resetCodeExpires= expires
+    await user.save();
+
+    sendPasswordResetEmail(user.email, user.displayName || user.fullName, resetCode)
+        .then(() => {
+            req.flash('success', 'Password reset code sent to your email.');
+            res.redirect('/confirm-code');
+        })
+        .catch(err => {
+            console.error('Error sending password reset email:', err);
+            req.flash('error', 'There was an error sending the password reset email. Please try again later.');
+            res.redirect('/enter-email');
+        });
+}

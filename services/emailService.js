@@ -33,3 +33,44 @@ module.exports.sendWelcomeEmail = async function (to, name) {
     `
   });
 };
+
+module.exports.sendPasswordResetEmail = async function (to, displayName, resetCode) {
+  return transporter.sendMail({
+    from: '"CoinCoach App" <Solabode499@gmail.com>',
+    to,
+    subject: "CoinCoach Password Reset",
+    html: `
+    <div style="font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7;">
+  <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+
+    <h2 style="color: #333; text-align: center;">Password Reset Request</h2>
+
+    <p style="font-size: 15px; color: #555;">
+      Hi <strong>${displayName}</strong>,
+    </p>
+
+    <p style="font-size: 15px; color: #555;">
+      We received a request to reset your CoinCoach account password.  
+      Use the verification code below to complete the process.
+    </p>
+
+    <div style="text-align: center; margin: 30px 0;">
+      <div style="display: inline-block; padding: 15px 25px; background: #007bff; color: #ffffff; font-size: 24px; letter-spacing: 3px; border-radius: 6px;">
+        <strong>${resetCode}</strong>
+      </div>
+    </div>
+
+    <p style="font-size: 14px; color: #777; margin-top: 30px;">
+      If you didn’t request this, you can safely ignore this email.  
+      Your password will remain unchanged.
+    </p>
+
+    <p style="font-size: 14px; color: #777;">
+      — The CoinCoach Team
+    </p>
+
+  </div>
+</div>
+        `,  
+  });
+};

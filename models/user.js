@@ -36,6 +36,14 @@ const userSchema = new Schema({
     type: Date,
     default: Date.now
   },
+  resetCode: {
+        type: String,
+        required: false
+  },
+  resetCodeExpires: {
+        type: Date,
+        required: false
+  },
 });
 
 userSchema.plugin(passportLocalMongoose, { 

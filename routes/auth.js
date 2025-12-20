@@ -15,6 +15,8 @@ router.post('/register', redirectIfLoggedIn, catchAsync(controller.register));
 
 router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
+router.get('/enter-email', redirectIfLoggedIn,  controller.enterEmail);
+
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
 router.post('/logout', controller.logout);
