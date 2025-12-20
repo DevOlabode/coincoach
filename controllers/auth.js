@@ -53,7 +53,7 @@ module.exports.enterEmail = (req, res) => {
     res.render('auth/enterEmail');
 };
 
-module.exports.sendResetCode = async (req, res, next) => {
+module.exports.sendResetCode = async (req, res) => {
     const { sendPasswordResetEmail } = require('../services/emailService');
     const { email } = req.body;
 
@@ -70,9 +70,9 @@ module.exports.sendResetCode = async (req, res, next) => {
     user.resetCodeExpires= expires
     await user.save();
 
-    sendPasswordResetEmail(user.email, user.displayName || user.fullName, resetCode)
+    sendPasswordResetEmail(user.email, user.displayName , resetCode)
         .then(() => {
-            req.flash('success', 'Password reset code sent to your email.');
+            req.flash('success', `Reset code sent to ${to}`);
             res.redirect('/confirm-code');
         })
         .catch(err => {
@@ -80,4 +80,26 @@ module.exports.sendResetCode = async (req, res, next) => {
             req.flash('error', 'There was an error sending the password reset email. Please try again later.');
             res.redirect('/enter-email');
         });
-}
+};
+
+module.exports.confirmCodeForm = (req, res) => {
+    res.render('auth/confirmCode');
+};
+
+module.exports.confirmCode = async (req, res, next) => {
+    const {code} = req.body;
+    const user = await User.findOne({ resetCode: code, resetCodeExpires: { $gt: Date.now() } });
+
+    if(!user){
+        req.flash('error', 'Invalid or expired reset code. Please try again.');
+        return res.redirect('/confirm-code');
+    }
+
+    // Proceed to allow user to reset password
+    req.flash('success', 'Reset code confirmed. You may now reset your password.');
+    res.redirect(`/reset-password`);
+};
+
+module.exports.resetPasswordForm = (req, res) => {
+    res.render('auth/resetPassword');
+};

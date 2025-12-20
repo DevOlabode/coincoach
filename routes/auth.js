@@ -17,6 +17,14 @@ router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
 router.get('/enter-email', redirectIfLoggedIn,  controller.enterEmail);
 
+router.post('/send-reset-code', redirectIfLoggedIn, catchAsync(controller.sendResetCode));
+
+router.get('/confirm-code', redirectIfLoggedIn, controller.confirmCodeForm);
+
+router.post('/confirm-code', redirectIfLoggedIn, catchAsync(controller.confirmCode));
+
+router.get('/reset-password', redirectIfLoggedIn, controller.resetPasswordForm);
+
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
 router.post('/logout', controller.logout);
