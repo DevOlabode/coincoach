@@ -3,13 +3,15 @@
 <h1><%= transaction.name %></h1>
 
 <ul>
-    <li><%= transaction.category %></li>
-    <li><%= transaction.date %></li>
-    <li><%= transaction.amount %></li>
-    <li><%= transaction.type %></li>
-    <li><%= transaction.description %></li>
-    <li><%= transaction.recurrence %></li>
-    <li><%= transaction.currency %></li>
+    <li><b>Transaction Type : </b><%= transaction.type %></li>
+    <li><b>Category : </b><%= transaction.category %></li>
+    <li><b>Amount : </b><%= transaction.amount %></li>
+    <li><b>Date : </b><%= transaction.date %></li>
+    <li><b>Description : </b><%= transaction.description %></li>
+    <li><b>Recurrence : </b><%= transaction.recurrence %></li>
+    <li><b>Currency : </b><%= transaction.currency %></li>
+    <li><b>Input Method : </b><%= transaction.inputMethod %></li>
+    <li><b>Recurring : </b><%= transaction.recurring %></li>
 </ul>
 
 

@@ -9,10 +9,13 @@
         <div>
             <a href="/transactions/<%= transaction._id %>"><h3>Transaction Name : <%= transaction.name %></h3></a>
             <ul>
-                    <li><%= transaction.type %></li>
-                    <li><%= transaction.category %></li>
-                    <li><%= transaction.amount %></li>
-                    <li><%= transaction.description %></li>
+                    <li><b>Transaction Type : </b><%= transaction.type %></li>
+                    <li><b>Category : </b><%= transaction.category %></li>
+                    <li><b>Amount : </b><%= transaction.amount %></li>
+                    <li><b>Description : </b><%= transaction.description %></li>
+                    <li><b>Input Method : </b><%= transaction.inputMethod %></li>
+                    <li><b>Recurring : </b><%= transaction.recurring %></li>
+                    <li><b>Recurrence : </b><%= transaction.recurrence %></li>
             </ul>
         </div>
     <% } %>

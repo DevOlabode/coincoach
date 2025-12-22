@@ -74,7 +74,7 @@ module.exports.analyseReciept = async (req, res) => {
                     date: new Date(),
                     category: product.category || 'Uncategorized',
                     description: description,
-                    inputMethod: 'imported'
+                    inputMethod: 'receipt'
                 });
 
                 await transaction.save();

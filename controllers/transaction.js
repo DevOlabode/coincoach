@@ -20,7 +20,8 @@ module.exports.createTransaction = async (req, res) => {
         name,
         recurring,
         recurrence,
-        currency
+        currency,
+        inputMethod : 'manual'
     });
     await transaction.save();
     req.flash('success', 'Transaction recorded successfully!');
@@ -28,7 +29,7 @@ module.exports.createTransaction = async (req, res) => {
 };
 
 module.exports.getTransactions = async (req, res) => {
-    const transactions = await Transaction.find({ userId : req.user._id }).sort({ date: -1 });
+    const transactions = await Transaction.find({ userId : req.user._id });
     res.render('transactions/index', { transactions });
 };
 
@@ -188,7 +189,8 @@ module.exports.bulkUpload = async(req, res) => {
                     name: row.name || `${row.category || 'Transaction'} - ${row.amount || 0}`,
                     recurring: row.recurring ? String(row.recurring).toLowerCase().trim() === 'true' : false,
                     recurrence: row.recurrence ? row.recurrence.toLowerCase().trim() : undefined,
-                    currency: row.currency ? row.currency.trim() : 'CAD'
+                    currency: row.currency ? row.currency.trim() : 'CAD',
+                    inputMethod : 'CSV'
                 };
                 
                 if (!transaction.date || isNaN(transaction.date.getTime())) {
@@ -261,7 +263,8 @@ module.exports.bulkUploadJSON = async(req, res) => {
                 name: t.name || `${t.category || 'Transaction'} - ${t.amount || 0}`,
                 recurring: t.recurring ? String(t.recurring).toLowerCase().trim() === 'true' : false,
                 recurrence: t.recurrence ? t.recurrence.toLowerCase().trim() : undefined,
-                currency: t.currency ? t.currency.trim() : 'CAD'
+                currency: t.currency ? t.currency.trim() : 'CAD',
+                inputMethod : 'JSON'
             };
             
             if (!transaction.date || isNaN(transaction.date.getTime())) {
