@@ -110,8 +110,9 @@ module.exports.resetPassword = async(req, res)=>{
     if(newPassword !== confirmPassword){
         req.flash('error', 'New password and confirmation do not match');
         return res.redirect('/reset-password');
-    }
+    };
 
+    
     await user.setPassword(newPassword);
     user.resetCode = undefined;
     user.resetCodeExpires = undefined;
