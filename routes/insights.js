@@ -7,6 +7,6 @@ const {isLogggedIn, isLoggedIn } = require('../middleware');
 
 router.use(isLoggedIn);
 
-router.get('/all', controller.allInsights);
+router.get('/', controller.allInsights);
 
 module.exports = router;

@@ -1,3 +1,185 @@
-<%- layout('./layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
-<h3>All Insights</h3>
+<section class="container mt-4">
+
+  <h2 class="mb-2">Financial Insights</h2>
+  <p class="text-muted">
+    Based on <strong><%= count %></strong> transactions
+  </p>
+
+  <% if (!insight) { %>
+    <div class="alert alert-warning">
+      Unable to generate insights at this time.
+    </div>
+  <% } else { %>
+
+  <!-- SUMMARY -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5 class="card-title">Overview</h5>
+      <p class="card-text">
+        <%= insight.summary %>
+      </p>
+    </div>
+  </div>
+
+  <!-- SCORE + NET -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Spending Efficiency</h6>
+          <h2><%= insight.spendingEfficiencyScore %>/100</h2>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Total Income</h6>
+          <h3>$<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %></h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card text-center">
+        <div class="card-body">
+          <h6 class="text-muted">Net Balance</h6>
+          <h3 class="<%= insight.incomeVsExpenses.net >= 0 ? 'text-success' : 'text-danger' %>">
+            $<%= insight.incomeVsExpenses.net.toLocaleString() %>
+          </h3>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INCOME VS EXPENSES -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>Income vs Expenses</h5>
+      <ul class="list-group">
+        <li class="list-group-item">
+          Total Income: $<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %>
+        </li>
+        <li class="list-group-item">
+          Total Expenses: $<%= insight.incomeVsExpenses.totalExpenses.toLocaleString() %>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EXPENSE BREAKDOWN -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>Expense Breakdown</h5>
+
+      <% if (insight.expenseBreakdown.categories.length === 0) { %>
+        <p class="text-muted">No expense data available.</p>
+      <% } else { %>
+        <ul class="list-group">
+          <% insight.expenseBreakdown.categories.forEach(c => { %>
+            <li class="list-group-item d-flex justify-content-between">
+              <span><%= c.category %></span>
+              <strong>$<%= c.total.toLocaleString() %></strong>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- TOP EXPENSES -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>Top Expenses</h5>
+
+      <% if (insight.topExpenses.length === 0) { %>
+        <p class="text-muted">No major expenses detected.</p>
+      <% } else { %>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th class="text-end">Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% insight.topExpenses.forEach(exp => { %>
+              <tr>
+                <td><%= exp.name %></td>
+                <td><%= exp.category %></td>
+                <td><%= new Date(exp.date).toLocaleDateString() %></td>
+                <td class="text-end">$<%= exp.amount.toLocaleString() %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- RECURRING INSIGHTS -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>Recurring Activity</h5>
+      <p>
+        Recurring Income: 
+        <strong>$<%= insight.recurringInsights.totalRecurringIncome.toLocaleString() %></strong>
+      </p>
+      <p>
+        Recurring Expenses: 
+        <strong>$<%= insight.recurringInsights.totalRecurringExpenses.toLocaleString() %></strong>
+      </p>
+      <p class="text-muted">
+        <%= insight.recurringInsights.notes %>
+      </p>
+    </div>
+  </div>
+
+  <!-- RISK SIGNALS -->
+  <div class="card mb-4">
+    <div class="card-body">
+      <h5>Risk Signals</h5>
+
+      <% if (insight.riskSignals.length === 0) { %>
+        <p class="text-success">No major risks detected 🎉</p>
+      <% } else { %>
+        <ul class="list-group">
+          <% insight.riskSignals.forEach(risk => { %>
+            <li class="list-group-item">
+              <strong class="text-<%= risk.severity === 'high' ? 'danger' : risk.severity === 'medium' ? 'warning' : 'secondary' %>">
+                <%= risk.severity.toUpperCase() %>
+              </strong>
+              — <%= risk.message %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+  </div>
+
+  <!-- FUTURE PROJECTION -->
+  <div class="card mb-5">
+    <div class="card-body">
+      <h5>Future Projection</h5>
+      <p>
+        Projected Monthly Net: 
+        <strong>$<%= insight.futureProjection.projectedMonthlyNet.toLocaleString() %></strong>
+      </p>
+      <p>
+        Projected Yearly Net: 
+        <strong>$<%= insight.futureProjection.projectedYearlyNet.toLocaleString() %></strong>
+      </p>
+      <p class="text-muted">
+        Confidence: <%= insight.futureProjection.confidence %>
+      </p>
+    </div>
+  </div>
+
+  <% } %>
+
+</section>
