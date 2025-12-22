@@ -36,7 +36,7 @@ module.exports.sendWelcomeEmail = async function (to, name) {
 
 module.exports.sendPasswordResetEmail = async function (to, displayName, resetCode) {
   return transporter.sendMail({
-    from: '"CoinCoach App" <Solabode499@gmail.com>',
+    from: '"CoinCoach App" <solabode499@gmail.com>',
     to,
     subject: "CoinCoach Password Reset",
     html: `

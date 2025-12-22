@@ -69,7 +69,7 @@ module.exports.sendResetCode = async (req, res) => {
     user.resetCodeExpires= expires
     await user.save();
 
-    sendPasswordResetEmail(user.email, user.displayName , resetCode)
+    await sendPasswordResetEmail(user.email, user.displayName , resetCode)
         .then(() => {
             req.flash('success', `Reset code sent to ${user.email}`);
             res.redirect('/confirm-code');

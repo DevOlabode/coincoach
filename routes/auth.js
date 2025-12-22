@@ -15,15 +15,15 @@ router.post('/register', redirectIfLoggedIn, catchAsync(controller.register));
 
 router.get('/login', redirectIfLoggedIn, controller.loginForm);
 
-router.get('/enter-email', redirectIfLoggedIn,  controller.enterEmail);
+router.get('/enter-email',  controller.enterEmail);
 
-router.post('/send-reset-code', redirectIfLoggedIn, catchAsync(controller.sendResetCode));
+router.post('/send-reset-code', catchAsync(controller.sendResetCode));
 
-router.get('/confirm-code', redirectIfLoggedIn, controller.confirmCodeForm);
+router.get('/confirm-code', controller.confirmCodeForm);
 
-router.post('/confirm-code', redirectIfLoggedIn, catchAsync(controller.confirmCode));
+router.post('/confirm-code', catchAsync(controller.confirmCode));
 
-router.get('/reset-password', redirectIfLoggedIn, controller.resetPasswordForm);
+router.get('/reset-password', controller.resetPasswordForm);
 
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
