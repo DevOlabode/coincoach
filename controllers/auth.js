@@ -102,3 +102,20 @@ module.exports.confirmCode = async (req, res, next) => {
 module.exports.resetPasswordForm = (req, res) => {
     res.render('auth/resetPassword');
 };
+
+module.exports.resetPassword = async(req, res)=>{
+    const {newPassword, confirmPassword} = req.body;
+    const user = await User.findOne({ resetCodeExpires: { $gt: Date.now() } });
+
+    if(newPassword !== confirmPassword){
+        req.flash('error', 'New password and confirmation do not match');
+        return res.redirect('/reset-password');
+    }
+
+    await user.setPassword(newPassword);
+    user.resetCode = undefined;
+    user.resetCodeExpires = undefined;
+    await user.save();
+    req.flash('success', 'Password reset successfully. You may now log in.');
+    res.redirect('/login');
+}

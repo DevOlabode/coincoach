@@ -25,6 +25,8 @@ router.post('/confirm-code', catchAsync(controller.confirmCode));
 
 router.get('/reset-password', controller.resetPasswordForm);
 
+router.post('/reset-password', catchAsync(controller.resetPassword));
+
 router.post('/login', storeReturnTo, loginAuthenticate, controller.login);
 
 router.post('/logout', controller.logout);
