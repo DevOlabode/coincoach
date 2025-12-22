@@ -41,8 +41,9 @@ const userSchema = new Schema({
         required: false
   },
   resetCodeExpires: {
-        type: Date,
-        required: false
+      type: Date,
+      required: false,
+      index: { expires: 0 }
   },
 });
 
