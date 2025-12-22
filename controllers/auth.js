@@ -9,7 +9,6 @@ module.exports.registerForm = (req, res) => {
 };
 
 module.exports.register = async (req, res, next) => {
-    const {sendWelcomeEmail} = require('../services/emailService');
     const { displayName, preferredCurrency, password, email, fullName } = req.body;
 
     const user = new User({ email, displayName, preferredCurrency, fullName });
@@ -54,7 +53,7 @@ module.exports.enterEmail = (req, res) => {
 };
 
 module.exports.sendResetCode = async (req, res) => {
-    const { sendPasswordResetEmail } = require('../services/emailService');
+    const {sendPasswordResetEmail} = require('../services/emailService'); 
     const { email } = req.body;
 
     const user = await User.findOne({ email});
@@ -72,7 +71,7 @@ module.exports.sendResetCode = async (req, res) => {
 
     sendPasswordResetEmail(user.email, user.displayName , resetCode)
         .then(() => {
-            req.flash('success', `Reset code sent to ${to}`);
+            req.flash('success', `Reset code sent to ${user.email}`);
             res.redirect('/confirm-code');
         })
         .catch(err => {
