@@ -5,6 +5,7 @@
     <a href="/transactions/new" class="btn btn-secondary">Add A New One</a>
 <% }else{ %>
     <h3>All Transactions</h3>
+    <span>Showing <%= count %> transactions</span>
     <% for(let transaction of transactions){ %>
         <div>
             <a href="/transactions/<%= transaction._id %>"><h3>Transaction Name : <%= transaction.name %></h3></a>

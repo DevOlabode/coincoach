@@ -30,7 +30,8 @@ module.exports.createTransaction = async (req, res) => {
 
 module.exports.getTransactions = async (req, res) => {
     const transactions = await Transaction.find({ userId : req.user._id });
-    res.render('transactions/index', { transactions });
+    const count = await Transaction.countDocuments({userId : req.user._id});
+    res.render('transactions/index', { transactions, count });
 };
 
 module.exports.getTransactionById = async (req, res) =>{
