@@ -1,0 +1,249 @@
+<% layout('layout/boilerplate.ejs') %>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h2 class="mb-4">Upload Receipt</h2>
+            
+            <form id="receiptForm" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label class="form-label">Choose an option:</label>
+                    <div class="d-flex gap-2 mb-3">
+                        <button type="button" class="btn btn-outline-primary" id="openCameraBtn">
+                            Take Photo
+                        </button>
+                        <span class="align-self-center">or</span>
+                        <label for="receiptImage" class="btn btn-outline-secondary mb-0" style="cursor: pointer;">
+                            Upload File
+                        </label>
+                        <input type="file" class="form-control d-none" id="receiptImage" accept="image/*">
+                    </div>
+                    <div class="invalid-feedback">
+                        Please select or capture a receipt image.
+                    </div>
+                </div>
+
+                <!-- Camera Section -->
+                <div class="mb-3" id="cameraSection" style="display: none;">
+                    <label class="form-label">Camera</label>
+                    <div class="position-relative">
+                        <video id="videoStream" autoplay playsinline class="img-fluid rounded" style="max-height: 400px; width: 100%; background: #000;"></video>
+                        <canvas id="captureCanvas" style="display: none;"></canvas>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        <button type="button" class="btn btn-success" id="captureBtn">
+                             Capture Photo
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancelCameraBtn">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Image Preview Section -->
+                <div class="mb-3" id="imagePreview" style="display: none;">
+                    <label class="form-label">Preview</label>
+                    <div>
+                        <img id="previewImg" src="" alt="Receipt preview" class="img-fluid rounded" style="max-height: 400px;">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeImageBtn">
+                        Remove Image
+                    </button>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="submitBtn" disabled>
+                    <span id="submitText">Analyze Receipt</span>
+                    <span id="submitSpinner" class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const receiptImage = document.getElementById('receiptImage');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const receiptForm = document.getElementById('receiptForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const submitText = document.getElementById('submitText');
+    const submitSpinner = document.getElementById('submitSpinner');
+    const openCameraBtn = document.getElementById('openCameraBtn');
+    const cameraSection = document.getElementById('cameraSection');
+    const videoStream = document.getElementById('videoStream');
+    const captureCanvas = document.getElementById('captureCanvas');
+    const captureBtn = document.getElementById('captureBtn');
+    const cancelCameraBtn = document.getElementById('cancelCameraBtn');
+    const removeImageBtn = document.getElementById('removeImageBtn');
+
+    let stream = null;
+    let capturedImageBase64 = null;
+
+    // Function to enable/disable submit button
+    function updateSubmitButton() {
+        const hasImage = capturedImageBase64 || receiptImage.files.length > 0;
+        submitBtn.disabled = !hasImage;
+    }
+
+    // Open camera
+    openCameraBtn.addEventListener('click', async function() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ 
+                video: { 
+                    facingMode: 'environment' // Use back camera on mobile if available
+                } 
+            });
+            videoStream.srcObject = stream;
+            cameraSection.style.display = 'block';
+            imagePreview.style.display = 'none';
+            capturedImageBase64 = null;
+            updateSubmitButton();
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            alert('Unable to access camera. Please check permissions or use file upload instead.');
+        }
+    });
+
+    // Capture photo from camera
+    captureBtn.addEventListener('click', function() {
+        const video = videoStream;
+        const canvas = captureCanvas;
+        
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Draw video frame to canvas
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        
+        // Convert to base64
+        capturedImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Show preview
+        previewImg.src = capturedImageBase64;
+        imagePreview.style.display = 'block';
+        
+        // Stop camera stream
+        stopCamera();
+        
+        updateSubmitButton();
+    });
+
+    // Cancel camera
+    cancelCameraBtn.addEventListener('click', function() {
+        stopCamera();
+    });
+
+    // Stop camera stream
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+        cameraSection.style.display = 'none';
+        videoStream.srcObject = null;
+    }
+
+    // Remove image
+    removeImageBtn.addEventListener('click', function() {
+        capturedImageBase64 = null;
+        receiptImage.value = '';
+        imagePreview.style.display = 'none';
+        updateSubmitButton();
+    });
+
+    // Show preview when image is selected from file
+    receiptImage.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            capturedImageBase64 = null; // Clear camera capture
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                updateSubmitButton();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            if (!capturedImageBase64) {
+                imagePreview.style.display = 'none';
+                updateSubmitButton();
+            }
+        }
+    });
+
+    // Handle form submission
+    receiptForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        let imageBase64 = null;
+        
+        // Use captured image if available, otherwise use file
+        if (capturedImageBase64) {
+            imageBase64 = capturedImageBase64;
+        } else {
+            const file = receiptImage.files[0];
+            if (!file) {
+                receiptForm.classList.add('was-validated');
+                return;
+            }
+            
+            // Convert file to base64
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imageBase64 = e.target.result;
+                submitImage(imageBase64);
+            };
+            reader.readAsDataURL(file);
+            return;
+        }
+        
+        submitImage(imageBase64);
+    });
+
+    // Function to submit image
+    function submitImage(imageBase64) {
+        // Show loading state
+        submitBtn.disabled = true;
+        submitText.textContent = 'Analyzing...';
+        submitSpinner.classList.remove('d-none');
+
+        // Submit to server
+        fetch('/reciept/analyseReciept', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ imageBase64: imageBase64 })
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Handle success response
+            console.log('Success:', data);
+            alert('Receipt analyzed successfully!');
+            // Reset form
+            receiptForm.reset();
+            imagePreview.style.display = 'none';
+            capturedImageBase64 = null;
+            updateSubmitButton();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error analyzing receipt. Please try again.');
+        })
+        .finally(() => {
+            // Reset button state
+            submitBtn.disabled = false;
+            submitText.textContent = 'Analyze Receipt';
+            submitSpinner.classList.add('d-none');
+            updateSubmitButton();
+        });
+    }
+
+    // Stop camera when page is unloaded
+    window.addEventListener('beforeunload', function() {
+        stopCamera();
+    });
+</script>
+

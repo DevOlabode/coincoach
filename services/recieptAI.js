@@ -30,13 +30,12 @@ Return in this format:
   "products": [
     {
       "name": "string",
-      "brand": "string",
-      "category": "string",
-      "material": "string",
-      "weight": number,
-      "originCountry": "string",
-      "price": number,
-      "notes": "string"
+      "type": "expense",
+      "category": "food",
+      "amount": number,
+      "currency": "string",
+      "date": "string",
+      "description": "string"
     }
   ]
 }
