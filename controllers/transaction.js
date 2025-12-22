@@ -237,22 +237,23 @@ module.exports.bulkUploadJSONFrontend = (req, res) => {
     res.render('transactions/bulkUploadJSON');
 }
 
-module.exports.bulkUploadJSON = async(req, res) => {
+module.exports.bulkUploadJSON = async (req, res) => {
     const { transactions } = req.body;
     const errors = [];
     const results = [];
-    
+
+    // Validate JSON structure
     if (!transactions || !Array.isArray(transactions)) {
         req.flash('error', 'Invalid JSON format. Expected { "transactions": [...] }');
-        return res.redirect('/transactions/bulk-upload');
+        return res.redirect('/transactions/bulk-upload-json');
     }
-    
+
     for (let i = 0; i < transactions.length; i++) {
         try {
             const t = transactions[i];
-            
+
             const parsedDate = parseExcelDate(t.date);
-            
+
             const transaction = {
                 userId: req.user._id,
                 date: parsedDate,
@@ -264,36 +265,41 @@ module.exports.bulkUploadJSON = async(req, res) => {
                 recurring: t.recurring ? String(t.recurring).toLowerCase().trim() === 'true' : false,
                 recurrence: t.recurrence ? t.recurrence.toLowerCase().trim() : undefined,
                 currency: t.currency ? t.currency.trim() : 'CAD',
-                inputMethod : 'JSON'
+                inputMethod: 'JSON'
             };
-            
+
+            // Validate date
             if (!transaction.date || isNaN(transaction.date.getTime())) {
                 errors.push(`Transaction ${i + 1}: Invalid date`);
                 continue;
             }
-            
+
+            // Validate type + amount
             if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
                 errors.push(`Transaction ${i + 1}: Missing type or amount`);
                 continue;
             }
-            
+
             if (transaction.type !== 'income' && transaction.type !== 'expense') {
                 errors.push(`Transaction ${i + 1}: Type must be 'income' or 'expense'`);
                 continue;
             }
-            
+
             await Transaction.create(transaction);
             results.push(transaction);
-            
+
         } catch (err) {
             errors.push(`Transaction ${i + 1}: ${err.message}`);
         }
     }
-    
+
+    // Handle errors
     if (errors.length > 0) {
         req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
+        return res.redirect('/transactions/bulk-upload-json');
     }
 
+    // Success
     req.flash('success', `Imported ${results.length} transactions successfully`);
-    res.redirect('/transactions');
+    return res.redirect('/transactions');
 };

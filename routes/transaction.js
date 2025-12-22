@@ -30,7 +30,7 @@ router.get('/:id/edit', catchAsync(controller.editTransactionsForm));
 
 router.patch('/:id', validateTransaction, catchAsync(controller.updateTransaction));
 
-router.post('/bulk-json', express.json(), validateTransaction, catchAsync(controller.bulkUploadJSON));
+router.post('/bulk-json', express.json(), catchAsync(controller.bulkUploadJSON));
 
 router.delete('/:id', catchAsync(controller.deleteTransaction));
 
