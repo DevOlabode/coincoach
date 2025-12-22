@@ -43,6 +43,10 @@ const transactionSchema = new Schema({
         required : false,
         default : false
     },
+    inputMethod : {
+        type : String,
+        enum : ['manual', 'imported'],
+    },   
     recurrence : {
         type : String,
         enum : ['daily', 'weekly', 'monthly', 'yearly', 'hourly'],
