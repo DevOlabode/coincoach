@@ -70,7 +70,7 @@ module.exports.analyseReciept = async (req, res) => {
                     name: product.name || 'Unnamed Product',
                     type: 'expense',
                     amount: product.price || 0,
-                    currency: 'CAD', // Default to CAD, could be enhanced to detect currency
+                    currency: 'CAD', 
                     date: new Date(),
                     category: product.category || 'Uncategorized',
                     description: description,

@@ -2,7 +2,7 @@ const Groq = require("groq-sdk");
 
 const analyseReceipt = async (imageBase64) => {
   const groq = new Groq({
-    apiKey: process.env.GROQ_KEY,
+    apiKey: process.env.GROQ_API_KEY,
   });
 
   const prompt = `
