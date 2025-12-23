@@ -33,95 +33,229 @@
     ul {
       padding-left: 1.2rem;
     }
+
+    .risk-low {
+      color: #28a745;
+    }
+
+    .risk-medium {
+      color: #ffc107;
+    }
+
+    .risk-high {
+      color: #dc3545;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
 
   <h1>📊 Financial Insights</h1>
 
-  <% if (!insights || !insights.insight) { %>
-    <p>No insights available.</p>
-  <% } else { %>
+  <% if (typeof message !== 'undefined' && message) { %>
+    <div class="card">
+      <p><%= message %></p>
+    </div>
+  <% } else if (!insights || !insights.insight) { %>
+    <div class="card">
+      <p>No insights available.</p>
+    </div>
+  <% } else { 
+    const insight = insights.insight;
+  %>
 
     <!-- SUMMARY -->
+    <% if (insight.summary) { %>
     <div class="card">
       <h2>Summary</h2>
-      <p><%= insights.insight.summary %></p>
+      <p><%= insight.summary %></p>
     </div>
+    <% } %>
 
     <!-- INCOME VS EXPENSE -->
+    <% if (insight.incomeVsExpenses) { %>
     <div class="card grid">
       <div>
         <h3>Total Income</h3>
-        <p class="stat"><%= insights.insight.incomeVsExpenses.totalIncome %></p>
+        <p class="stat">$<%= insight.incomeVsExpenses.totalIncome?.toLocaleString() || 0 %></p>
       </div>
       <div>
         <h3>Total Expenses</h3>
-        <p class="stat"><%= insights.insight.incomeVsExpenses.totalExpenses %></p>
+        <p class="stat">$<%= insight.incomeVsExpenses.totalExpenses?.toLocaleString() || 0 %></p>
       </div>
       <div>
         <h3>Net</h3>
-        <p class="stat"><%= insights.insight.incomeVsExpenses.net %></p>
+        <p class="stat">$<%= insight.incomeVsExpenses.net?.toLocaleString() || 0 %></p>
       </div>
     </div>
+    <% } %>
 
     <!-- SPENDING SCORE -->
+    <% if (insight.spendingEfficiencyScore !== undefined && insight.spendingEfficiencyScore !== null) { %>
     <div class="card">
       <h2>Spending Efficiency Score</h2>
-      <p class="stat"><%= insights.insight.spendingEfficiencyScore %> / 100</p>
+      <p class="stat"><%= insight.spendingEfficiencyScore %> / 100</p>
     </div>
+    <% } %>
 
     <!-- TOP EXPENSES -->
+    <% if (insight.topExpenses && Array.isArray(insight.topExpenses)) { %>
     <div class="card">
       <h2>Top Expenses</h2>
-      <% if (insights.insight.topExpenses.length === 0) { %>
+      <% if (insight.topExpenses.length === 0) { %>
         <p>No expense data.</p>
       <% } else { %>
         <ul>
-          <% insights.insight.topExpenses.forEach(exp => { %>
+          <% insight.topExpenses.forEach(exp => { %>
             <li>
               <strong><%= exp.name %></strong> —
-              <%= exp.amount %> (<%= exp.category %>) on
-              <%= new Date(exp.date).toLocaleDateString() %>
+              $<%= exp.amount?.toLocaleString() %> (<%= exp.category %>) on
+              <%= exp.date ? new Date(exp.date).toLocaleDateString() : 'N/A' %>
             </li>
           <% }) %>
         </ul>
       <% } %>
     </div>
+    <% } %>
 
     <!-- EXPENSE BREAKDOWN -->
+    <% if (insight.expenseBreakdown && insight.expenseBreakdown.categories) { %>
     <div class="card">
       <h2>Expense Breakdown</h2>
-      <% if (insights.insight.expenseBreakdown.categories.length === 0) { %>
+      <% if (insight.expenseBreakdown.categories.length === 0) { %>
         <p>No expense categories.</p>
       <% } else { %>
         <ul>
-          <% insights.insight.expenseBreakdown.categories.forEach(cat => { %>
+          <% insight.expenseBreakdown.categories.forEach(cat => { %>
             <li>
-              <strong><%= cat.category %></strong>: <%= cat.total %>
+              <strong><%= cat.category %></strong>: $<%= cat.total?.toLocaleString() %>
             </li>
           <% }) %>
         </ul>
       <% } %>
     </div>
+    <% } %>
 
     <!-- RECENT LARGE TRANSACTIONS -->
+    <% if (insight.recentLargeTransactions && Array.isArray(insight.recentLargeTransactions)) { %>
     <div class="card">
       <h2>Recent Large Transactions</h2>
-      <% if (insights.insight.recentLargeTransactions.length === 0) { %>
+      <% if (insight.recentLargeTransactions.length === 0) { %>
         <p>No large transactions.</p>
       <% } else { %>
         <ul>
-          <% insights.insight.recentLargeTransactions.forEach(tx => { %>
+          <% insight.recentLargeTransactions.forEach(tx => { %>
             <li>
               <strong><%= tx.name %></strong> —
-              <%= tx.amount %> (<%= tx.type %>) on
-              <%= new Date(tx.date).toLocaleDateString() %>
+              $<%= tx.amount?.toLocaleString() %> (<%= tx.type %>) on
+              <%= tx.date ? new Date(tx.date).toLocaleDateString() : 'N/A' %>
             </li>
           <% }) %>
         </ul>
       <% } %>
     </div>
+    <% } %>
+
+    <!-- MONTHLY AVERAGES -->
+    <% if (insight.monthlyAverages) { %>
+    <div class="card grid">
+      <div>
+        <h3>Avg Monthly Income</h3>
+        <p class="stat">$<%= insight.monthlyAverages.averageMonthlyIncome?.toLocaleString() || 0 %></p>
+      </div>
+      <div>
+        <h3>Avg Monthly Spend</h3>
+        <p class="stat">$<%= insight.monthlyAverages.averageMonthlySpend?.toLocaleString() || 0 %></p>
+      </div>
+      <div>
+        <h3>Avg Monthly Net</h3>
+        <p class="stat">$<%= insight.monthlyAverages.averageMonthlyNet?.toLocaleString() || 0 %></p>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- INCOME SOURCES -->
+    <% if (insight.incomeSources && insight.incomeSources.sources && insight.incomeSources.sources.length > 0) { %>
+    <div class="card">
+      <h2>Income Sources</h2>
+      <ul>
+        <% insight.incomeSources.sources.forEach(source => { %>
+          <li>
+            <strong><%= source.category %></strong>: $<%= source.total?.toLocaleString() %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } %>
+
+    <!-- RECURRING INSIGHTS -->
+    <% if (insight.recurringInsights) { %>
+    <div class="card">
+      <h2>Recurring Insights</h2>
+      <p><strong>Recurring Income:</strong> $<%= insight.recurringInsights.totalRecurringIncome?.toLocaleString() || 0 %></p>
+      <p><strong>Recurring Expenses:</strong> $<%= insight.recurringInsights.totalRecurringExpenses?.toLocaleString() || 0 %></p>
+      <% if (insight.recurringInsights.recurringIncomePercentage !== undefined) { %>
+      <p><strong>Recurring Income %:</strong> <%= insight.recurringInsights.recurringIncomePercentage.toFixed(2) %>%</p>
+      <% } %>
+      <% if (insight.recurringInsights.notes) { %>
+      <p><%= insight.recurringInsights.notes %></p>
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- RISK SIGNALS -->
+    <% if (insight.riskSignals && Array.isArray(insight.riskSignals) && insight.riskSignals.length > 0) { %>
+    <div class="card">
+      <h2>Risk Signals</h2>
+      <ul>
+        <% insight.riskSignals.forEach(risk => { %>
+          <li class="risk-<%= risk.severity %>">
+            <strong>[<%= risk.severity.toUpperCase() %>]</strong> <%= risk.type %>: <%= risk.message %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } %>
+
+    <!-- OPTIMIZATION SUGGESTIONS -->
+    <% if (insight.optimizationSuggestions && Array.isArray(insight.optimizationSuggestions) && insight.optimizationSuggestions.length > 0) { %>
+    <div class="card">
+      <h2>Optimization Suggestions</h2>
+      <ul>
+        <% insight.optimizationSuggestions.forEach(suggestion => { %>
+          <li>
+            <strong><%= suggestion.area %>:</strong> <%= suggestion.suggestion %>
+          </li>
+        <% }) %>
+      </ul>
+    </div>
+    <% } %>
+
+    <!-- BEHAVIOR PATTERNS -->
+    <% if (insight.behaviorPatterns) { %>
+    <div class="card">
+      <h2>Behavior Patterns</h2>
+      <% if (insight.behaviorPatterns.highestIncomeMonth) { %>
+      <p><strong>Highest Income Month:</strong> <%= insight.behaviorPatterns.highestIncomeMonth %></p>
+      <% } %>
+      <% if (insight.behaviorPatterns.highestExpenseMonth) { %>
+      <p><strong>Highest Expense Month:</strong> <%= insight.behaviorPatterns.highestExpenseMonth %></p>
+      <% } %>
+      <% if (insight.behaviorPatterns.notes) { %>
+      <p><%= insight.behaviorPatterns.notes %></p>
+      <% } %>
+    </div>
+    <% } %>
+
+    <!-- FUTURE PROJECTION -->
+    <% if (insight.futureProjection) { %>
+    <div class="card">
+      <h2>Future Projection</h2>
+      <p><strong>Projected Monthly Net:</strong> $<%= insight.futureProjection.projectedMonthlyNet?.toLocaleString() || 0 %></p>
+      <p><strong>Projected Yearly Net:</strong> $<%= insight.futureProjection.projectedYearlyNet?.toLocaleString() || 0 %></p>
+      <p><strong>Confidence:</strong> <%= insight.futureProjection.confidence || 'N/A' %></p>
+    </div>
+    <% } %>
 
   <% } %>
 

@@ -3,7 +3,7 @@ const router = express.Router();
 
 const controller = require('../controllers/insights');
 
-const {isLogggedIn, isLoggedIn } = require('../middleware');
+const { isLoggedIn } = require('../middleware');
 
 router.use(isLoggedIn);
 
