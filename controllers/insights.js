@@ -4,14 +4,12 @@ const transactionInsight = require('../services/insightAI');
 
 module.exports.allInsights = async (req, res) => {
     try {
-        // Get transactions sorted by date (most recent first)
         const transactions = await Transaction.find({ userId: req.user._id })
             .sort({ date: -1, updatedAt: -1 })
-            .lean(); // Convert to plain objects for AI service
+            .lean(); 
         
         const count = await Transaction.countDocuments({ userId: req.user._id });
         
-        // Handle empty transactions case
         if (count === 0) {
             return res.render('insights/all', { 
                 insights: null,
@@ -19,13 +17,10 @@ module.exports.allInsights = async (req, res) => {
             });
         }
 
-        // Generate insights using AI
         const insightData = await transactionInsight(transactions);
         
-        // Get the most recent transaction date
         const lastTransactionAt = transactions[0]?.updatedAt || transactions[0]?.date || new Date();
 
-        // Ensure required fields have defaults if missing
         const insightPayload = {
             userId: req.user._id,
             incomeVsExpenses: insightData.incomeVsExpenses || {
@@ -55,18 +50,15 @@ module.exports.allInsights = async (req, res) => {
             lastTransactionAt
         };
 
-        // Create insight document
         const insights = new Insight(insightPayload);
         await insights.save();
 
-        // Render with insights object (view expects insights.insight.*)
-        // We'll structure it so the view can access insight data
         res.render('insights/all', { 
             insights: {
-                insight: insightData, // Nested for view compatibility
-                ...insights.toObject() // Also include full document
+                insight: insightData, 
+                ...insights.toObject() 
             },
-            message: undefined // Explicitly set to avoid undefined variable errors
+            message: undefined 
         });
     } catch (error) {
         console.error('Error generating insights:', error);
