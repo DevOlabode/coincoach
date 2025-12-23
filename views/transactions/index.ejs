@@ -104,9 +104,23 @@
     <h2>All Transactions</h2>
     <div>
       <a href="/insights" class="btn btn-primary" style="margin-right: 0.5rem;">📊 View Insights</a>
+      
+      <!-- Export Dropdown -->
+      <div class="btn-group" style="display: inline-block; position: relative; margin-right: 0.5rem;">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+          📥 Export
+        </button>
+        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+          <li><a class="dropdown-item" href="/export/excel">📊 Export to Excel</a></li>
+          <li><a class="dropdown-item" href="/export/csv">📄 Export to CSV</a></li>
+          <li><a class="dropdown-item" href="/export/google-sheets">📗 Export for Google Sheets</a></li>
+        </ul>
+      </div>
+      
       <a href="/transactions/new" class="btn btn-success" style="margin-right: 0.5rem;">+ Add Transaction</a>
       <a href="/transactions/bulk-upload" class="btn btn-secondary">📤 Bulk Upload</a>
     </div>
+  </div>
   </div>
 
   <% if(transactions.length === 0){ %>
