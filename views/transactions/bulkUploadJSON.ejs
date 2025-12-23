@@ -1,70 +1,116 @@
 <% layout('layout/boilerplate.ejs') %>
 
-<h3>Bulk Upload Transactions</h3>
+<div style="max-width: 900px; margin: 0 auto;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2>📤 Bulk Upload Transactions</h2>
+    <a href="/transactions" class="btn btn-secondary">← Back to Transactions</a>
+  </div>
 
-<!-- CSV/Excel Upload -->
-<h4>Upload CSV or Excel File</h4>
-<form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-    <input type="file" name="csvFile" accept=".csv,.xlsx,.xls" required>
-    <button type="submit">Upload File</button>
-</form>
+  <!-- CSV/Excel Upload -->
+  <div class="card" style="background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+    <h4 style="margin-bottom: 1rem;">📄 Upload CSV or Excel File</h4>
+    <form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="csvFile" class="form-label">Select File</label>
+        <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv,.xlsx,.xls" required>
+        <div class="form-text">Supported formats: CSV, XLSX, XLS</div>
+      </div>
+      <button type="submit" class="btn btn-primary">📤 Upload File</button>
+    </form>
 
-<p><strong>File Format:</strong> Must have headers: date, type, category, amount, description</p>
-<p><strong>Example:</strong></p>
-<pre>
-date       | type    | category | amount | description
+    <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+      <p style="margin-bottom: 0.5rem;"><strong>File Format:</strong> Must have headers: date, type, category, amount, description</p>
+      <p style="margin-bottom: 0.5rem;"><strong>Example:</strong></p>
+      <pre style="background: #fff; padding: 0.75rem; border-radius: 4px; font-size: 0.9rem; margin: 0;"><code>date       | type    | category | amount | description
 12/6/2025  | expense | food     | 25.50  | Groceries
-12/7/2025  | income  | salary   | 5000   | Monthly pay
-</pre>
+12/7/2025  | income  | salary   | 5000   | Monthly pay</code></pre>
+    </div>
+  </div>
 
-<hr>
+  <!-- JSON Upload -->
+  <div class="card" style="background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+    <h4 style="margin-bottom: 1rem;">📋 Upload JSON</h4>
+    <form action="/transactions/bulk-json" method="POST" id="jsonForm">
+      <div class="mb-3">
+        <label for="jsonData" class="form-label">Paste JSON Data</label>
+        <textarea class="form-control" name="jsonData" id="jsonData" rows="12" placeholder='Paste JSON here' required style="font-family: monospace;"></textarea>
+        <div class="form-text">Paste your transactions in JSON format below</div>
+      </div>
+      <button type="submit" class="btn btn-primary">📤 Upload JSON</button>
+    </form>
 
-<!-- JSON Upload -->
-<h4>Upload JSON</h4>
-<form action="/transactions/bulk-json" method="POST" id="jsonForm">
-    <textarea name="jsonData" id="jsonData" rows="10" cols="60" placeholder='Paste JSON here' required></textarea>
-    <button type="submit">Upload JSON</button>
-</form>
-
-<p><strong>JSON Format:</strong></p>
-<pre>
-{
+    <div style="margin-top: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 4px;">
+      <p style="margin-bottom: 0.5rem;"><strong>JSON Format:</strong></p>
+      <pre style="background: #fff; padding: 1rem; border-radius: 4px; font-size: 0.9rem; margin: 0; overflow-x: auto;"><code>{
   "transactions": [
     {
       "date": "12/6/2025",
       "type": "expense",
       "category": "food",
       "amount": 25.50,
-      "description": "Groceries"
+      "description": "Groceries",
+      "name": "Weekly Groceries",
+      "recurring": true,
+      "recurrence": "weekly",
+      "currency": "CAD"
     },
     {
       "date": "12/7/2025",
       "type": "income",
       "category": "salary",
       "amount": 5000,
-      "description": "Monthly pay"
+      "description": "Monthly pay",
+      "name": "Salary",
+      "recurring": true,
+      "recurrence": "monthly",
+      "currency": "CAD"
     }
   ]
-}
-</pre>
+}</code></pre>
+    </div>
+  </div>
+
+  <div style="padding: 1rem; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #0066cc;">
+    <p style="margin: 0;"><strong>💡 Tip:</strong> After uploading transactions, insights will be automatically generated. Visit the <a href="/insights">Insights page</a> to view your financial analysis.</p>
+  </div>
+</div>
 
 <script>
 document.getElementById('jsonForm').addEventListener('submit', async function(e) {
     e.preventDefault();
     const jsonData = document.getElementById('jsonData').value;
+    const submitBtn = e.target.querySelector('button[type="submit"]');
     
+    // Validate JSON
     try {
-        JSON.parse(jsonData); // Validate JSON
+        const parsed = JSON.parse(jsonData);
+        
+        if (!parsed.transactions || !Array.isArray(parsed.transactions)) {
+            throw new Error('JSON must have a "transactions" array');
+        }
+        
+        // Disable button and show loading
+        submitBtn.disabled = true;
+        submitBtn.textContent = '⏳ Uploading...';
         
         const response = await fetch('/transactions/bulk-json', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: jsonData
+            body: JSON.stringify(parsed)
         });
         
-        window.location.href = '/transactions';
+        if (response.ok) {
+            window.location.href = '/transactions';
+        } else {
+            const error = await response.text();
+            alert('Upload failed: ' + error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = '📤 Upload JSON';
+        }
     } catch (err) {
         alert('Invalid JSON format: ' + err.message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = '📤 Upload JSON';
     }
 });
 </script>

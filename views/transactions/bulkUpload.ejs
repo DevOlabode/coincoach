@@ -1,9 +1,45 @@
 <% layout('layout/boilerplate.ejs') %>
 
-<form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-    <input type="file" name="csvFile" accept=".csv,.xlsx,.xls" required>
-  <button type="submit">Upload CSV</button>
-</form>
+<div style="max-width: 800px; margin: 0 auto;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h2>📤 Bulk Upload Transactions</h2>
+    <a href="/transactions" class="btn btn-secondary">← Back to Transactions</a>
+  </div>
 
-<p>CSV Format: date, type, category, amount, description</p>
-<p>Example: 2024-12-01, expense, food, 25.50, Groceries</p>
+  <div class="card" style="background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+    <h4 style="margin-bottom: 1rem;">Upload CSV or Excel File</h4>
+    <form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="csvFile" class="form-label">Select File</label>
+        <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv,.xlsx,.xls" required>
+        <div class="form-text">Supported formats: CSV, XLSX, XLS</div>
+      </div>
+      <button type="submit" class="btn btn-primary">📤 Upload File</button>
+    </form>
+  </div>
+
+  <div class="card" style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px;">
+    <h5 style="margin-bottom: 1rem;">📋 File Format Requirements</h5>
+    <p><strong>Required columns:</strong> date, type, category, amount, description</p>
+    <p><strong>Optional columns:</strong> name, recurring, recurrence, currency</p>
+    
+    <h6 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Example CSV:</h6>
+    <pre style="background: #fff; padding: 1rem; border-radius: 4px; overflow-x: auto;"><code>date,type,category,amount,description,name,recurring,recurrence,currency
+12/6/2025,expense,food,25.50,Groceries,Weekly Groceries,true,weekly,CAD
+12/7/2025,income,salary,5000,Monthly pay,Salary,true,monthly,CAD
+12/8/2025,expense,transportation,50.00,Gas,Gas Station,false,,CAD</code></pre>
+
+    <h6 style="margin-top: 1.5rem; margin-bottom: 0.5rem;">Notes:</h6>
+    <ul>
+      <li><strong>date:</strong> Format: MM/DD/YYYY or YYYY-MM-DD</li>
+      <li><strong>type:</strong> Must be "income" or "expense"</li>
+      <li><strong>amount:</strong> Numeric value (e.g., 25.50)</li>
+      <li><strong>recurring:</strong> "true" or "false" (case-insensitive)</li>
+      <li><strong>recurrence:</strong> "daily", "weekly", "monthly", "yearly" (optional)</li>
+    </ul>
+  </div>
+
+  <div style="margin-top: 2rem; padding: 1rem; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #0066cc;">
+    <p style="margin: 0;"><strong>💡 Tip:</strong> After uploading, insights will be automatically generated. Visit the <a href="/insights">Insights page</a> to view your financial analysis.</p>
+  </div>
+</div>

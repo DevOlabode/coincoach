@@ -4,8 +4,7 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const XLSX = require('xlsx');
 
-const transactionInsight = require('../services/insightAI');
-const Insight = require('../models/insights');
+const generateInsights = require('../utils/generateInsights');
 
 
 module.exports.newTransactionForm = (req, res) => {
@@ -29,58 +28,12 @@ module.exports.createTransaction = async (req, res) => {
     });
     await transaction.save();
 
-    const transactions = await Transaction.find({ userId: req.user._id })
-            .sort({ date: -1, updatedAt: -1 })
-            .lean(); 
-        
-    const count = await Transaction.countDocuments({ userId: req.user._id });
-        
-        if (count === 0) {
-            return res.render('insights/all', { 
-                insights: null,
-                message: 'No transactions found. Add some transactions to generate insights.'
-            });
-        }
+    // Generate insights in the background (don't wait for it)
+    generateInsights(req.user._id).catch(err => {
+        console.error('Failed to generate insights after transaction creation:', err);
+    });
 
-    const insightData = await transactionInsight(transactions);
-        
-    const lastTransactionAt = transactions[0]?.updatedAt || transactions[0]?.date || new Date();
-
-    const insightPayload = {
-            userId: req.user._id,
-            incomeVsExpenses: insightData.incomeVsExpenses || {
-                totalIncome: 0,
-                totalExpenses: 0,
-                net: 0
-            },
-            expenseBreakdown: insightData.expenseBreakdown || {
-                categories: [],
-                chart: 'Expense Categories Pie Chart'
-            },
-            topExpenses: insightData.topExpenses || [],
-            monthlyAverages: insightData.monthlyAverages || {},
-            incomeSources: insightData.incomeSources || {
-                sources: [],
-                chart: 'Income Categories'
-            },
-            recentLargeTransactions: insightData.recentLargeTransactions || [],
-            spendingEfficiencyScore: insightData.spendingEfficiencyScore,
-            recurringInsights: insightData.recurringInsights || {},
-            riskSignals: insightData.riskSignals || [],
-            optimizationSuggestions: insightData.optimizationSuggestions || [],
-            behaviorPatterns: insightData.behaviorPatterns || {},
-            futureProjection: insightData.futureProjection || {},
-            summary: insightData.summary || '',
-            transactionCount: count,
-            lastTransactionAt
-        };
-
-    const insights = new Insight(insightPayload);
-    await insights.save();
-
-    
-
-    req.flash('success', 'Transaction recorded successfully!');
+    req.flash('success', 'Transaction recorded successfully! Insights are being generated.');
     res.redirect(`/transactions/${transaction._id}`); 
 };
 
@@ -275,7 +228,14 @@ module.exports.bulkUpload = async(req, res) => {
         
         fs.unlinkSync(filePath);
         
-        req.flash('success', `Imported ${results.length} transactions successfully`);
+        // Generate insights after successful bulk upload
+        if (results.length > 0) {
+            generateInsights(req.user._id).catch(err => {
+                console.error('Failed to generate insights after bulk upload:', err);
+            });
+        }
+        
+        req.flash('success', `Imported ${results.length} transactions successfully. Insights are being generated.`);
         if (errors.length > 0) {
             req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
         }
@@ -356,7 +316,14 @@ module.exports.bulkUploadJSON = async (req, res) => {
         return res.redirect('/transactions/bulk-upload-json');
     }
 
+    // Generate insights after successful JSON upload
+    if (results.length > 0) {
+        generateInsights(req.user._id).catch(err => {
+            console.error('Failed to generate insights after JSON upload:', err);
+        });
+    }
+
     // Success
-    req.flash('success', `Imported ${results.length} transactions successfully`);
+    req.flash('success', `Imported ${results.length} transactions successfully. Insights are being generated.`);
     return res.redirect('/transactions');
 };

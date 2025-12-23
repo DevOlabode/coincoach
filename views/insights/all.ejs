@@ -1,91 +1,134 @@
 <% layout('layout/boilerplate.ejs') %>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      padding: 2rem;
-    }
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #f5f5f5;
+    padding: 2rem;
+  }
 
-    h1, h2 {
-      margin-bottom: 0.5rem;
-    }
+  h1, h2 {
+    margin-bottom: 0.5rem;
+  }
 
-    .card {
-      background: #fff;
-      padding: 1.2rem;
-      border-radius: 8px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-    }
+  .card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1rem;
-    }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
 
-    .stat {
-      font-size: 1.2rem;
-      font-weight: bold;
-    }
+  .stat {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0066cc;
+  }
 
-    ul {
-      padding-left: 1.2rem;
-    }
+  ul {
+    padding-left: 1.2rem;
+  }
 
-    .risk-low {
-      color: #28a745;
-    }
+  .risk-low {
+    color: #28a745;
+  }
 
-    .risk-medium {
-      color: #ffc107;
-    }
+  .risk-medium {
+    color: #ffc107;
+  }
 
-    .risk-high {
-      color: #dc3545;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
+  .risk-high {
+    color: #dc3545;
+    font-weight: bold;
+  }
 
-  <h1>📊 Financial Insights</h1>
+  .btn {
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-decoration: none;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+
+  .btn-primary {
+    background: #0066cc;
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background: #0052a3;
+  }
+
+  .btn-secondary {
+    background: #6c757d;
+    color: white;
+  }
+
+  .btn-secondary:hover {
+    background: #5a6268;
+  }
+</style>
+
+<div style="max-width: 1200px; margin: 0 auto;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h1>📊 Financial Insights</h1>
+    <div>
+      <a href="/transactions" class="btn btn-secondary" style="margin-right: 0.5rem;">View Transactions</a>
+      <form action="/insights/generate" method="POST" style="display: inline;">
+        <button type="submit" class="btn btn-primary">🔄 Regenerate Insights</button>
+      </form>
+    </div>
+  </div>
 
   <% if (typeof message !== 'undefined' && message) { %>
     <div class="card">
       <p><%= message %></p>
+      <% if (typeof message !== 'undefined' && message.includes('No transactions')) { %>
+        <a href="/transactions/new" class="btn btn-primary" style="margin-top: 1rem;">Add Transaction</a>
+      <% } %>
     </div>
-  <% } else if (!insights || !insights.insight) { %>
+  <% } else if (!insight) { %>
     <div class="card">
-      <p>No insights available.</p>
+      <p>No insights available. Generate insights from your transactions.</p>
+      <form action="/insights/generate" method="POST" style="margin-top: 1rem;">
+        <button type="submit" class="btn btn-primary">Generate Insights</button>
+      </form>
     </div>
-  <% } else { 
-    const insight = insights.insight;
-  %>
+  <% } else { %>
 
     <!-- SUMMARY -->
     <% if (insight.summary) { %>
     <div class="card">
       <h2>Summary</h2>
-      <p><%= insight.summary %></p>
+      <p style="font-size: 1.1rem; line-height: 1.6;"><%= insight.summary %></p>
     </div>
     <% } %>
 
     <!-- INCOME VS EXPENSE -->
     <% if (insight.incomeVsExpenses) { %>
-    <div class="card grid">
-      <div>
-        <h3>Total Income</h3>
-        <p class="stat">$<%= insight.incomeVsExpenses.totalIncome?.toLocaleString() || 0 %></p>
-      </div>
-      <div>
-        <h3>Total Expenses</h3>
-        <p class="stat">$<%= insight.incomeVsExpenses.totalExpenses?.toLocaleString() || 0 %></p>
-      </div>
-      <div>
-        <h3>Net</h3>
-        <p class="stat">$<%= insight.incomeVsExpenses.net?.toLocaleString() || 0 %></p>
+    <div class="card">
+      <h2>Income vs Expenses</h2>
+      <div class="grid">
+        <div>
+          <h3>Total Income</h3>
+          <p class="stat" style="color: #28a745;">$<%= insight.incomeVsExpenses.totalIncome?.toLocaleString() || 0 %></p>
+        </div>
+        <div>
+          <h3>Total Expenses</h3>
+          <p class="stat" style="color: #dc3545;">$<%= insight.incomeVsExpenses.totalExpenses?.toLocaleString() || 0 %></p>
+        </div>
+        <div>
+          <h3>Net</h3>
+          <p class="stat" style="color: <%= (insight.incomeVsExpenses.net || 0) >= 0 ? '#28a745' : '#dc3545' %>;">$<%= insight.incomeVsExpenses.net?.toLocaleString() || 0 %></p>
+        </div>
       </div>
     </div>
     <% } %>
@@ -95,6 +138,30 @@
     <div class="card">
       <h2>Spending Efficiency Score</h2>
       <p class="stat"><%= insight.spendingEfficiencyScore %> / 100</p>
+      <div style="background: #f0f0f0; height: 20px; border-radius: 10px; margin-top: 0.5rem; overflow: hidden;">
+        <div style="background: <%= insight.spendingEfficiencyScore >= 70 ? '#28a745' : insight.spendingEfficiencyScore >= 50 ? '#ffc107' : '#dc3545' %>; height: 100%; width: <%= insight.spendingEfficiencyScore %>%"></div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- MONTHLY AVERAGES -->
+    <% if (insight.monthlyAverages) { %>
+    <div class="card">
+      <h2>Monthly Averages</h2>
+      <div class="grid">
+        <div>
+          <h3>Avg Monthly Income</h3>
+          <p class="stat" style="color: #28a745;">$<%= insight.monthlyAverages.averageMonthlyIncome?.toLocaleString() || 0 %></p>
+        </div>
+        <div>
+          <h3>Avg Monthly Spend</h3>
+          <p class="stat" style="color: #dc3545;">$<%= insight.monthlyAverages.averageMonthlySpend?.toLocaleString() || 0 %></p>
+        </div>
+        <div>
+          <h3>Avg Monthly Net</h3>
+          <p class="stat" style="color: <%= (insight.monthlyAverages.averageMonthlyNet || 0) >= 0 ? '#28a745' : '#dc3545' %>;">$<%= insight.monthlyAverages.averageMonthlyNet?.toLocaleString() || 0 %></p>
+        </div>
+      </div>
     </div>
     <% } %>
 
@@ -107,7 +174,7 @@
       <% } else { %>
         <ul>
           <% insight.topExpenses.forEach(exp => { %>
-            <li>
+            <li style="margin-bottom: 0.5rem;">
               <strong><%= exp.name %></strong> —
               $<%= exp.amount?.toLocaleString() %> (<%= exp.category %>) on
               <%= exp.date ? new Date(exp.date).toLocaleDateString() : 'N/A' %>
@@ -127,12 +194,26 @@
       <% } else { %>
         <ul>
           <% insight.expenseBreakdown.categories.forEach(cat => { %>
-            <li>
+            <li style="margin-bottom: 0.5rem;">
               <strong><%= cat.category %></strong>: $<%= cat.total?.toLocaleString() %>
             </li>
           <% }) %>
         </ul>
       <% } %>
+    </div>
+    <% } %>
+
+    <!-- INCOME SOURCES -->
+    <% if (insight.incomeSources && insight.incomeSources.sources && insight.incomeSources.sources.length > 0) { %>
+    <div class="card">
+      <h2>Income Sources</h2>
+      <ul>
+        <% insight.incomeSources.sources.forEach(source => { %>
+          <li style="margin-bottom: 0.5rem;">
+            <strong><%= source.category %></strong>: $<%= source.total?.toLocaleString() %>
+          </li>
+        <% }) %>
+      </ul>
     </div>
     <% } %>
 
@@ -145,7 +226,7 @@
       <% } else { %>
         <ul>
           <% insight.recentLargeTransactions.forEach(tx => { %>
-            <li>
+            <li style="margin-bottom: 0.5rem;">
               <strong><%= tx.name %></strong> —
               $<%= tx.amount?.toLocaleString() %> (<%= tx.type %>) on
               <%= tx.date ? new Date(tx.date).toLocaleDateString() : 'N/A' %>
@@ -153,38 +234,6 @@
           <% }) %>
         </ul>
       <% } %>
-    </div>
-    <% } %>
-
-    <!-- MONTHLY AVERAGES -->
-    <% if (insight.monthlyAverages) { %>
-    <div class="card grid">
-      <div>
-        <h3>Avg Monthly Income</h3>
-        <p class="stat">$<%= insight.monthlyAverages.averageMonthlyIncome?.toLocaleString() || 0 %></p>
-      </div>
-      <div>
-        <h3>Avg Monthly Spend</h3>
-        <p class="stat">$<%= insight.monthlyAverages.averageMonthlySpend?.toLocaleString() || 0 %></p>
-      </div>
-      <div>
-        <h3>Avg Monthly Net</h3>
-        <p class="stat">$<%= insight.monthlyAverages.averageMonthlyNet?.toLocaleString() || 0 %></p>
-      </div>
-    </div>
-    <% } %>
-
-    <!-- INCOME SOURCES -->
-    <% if (insight.incomeSources && insight.incomeSources.sources && insight.incomeSources.sources.length > 0) { %>
-    <div class="card">
-      <h2>Income Sources</h2>
-      <ul>
-        <% insight.incomeSources.sources.forEach(source => { %>
-          <li>
-            <strong><%= source.category %></strong>: $<%= source.total?.toLocaleString() %>
-          </li>
-        <% }) %>
-      </ul>
     </div>
     <% } %>
 
@@ -198,7 +247,7 @@
       <p><strong>Recurring Income %:</strong> <%= insight.recurringInsights.recurringIncomePercentage.toFixed(2) %>%</p>
       <% } %>
       <% if (insight.recurringInsights.notes) { %>
-      <p><%= insight.recurringInsights.notes %></p>
+      <p style="margin-top: 0.5rem;"><%= insight.recurringInsights.notes %></p>
       <% } %>
     </div>
     <% } %>
@@ -206,10 +255,10 @@
     <!-- RISK SIGNALS -->
     <% if (insight.riskSignals && Array.isArray(insight.riskSignals) && insight.riskSignals.length > 0) { %>
     <div class="card">
-      <h2>Risk Signals</h2>
+      <h2>⚠️ Risk Signals</h2>
       <ul>
         <% insight.riskSignals.forEach(risk => { %>
-          <li class="risk-<%= risk.severity %>">
+          <li class="risk-<%= risk.severity %>" style="margin-bottom: 0.75rem;">
             <strong>[<%= risk.severity.toUpperCase() %>]</strong> <%= risk.type %>: <%= risk.message %>
           </li>
         <% }) %>
@@ -220,10 +269,10 @@
     <!-- OPTIMIZATION SUGGESTIONS -->
     <% if (insight.optimizationSuggestions && Array.isArray(insight.optimizationSuggestions) && insight.optimizationSuggestions.length > 0) { %>
     <div class="card">
-      <h2>Optimization Suggestions</h2>
+      <h2>💡 Optimization Suggestions</h2>
       <ul>
         <% insight.optimizationSuggestions.forEach(suggestion => { %>
-          <li>
+          <li style="margin-bottom: 0.75rem;">
             <strong><%= suggestion.area %>:</strong> <%= suggestion.suggestion %>
           </li>
         <% }) %>
@@ -242,7 +291,7 @@
       <p><strong>Highest Expense Month:</strong> <%= insight.behaviorPatterns.highestExpenseMonth %></p>
       <% } %>
       <% if (insight.behaviorPatterns.notes) { %>
-      <p><%= insight.behaviorPatterns.notes %></p>
+      <p style="margin-top: 0.5rem;"><%= insight.behaviorPatterns.notes %></p>
       <% } %>
     </div>
     <% } %>
@@ -250,14 +299,17 @@
     <!-- FUTURE PROJECTION -->
     <% if (insight.futureProjection) { %>
     <div class="card">
-      <h2>Future Projection</h2>
+      <h2>🔮 Future Projection</h2>
       <p><strong>Projected Monthly Net:</strong> $<%= insight.futureProjection.projectedMonthlyNet?.toLocaleString() || 0 %></p>
       <p><strong>Projected Yearly Net:</strong> $<%= insight.futureProjection.projectedYearlyNet?.toLocaleString() || 0 %></p>
-      <p><strong>Confidence:</strong> <%= insight.futureProjection.confidence || 'N/A' %></p>
+      <p><strong>Confidence:</strong> 
+        <span style="padding: 0.25rem 0.5rem; border-radius: 4px; background: <%= insight.futureProjection.confidence === 'high' ? '#d4edda' : insight.futureProjection.confidence === 'medium' ? '#fff3cd' : '#f8d7da' %>;">
+          <%= insight.futureProjection.confidence || 'N/A' %>
+        </span>
+      </p>
     </div>
     <% } %>
 
   <% } %>
 
-</body>
-</html>
+</div>
