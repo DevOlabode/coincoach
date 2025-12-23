@@ -9,6 +9,9 @@ const InsightSchema = new mongoose.Schema(
       index: true
     },
 
+    // ───────────────
+    // CORE METRICS
+    // ───────────────
     incomeVsExpenses: {
       totalIncome: { type: Number, required: true },
       totalExpenses: { type: Number, required: true },
@@ -116,7 +119,7 @@ const InsightSchema = new mongoose.Schema(
 
     summary: {
       type: String,
-      required: true
+      required: false
     },
 
     // ───────────────
@@ -136,11 +139,6 @@ const InsightSchema = new mongoose.Schema(
       type: Date,
       default: Date.now
     },
-
-    expiresAt: {
-      type: Date,
-      index: true
-    }
   },
   {
     timestamps: true

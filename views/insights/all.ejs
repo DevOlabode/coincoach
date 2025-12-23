@@ -1,185 +1,129 @@
-<% layout('layout/boilerplate') %>
+<% layout('layout/boilerplate.ejs') %>
 
-<section class="container mt-4">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      padding: 2rem;
+    }
 
-  <h2 class="mb-2">Financial Insights</h2>
-  <p class="text-muted">
-    Based on <strong><%= count %></strong> transactions
-  </p>
+    h1, h2 {
+      margin-bottom: 0.5rem;
+    }
 
-  <% if (!insight) { %>
-    <div class="alert alert-warning">
-      Unable to generate insights at this time.
-    </div>
+    .card {
+      background: #fff;
+      padding: 1.2rem;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+    }
+
+    .stat {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📊 Financial Insights</h1>
+
+  <% if (!insights || !insights.insight) { %>
+    <p>No insights available.</p>
   <% } else { %>
 
-  <!-- SUMMARY -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Overview</h5>
-      <p class="card-text">
-        <%= insight.summary %>
-      </p>
+    <!-- SUMMARY -->
+    <div class="card">
+      <h2>Summary</h2>
+      <p><%= insights.insight.summary %></p>
     </div>
-  </div>
 
-  <!-- SCORE + NET -->
-  <div class="row mb-4">
-    <div class="col-md-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <h6 class="text-muted">Spending Efficiency</h6>
-          <h2><%= insight.spendingEfficiencyScore %>/100</h2>
-        </div>
+    <!-- INCOME VS EXPENSE -->
+    <div class="card grid">
+      <div>
+        <h3>Total Income</h3>
+        <p class="stat"><%= insights.insight.incomeVsExpenses.totalIncome %></p>
+      </div>
+      <div>
+        <h3>Total Expenses</h3>
+        <p class="stat"><%= insights.insight.incomeVsExpenses.totalExpenses %></p>
+      </div>
+      <div>
+        <h3>Net</h3>
+        <p class="stat"><%= insights.insight.incomeVsExpenses.net %></p>
       </div>
     </div>
 
-    <div class="col-md-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <h6 class="text-muted">Total Income</h6>
-          <h3>$<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %></h3>
-        </div>
-      </div>
+    <!-- SPENDING SCORE -->
+    <div class="card">
+      <h2>Spending Efficiency Score</h2>
+      <p class="stat"><%= insights.insight.spendingEfficiencyScore %> / 100</p>
     </div>
 
-    <div class="col-md-4">
-      <div class="card text-center">
-        <div class="card-body">
-          <h6 class="text-muted">Net Balance</h6>
-          <h3 class="<%= insight.incomeVsExpenses.net >= 0 ? 'text-success' : 'text-danger' %>">
-            $<%= insight.incomeVsExpenses.net.toLocaleString() %>
-          </h3>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- INCOME VS EXPENSES -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5>Income vs Expenses</h5>
-      <ul class="list-group">
-        <li class="list-group-item">
-          Total Income: $<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %>
-        </li>
-        <li class="list-group-item">
-          Total Expenses: $<%= insight.incomeVsExpenses.totalExpenses.toLocaleString() %>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- EXPENSE BREAKDOWN -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5>Expense Breakdown</h5>
-
-      <% if (insight.expenseBreakdown.categories.length === 0) { %>
-        <p class="text-muted">No expense data available.</p>
+    <!-- TOP EXPENSES -->
+    <div class="card">
+      <h2>Top Expenses</h2>
+      <% if (insights.insight.topExpenses.length === 0) { %>
+        <p>No expense data.</p>
       <% } else { %>
-        <ul class="list-group">
-          <% insight.expenseBreakdown.categories.forEach(c => { %>
-            <li class="list-group-item d-flex justify-content-between">
-              <span><%= c.category %></span>
-              <strong>$<%= c.total.toLocaleString() %></strong>
+        <ul>
+          <% insights.insight.topExpenses.forEach(exp => { %>
+            <li>
+              <strong><%= exp.name %></strong> —
+              <%= exp.amount %> (<%= exp.category %>) on
+              <%= new Date(exp.date).toLocaleDateString() %>
             </li>
           <% }) %>
         </ul>
       <% } %>
     </div>
-  </div>
 
-  <!-- TOP EXPENSES -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5>Top Expenses</h5>
-
-      <% if (insight.topExpenses.length === 0) { %>
-        <p class="text-muted">No major expenses detected.</p>
+    <!-- EXPENSE BREAKDOWN -->
+    <div class="card">
+      <h2>Expense Breakdown</h2>
+      <% if (insights.insight.expenseBreakdown.categories.length === 0) { %>
+        <p>No expense categories.</p>
       <% } else { %>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Category</th>
-              <th>Date</th>
-              <th class="text-end">Amount</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% insight.topExpenses.forEach(exp => { %>
-              <tr>
-                <td><%= exp.name %></td>
-                <td><%= exp.category %></td>
-                <td><%= new Date(exp.date).toLocaleDateString() %></td>
-                <td class="text-end">$<%= exp.amount.toLocaleString() %></td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      <% } %>
-    </div>
-  </div>
-
-  <!-- RECURRING INSIGHTS -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5>Recurring Activity</h5>
-      <p>
-        Recurring Income: 
-        <strong>$<%= insight.recurringInsights.totalRecurringIncome.toLocaleString() %></strong>
-      </p>
-      <p>
-        Recurring Expenses: 
-        <strong>$<%= insight.recurringInsights.totalRecurringExpenses.toLocaleString() %></strong>
-      </p>
-      <p class="text-muted">
-        <%= insight.recurringInsights.notes %>
-      </p>
-    </div>
-  </div>
-
-  <!-- RISK SIGNALS -->
-  <div class="card mb-4">
-    <div class="card-body">
-      <h5>Risk Signals</h5>
-
-      <% if (insight.riskSignals.length === 0) { %>
-        <p class="text-success">No major risks detected 🎉</p>
-      <% } else { %>
-        <ul class="list-group">
-          <% insight.riskSignals.forEach(risk => { %>
-            <li class="list-group-item">
-              <strong class="text-<%= risk.severity === 'high' ? 'danger' : risk.severity === 'medium' ? 'warning' : 'secondary' %>">
-                <%= risk.severity.toUpperCase() %>
-              </strong>
-              — <%= risk.message %>
+        <ul>
+          <% insights.insight.expenseBreakdown.categories.forEach(cat => { %>
+            <li>
+              <strong><%= cat.category %></strong>: <%= cat.total %>
             </li>
           <% }) %>
         </ul>
       <% } %>
     </div>
-  </div>
 
-  <!-- FUTURE PROJECTION -->
-  <div class="card mb-5">
-    <div class="card-body">
-      <h5>Future Projection</h5>
-      <p>
-        Projected Monthly Net: 
-        <strong>$<%= insight.futureProjection.projectedMonthlyNet.toLocaleString() %></strong>
-      </p>
-      <p>
-        Projected Yearly Net: 
-        <strong>$<%= insight.futureProjection.projectedYearlyNet.toLocaleString() %></strong>
-      </p>
-      <p class="text-muted">
-        Confidence: <%= insight.futureProjection.confidence %>
-      </p>
+    <!-- RECENT LARGE TRANSACTIONS -->
+    <div class="card">
+      <h2>Recent Large Transactions</h2>
+      <% if (insights.insight.recentLargeTransactions.length === 0) { %>
+        <p>No large transactions.</p>
+      <% } else { %>
+        <ul>
+          <% insights.insight.recentLargeTransactions.forEach(tx => { %>
+            <li>
+              <strong><%= tx.name %></strong> —
+              <%= tx.amount %> (<%= tx.type %>) on
+              <%= new Date(tx.date).toLocaleDateString() %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
     </div>
-  </div>
 
   <% } %>
 
-</section>
+</body>
+</html>

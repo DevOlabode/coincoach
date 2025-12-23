@@ -107,6 +107,7 @@ RULES
 ────────────────────────────────────────
 
 - Return ONLY valid JSON. No markdown, no explanations.
+- Valid JSON and Valid JSON only. Nothing else.
 - All numbers must be numeric (no strings).
 - Dates must remain in ISO format.
 - Ignore transactions with invalid or missing amounts or dates.
@@ -117,6 +118,7 @@ RULES
 - Do NOT infer categories that do not exist.
 - Category names are case-sensitive; do not auto-merge them.
 - Use the full transaction list for all calculations.
+- If you don't have a value for something, return NULL
 
 ────────────────────────────────────────
 TRANSACTIONS INPUT
