@@ -9,5 +9,6 @@ router.use(isLoggedIn);
 
 router.get('/', controller.allInsights);
 router.post('/generate', controller.generateInsights);
+router.get('/download-pdf', controller.downloadPDF);
 
 module.exports = router;

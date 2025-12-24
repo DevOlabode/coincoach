@@ -82,6 +82,9 @@
     <h1>📊 Financial Insights</h1>
     <div>
       <a href="/transactions" class="btn btn-secondary" style="margin-right: 0.5rem;">View Transactions</a>
+      <% if (insight) { %>
+      <a href="/insights/download-pdf" class="btn btn-primary" style="margin-right: 0.5rem; background: #dc3545;">📥 Download PDF</a>
+      <% } %>
       <form action="/insights/generate" method="POST" style="display: inline;">
         <button type="submit" class="btn btn-primary">🔄 Regenerate Insights</button>
       </form>
