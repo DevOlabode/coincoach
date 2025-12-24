@@ -2,6 +2,7 @@ const Transaction = require('../models/transactions');
 const Insight = require('../models/insights');
 const generateInsights = require('../utils/generateInsights');
 const PDFDocument = require('pdfkit');
+const { calculateOpportunityCost } = require('../services/opportunityCostService');
 
 module.exports.allInsights = async (req, res) => {
     try {
@@ -10,6 +11,9 @@ module.exports.allInsights = async (req, res) => {
             .sort({ generatedAt: -1 })
             .lean();
         
+        // Calculate opportunity cost
+        const opportunityCost = await calculateOpportunityCost(req.user._id);
+        
         if (!latestInsight) {
             // Check if user has transactions
             const transactionCount = await Transaction.countDocuments({ userId: req.user._id });
@@ -17,6 +21,7 @@ module.exports.allInsights = async (req, res) => {
             if (transactionCount === 0) {
                 return res.render('insights/all', { 
                     insight: null,
+                    opportunityCost: null,
                     message: 'No transactions found. Add some transactions to generate insights.'
                 });
             }
@@ -26,11 +31,13 @@ module.exports.allInsights = async (req, res) => {
                 const newInsight = await generateInsights(req.user._id);
                 return res.render('insights/all', { 
                     insight: newInsight.toObject(),
+                    opportunityCost,
                     message: undefined
                 });
             } catch (error) {
                 return res.render('insights/all', { 
                     insight: null,
+                    opportunityCost,
                     message: error.message || 'Failed to generate insights. Please try again.'
                 });
             }
@@ -38,9 +45,11 @@ module.exports.allInsights = async (req, res) => {
         
         res.render('insights/all', { 
             insight: latestInsight,
+            opportunityCost,
             message: undefined
         });
     } catch (error) {
+        console.error('Error in allInsights:', error);
         req.flash('error', 'Failed to load insights');
         res.redirect('/transactions');
     }
@@ -68,6 +77,9 @@ module.exports.downloadPDF = async (req, res) => {
             req.flash('error', 'No insights available to download');
             return res.redirect('/insights');
         }
+
+        // Get opportunity cost data
+        const opportunityCost = await calculateOpportunityCost(req.user._id);
 
         // Create PDF document
         const doc = new PDFDocument({ margin: 50 });
@@ -104,6 +116,24 @@ module.exports.downloadPDF = async (req, res) => {
         // Summary
         if (insight.summary) {
             addSection('Executive Summary', insight.summary);
+        }
+
+        // Opportunity Cost Analysis
+        if (opportunityCost && opportunityCost.monthlyDiscretionary > 0) {
+            doc.fontSize(14).font('Helvetica-Bold').text('💰 Opportunity Cost Analysis', { underline: true });
+            doc.moveDown(0.3);
+            doc.fontSize(10).font('Helvetica');
+            doc.text(`Monthly Discretionary Spending: $${opportunityCost.monthlyDiscretionary.toLocaleString()}`);
+            doc.text(`Annual Discretionary Spending: $${opportunityCost.annualDiscretionary.toLocaleString()}`);
+            doc.moveDown(0.3);
+            doc.text('If invested at 7% annual return, this could grow to:');
+            doc.text(`• 1 Year: $${opportunityCost.opportunityCosts.oneYear.toLocaleString()}`);
+            doc.text(`• 5 Years: $${opportunityCost.opportunityCosts.fiveYears.toLocaleString()}`);
+            doc.text(`• 10 Years: $${opportunityCost.opportunityCosts.tenYears.toLocaleString()}`);
+            doc.text(`• 20 Years: $${opportunityCost.opportunityCosts.twentyYears.toLocaleString()}`);
+            doc.moveDown(0.3);
+            doc.text(opportunityCost.message);
+            doc.moveDown(0.5);
         }
 
         // Income vs Expenses

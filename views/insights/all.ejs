@@ -75,6 +75,66 @@
   .btn-secondary:hover {
     background: #5a6268;
   }
+
+  .opportunity-cost-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .opportunity-cost-card h2 {
+    color: white;
+    margin-bottom: 1rem;
+  }
+
+  .cost-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .cost-item {
+    background: rgba(255,255,255,0.15);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .cost-item .label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 0.5rem;
+  }
+
+  .cost-item .value {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .alternatives-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .alternative-item {
+    background: rgba(255,255,255,0.1);
+    padding: 1rem;
+    border-radius: 8px;
+  }
+
+  .chart-container {
+    margin-top: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    max-width: 800px;
+  }
 </style>
 
 <div style="max-width: 1200px; margin: 0 auto;">
@@ -106,6 +166,89 @@
       </form>
     </div>
   <% } else { %>
+
+    <!-- OPPORTUNITY COST ANALYSIS -->
+    <% if (opportunityCost && opportunityCost.monthlyDiscretionary > 0) { %>
+    <div class="opportunity-cost-card">
+      <h2>💰 Opportunity Cost Analysis</h2>
+      <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">
+        You spend <strong>$<%= opportunityCost.monthlyDiscretionary.toFixed(2) %></strong> per month on discretionary items.
+        Here's what that money could become if invested instead:
+      </p>
+
+      <div class="cost-grid">
+        <div class="cost-item">
+          <div class="label">1 Year</div>
+          <div class="value">$<%= opportunityCost.opportunityCosts.oneYear.toLocaleString(undefined, {maximumFractionDigits: 0}) %></div>
+        </div>
+        <div class="cost-item">
+          <div class="label">5 Years</div>
+          <div class="value">$<%= opportunityCost.opportunityCosts.fiveYears.toLocaleString(undefined, {maximumFractionDigits: 0}) %></div>
+        </div>
+        <div class="cost-item">
+          <div class="label">10 Years</div>
+          <div class="value">$<%= opportunityCost.opportunityCosts.tenYears.toLocaleString(undefined, {maximumFractionDigits: 0}) %></div>
+        </div>
+        <div class="cost-item">
+          <div class="label">20 Years</div>
+          <div class="value">$<%= opportunityCost.opportunityCosts.twentyYears.toLocaleString(undefined, {maximumFractionDigits: 0}) %></div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="opportunityCostChart"></canvas>
+      </div>
+
+      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">💡 Alternative Uses</h3>
+      <p style="opacity: 0.95; margin-bottom: 1rem;">Your monthly discretionary spending of $<%= opportunityCost.monthlyDiscretionary.toFixed(2) %> equals:</p>
+      
+      <div class="alternatives-grid">
+        <div class="alternative-item">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">☕</div>
+          <div style="font-size: 1.5rem; font-weight: bold;"><%= opportunityCost.alternatives.coffee.count %></div>
+          <div style="opacity: 0.9;"><%= opportunityCost.alternatives.coffee.item %></div>
+        </div>
+        <div class="alternative-item">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">📺</div>
+          <div style="font-size: 1.5rem; font-weight: bold;"><%= opportunityCost.alternatives.streaming.count %></div>
+          <div style="opacity: 0.9;"><%= opportunityCost.alternatives.streaming.item %></div>
+        </div>
+        <div class="alternative-item">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛒</div>
+          <div style="font-size: 1.5rem; font-weight: bold;"><%= opportunityCost.alternatives.groceries.count %></div>
+          <div style="opacity: 0.9;"><%= opportunityCost.alternatives.groceries.item %></div>
+        </div>
+        <div class="alternative-item">
+          <div style="font-size: 2rem; margin-bottom: 0.5rem;">⛽</div>
+          <div style="font-size: 1.5rem; font-weight: bold;"><%= opportunityCost.alternatives.gasoline.count %></div>
+          <div style="opacity: 0.9;"><%= opportunityCost.alternatives.gasoline.item %></div>
+        </div>
+      </div>
+
+      <p style="margin-top: 1.5rem; font-size: 1rem; opacity: 0.95;">
+        <%= opportunityCost.message %>
+      </p>
+
+      <% if (opportunityCost.categoryBreakdown && opportunityCost.categoryBreakdown.length > 0) { %>
+      <h3 style="margin-top: 2rem; margin-bottom: 1rem;">📊 Discretionary Spending Breakdown</h3>
+      <div style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 8px;">
+        <% opportunityCost.categoryBreakdown.forEach(cat => { %>
+          <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <span><%= cat._id %></span>
+            <span style="font-weight: bold;">$<%= cat.total.toFixed(2) %> (<%= cat.count %> transactions)</span>
+          </div>
+        <% }) %>
+      </div>
+      <% } %>
+    </div>
+    <% } else if (opportunityCost) { %>
+    <div class="card" style="background: #d4edda; border-left: 4px solid #28a745;">
+      <h3 style="color: #155724; margin-top: 0;">🎉 Excellent Financial Discipline!</h3>
+      <p style="color: #155724; margin-bottom: 0;">
+        You have minimal discretionary spending this month. Keep up the great work!
+      </p>
+    </div>
+    <% } %>
 
     <!-- SUMMARY -->
     <% if (insight.summary) { %>
@@ -316,3 +459,71 @@
   <% } %>
 
 </div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<% if (opportunityCost && opportunityCost.monthlyDiscretionary > 0) { %>
+<script>
+// Opportunity Cost Growth Chart
+const ctx = document.getElementById('opportunityCostChart');
+if (ctx) {
+  const wealthData = <%= JSON.stringify(opportunityCost.wealthAccumulation) %>;
+  
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: wealthData.map(d => d.year + ' years'),
+      datasets: [{
+        label: 'Investment Value',
+        data: wealthData.map(d => d.value),
+        borderColor: '#ffffff',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 5,
+        pointBackgroundColor: '#ffffff',
+        pointBorderColor: '#667eea',
+        pointBorderWidth: 2
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Compound Growth of Your Discretionary Spending (7% Annual Return)',
+          color: '#ffffff',
+          font: { size: 16 }
+        },
+        legend: {
+          labels: { color: '#ffffff' }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return 'Value: $' + context.parsed.y.toLocaleString(undefined, {maximumFractionDigits: 0});
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: '#ffffff' },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' }
+        },
+        y: {
+          ticks: { 
+            color: '#ffffff',
+            callback: function(value) {
+              return '$' + value.toLocaleString(undefined, {maximumFractionDigits: 0});
+            }
+          },
+          grid: { color: 'rgba(255, 255, 255, 0.1)' }
+        }
+      }
+    }
+  });
+}
+</script>
+<% } %>
