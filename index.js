@@ -89,7 +89,8 @@ const chatAIRoutes = require('./routes/chatAI');
 const userRoutes = require('./routes/user');
 const recieptRoutes = require('./routes/reciept');
 const insightsRoutes = require('./routes/insights');
-const exportRoutes = require('./routes/export')
+const exportRoutes = require('./routes/export');
+const billRoutes = require('./routes/bill');
 
 // Add after existing route uses
 app.use('/chat', chatSessionRoutes);
@@ -101,6 +102,7 @@ app.use('/transactions', transactionRoutes);
 app.use('/user', userRoutes);
 app.use('/insights', insightsRoutes);
 app.use('/export', exportRoutes);
+app.use('/', billRoutes);
 
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('Page not found', 404))
