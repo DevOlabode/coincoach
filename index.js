@@ -21,6 +21,9 @@ const ExpressError = require('./utils/ExpressError');
 
 const {sessionConfig} = require('./config/session');
 
+const { initializeBillScheduler } = require('./utils/billScheduler');
+const { sendDailyBillAlerts } = require('./services/billEmailService');
+
 app.use(session(sessionConfig));
 app.use(flash());
 
@@ -103,6 +106,17 @@ app.use('/user', userRoutes);
 app.use('/insights', insightsRoutes);
 app.use('/export', exportRoutes);
 app.use('/', billRoutes);
+
+// Add after database connection
+initializeBillScheduler();
+
+// Schedule daily email alerts (runs at 9 AM)
+setInterval(() => {
+    const now = new Date();
+    if (now.getHours() === 9 && now.getMinutes() === 0) {
+        sendDailyBillAlerts();
+    }
+}, 60000);
 
 app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('Page not found', 404))

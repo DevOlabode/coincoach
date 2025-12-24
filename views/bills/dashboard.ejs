@@ -1,0 +1,308 @@
+<% layout('layout/boilerplate.ejs') %>
+
+<style>
+  .bill-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    border-left: 4px solid #6c757d;
+  }
+
+  .bill-card.unusual {
+    border-left-color: #dc3545;
+    background: #fff5f5;
+  }
+
+  .bill-card.warning {
+    border-left-color: #ffc107;
+    background: #fffbf0;
+  }
+
+  .bill-amount {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+  }
+
+  .bill-amount.unusual {
+    color: #dc3545;
+  }
+
+  .bill-amount.normal {
+    color: #28a745;
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  .badge-danger {
+    background: #dc3545;
+    color: white;
+  }
+
+  .badge-warning {
+    background: #ffc107;
+    color: #212529;
+  }
+
+  .badge-info {
+    background: #17a2b8;
+    color: white;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-card {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #0066cc;
+  }
+
+  .deviation-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background: #f8f9fa;
+    margin-top: 0.5rem;
+  }
+
+  .deviation-indicator.positive {
+    background: #fff5f5;
+    color: #dc3545;
+  }
+</style>
+
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <h1>💰 Bill Shock Predictor</h1>
+    <div>
+      <a href="/transactions" class="btn btn-secondary" style="margin-right: 0.5rem;">← Transactions</a>
+      <form action="/bills/generate" method="POST" style="display: inline;">
+        <button type="submit" class="btn btn-primary">🔄 Regenerate Predictions</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Summary Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">Total Predictions</div>
+      <div class="stat-value"><%= predictions.length %></div>
+    </div>
+    <div class="stat-card">
+      <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">Upcoming (7 days)</div>
+      <div class="stat-value" style="color: #ffc107;"><%= upcomingBills.length %></div>
+    </div>
+    <div class="stat-card">
+      <div style="color: #6c757d; font-size: 0.9rem; margin-bottom: 0.5rem;">Unusual Bills</div>
+      <div class="stat-value" style="color: #dc3545;"><%= unusualBills.length %></div>
+    </div>
+  </div>
+
+  <% if (predictions.length === 0) { %>
+    <div class="empty-state">
+      <i class="fas fa-chart-line fa-3x" style="color: #6c757d; margin-bottom: 1rem;"></i>
+      <h3>No Bill Predictions Available</h3>
+      <p style="color: #6c757d; margin-bottom: 1.5rem;">
+        Add recurring expense transactions to start tracking and predicting your bills.
+      </p>
+      <a href="/transactions/new" class="btn btn-primary">Add Transaction</a>
+    </div>
+  <% } else { %>
+
+    <!-- Unusual Bills Alert Section -->
+    <% if (unusualBills.length > 0) { %>
+    <div style="background: #fff5f5; border: 2px solid #dc3545; border-radius: 8px; padding: 1.5rem; margin-bottom: 2rem;">
+      <h3 style="color: #dc3545; margin-bottom: 1rem;">⚠️ Unusual Bills Detected</h3>
+      <p style="margin-bottom: 1rem;">These bills are significantly higher than usual. Review them carefully.</p>
+      
+      <% unusualBills.forEach(bill => { %>
+        <div class="bill-card unusual">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 0.5rem 0;"><%= bill.billName %></h4>
+              <span class="badge badge-danger">⚠️ UNUSUAL</span>
+              
+              <div class="bill-amount unusual">
+                $<%= bill.predictedAmount.toLocaleString() %>
+              </div>
+
+              <div class="deviation-indicator positive">
+                <span style="font-weight: bold;">↑ $<%= Math.abs(bill.deviation).toLocaleString() %></span>
+                <span style="color: #6c757d;">higher than average</span>
+              </div>
+
+              <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
+                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %> (<%= bill.daysUntil %> days)</div>
+                <div>📊 Avg: $<%= bill.averageAmount.toLocaleString() %></div>
+                <div>🏷️ Category: <%= bill.category %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+              </div>
+            </div>
+            
+            <form action="/bills/<%= bill._id %>/dismiss" method="POST" style="margin: 0;">
+              <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss notification">
+                ✓ Dismiss
+              </button>
+            </form>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <% } %>
+
+    <!-- Upcoming Bills (Next 7 Days) -->
+    <% if (upcomingBills.length > 0) { %>
+    <div style="margin-bottom: 2rem;">
+      <h3 style="margin-bottom: 1rem;">📅 Upcoming Bills (Next 7 Days)</h3>
+      
+      <% upcomingBills.forEach(bill => { %>
+        <div class="bill-card <%= bill.isUnusual ? 'unusual' : 'warning' %>">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 0.5rem 0;"><%= bill.billName %></h4>
+              
+              <% if (bill.daysUntil <= 3) { %>
+                <span class="badge badge-warning">⏰ Due in <%= bill.daysUntil %> day<%= bill.daysUntil !== 1 ? 's' : '' %></span>
+              <% } else { %>
+                <span class="badge badge-info">Due in <%= bill.daysUntil %> days</span>
+              <% } %>
+              
+              <% if (bill.isUnusual) { %>
+                <span class="badge badge-danger" style="margin-left: 0.5rem;">⚠️ UNUSUAL</span>
+              <% } %>
+
+              <div class="bill-amount <%= bill.isUnusual ? 'unusual' : 'normal' %>">
+                $<%= bill.predictedAmount.toLocaleString() %>
+              </div>
+
+              <% if (bill.deviation !== 0) { %>
+                <div class="deviation-indicator <%= bill.deviation > 0 ? 'positive' : '' %>">
+                  <span style="font-weight: bold;">
+                    <%= bill.deviation > 0 ? '↑' : '↓' %> 
+                    $<%= Math.abs(bill.deviation).toLocaleString() %>
+                  </span>
+                  <span style="color: #6c757d;">vs average ($<%= bill.averageAmount.toLocaleString() %>)</span>
+                </div>
+              <% } %>
+
+              <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
+                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %></div>
+                <div>🏷️ Category: <%= bill.category %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+              </div>
+            </div>
+            
+            <% if (!bill.notified && bill.daysUntil <= 3) { %>
+            <form action="/bills/<%= bill._id %>/dismiss" method="POST" style="margin: 0;">
+              <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss notification">
+                ✓ Dismiss
+              </button>
+            </form>
+            <% } %>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+    <% } %>
+
+    <!-- All Predictions -->
+    <div>
+      <h3 style="margin-bottom: 1rem;">📊 All Bill Predictions</h3>
+      
+      <% predictions.forEach(bill => { %>
+        <% if (bill.daysUntil > 7) { %>
+        <div class="bill-card">
+          <div style="display: flex; justify-content: space-between; align-items: start;">
+            <div style="flex: 1;">
+              <h4 style="margin: 0 0 0.5rem 0;"><%= bill.billName %></h4>
+              
+              <% if (bill.isUnusual) { %>
+                <span class="badge badge-danger">⚠️ UNUSUAL</span>
+              <% } %>
+
+              <div class="bill-amount <%= bill.isUnusual ? 'unusual' : 'normal' %>">
+                $<%= bill.predictedAmount.toLocaleString() %>
+              </div>
+
+              <% if (bill.deviation !== 0) { %>
+                <div class="deviation-indicator <%= bill.deviation > 0 ? 'positive' : '' %>">
+                  <span style="font-weight: bold;">
+                    <%= bill.deviation > 0 ? '↑' : '↓' %> 
+                    $<%= Math.abs(bill.deviation).toLocaleString() %>
+                  </span>
+                  <span style="color: #6c757d;">vs average ($<%= bill.averageAmount.toLocaleString() %>)</span>
+                </div>
+              <% } %>
+
+              <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
+                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %> (<%= bill.daysUntil %> days)</div>
+                <div>🏷️ Category: <%= bill.category %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      <% }); %>
+    </div>
+
+  <% } %>
+</div>
+
+<script>
+// Auto-refresh notifications every 5 minutes
+setInterval(async () => {
+  try {
+    const response = await fetch('/bills/notifications');
+    const notifications = await response.json();
+    
+    // You can add browser notifications here if desired
+    if (notifications.length > 0 && Notification.permission === 'granted') {
+      notifications.forEach(n => {
+        if (n.daysUntil <= 3) {
+          new Notification('Upcoming Bill Alert', {
+            body: `${n.billName}: $${n.predictedAmount.toLocaleString()} in ${n.daysUntil} days`,
+            icon: '/icon.png'
+          });
+        }
+      });
+    }
+  } catch (error) {
+    console.error('Failed to fetch notifications:', error);
+  }
+}, 300000); // 5 minutes
+
+// Request notification permission
+if ('Notification' in window && Notification.permission === 'default') {
+  Notification.requestPermission();
+}
+</script>
