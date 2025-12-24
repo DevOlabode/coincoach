@@ -11,11 +11,10 @@ module.exports.allInsights = async (req, res) => {
             .sort({ generatedAt: -1 })
             .lean();
         
-        // Calculate opportunity cost
+        // Calculate  cost
         const opportunityCost = await calculateOpportunityCost(req.user._id);
         
         if (!latestInsight) {
-            // Check if user has transactions
             const transactionCount = await Transaction.countDocuments({ userId: req.user._id });
             
             if (transactionCount === 0) {
@@ -113,12 +112,10 @@ module.exports.downloadPDF = async (req, res) => {
         doc.fontSize(10).font('Helvetica').text(`Generated: ${new Date(insight.generatedAt).toLocaleDateString()}`, { align: 'center' });
         doc.moveDown(1);
 
-        // Summary
         if (insight.summary) {
             addSection('Executive Summary', insight.summary);
         }
 
-        // Opportunity Cost Analysis
         if (opportunityCost && opportunityCost.monthlyDiscretionary > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('💰 Opportunity Cost Analysis', { underline: true });
             doc.moveDown(0.3);
@@ -136,7 +133,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Income vs Expenses
         if (insight.incomeVsExpenses) {
             doc.fontSize(14).font('Helvetica-Bold').text('Income vs Expenses', { underline: true });
             doc.moveDown(0.3);
@@ -147,12 +143,10 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Spending Efficiency Score
         if (insight.spendingEfficiencyScore !== undefined && insight.spendingEfficiencyScore !== null) {
             addSection('Spending Efficiency Score', `${insight.spendingEfficiencyScore} / 100`);
         }
 
-        // Monthly Averages
         if (insight.monthlyAverages) {
             doc.fontSize(14).font('Helvetica-Bold').text('Monthly Averages', { underline: true });
             doc.moveDown(0.3);
@@ -169,7 +163,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Top Expenses
         if (insight.topExpenses && Array.isArray(insight.topExpenses) && insight.topExpenses.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('Top Expenses', { underline: true });
             doc.moveDown(0.3);
@@ -180,7 +173,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Expense Breakdown
         if (insight.expenseBreakdown && insight.expenseBreakdown.categories && insight.expenseBreakdown.categories.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('Expense Breakdown by Category', { underline: true });
             doc.moveDown(0.3);
@@ -191,7 +183,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Income Sources
         if (insight.incomeSources && insight.incomeSources.sources && insight.incomeSources.sources.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('Income Sources', { underline: true });
             doc.moveDown(0.3);
@@ -202,7 +193,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Recent Large Transactions
         if (insight.recentLargeTransactions && Array.isArray(insight.recentLargeTransactions) && insight.recentLargeTransactions.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('Recent Large Transactions', { underline: true });
             doc.moveDown(0.3);
@@ -214,7 +204,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Recurring Insights
         if (insight.recurringInsights) {
             doc.fontSize(14).font('Helvetica-Bold').text('Recurring Insights', { underline: true });
             doc.moveDown(0.3);
@@ -235,7 +224,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Risk Signals
         if (insight.riskSignals && Array.isArray(insight.riskSignals) && insight.riskSignals.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('⚠️ Risk Signals', { underline: true });
             doc.moveDown(0.3);
@@ -246,7 +234,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Optimization Suggestions
         if (insight.optimizationSuggestions && Array.isArray(insight.optimizationSuggestions) && insight.optimizationSuggestions.length > 0) {
             doc.fontSize(14).font('Helvetica-Bold').text('💡 Optimization Suggestions', { underline: true });
             doc.moveDown(0.3);
@@ -257,7 +244,6 @@ module.exports.downloadPDF = async (req, res) => {
             doc.moveDown(0.5);
         }
 
-        // Behavior Patterns
         if (insight.behaviorPatterns) {
             doc.fontSize(14).font('Helvetica-Bold').text('Behavior Patterns', { underline: true });
             doc.moveDown(0.3);
