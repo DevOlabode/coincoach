@@ -102,7 +102,10 @@ async function sendDailyBillAlerts() {
                     );
                     
                     // Mark as notified
-                    await markAsNotified(pendingBills.map(b => b._id));
+                    const billIds = pendingBills.map(b => b._id).filter(id => id);
+                    if (billIds.length > 0) {
+                        await markAsNotified(billIds);
+                    }
                     
                     sentCount++;
                     console.log(`Sent bill alert to ${user.email} (${pendingBills.length} bills)`);

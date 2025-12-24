@@ -152,19 +152,21 @@
               <span class="badge badge-danger">⚠️ UNUSUAL</span>
               
               <div class="bill-amount unusual">
-                $<%= bill.predictedAmount.toLocaleString() %>
+                $<%= (bill.predictedAmount || 0).toLocaleString() %>
               </div>
 
+              <% if (bill.deviation !== undefined && bill.deviation !== null && bill.deviation !== 0) { %>
               <div class="deviation-indicator positive">
-                <span style="font-weight: bold;">↑ $<%= Math.abs(bill.deviation).toLocaleString() %></span>
+                <span style="font-weight: bold;">↑ $<%= Math.abs(bill.deviation || 0).toLocaleString() %></span>
                 <span style="color: #6c757d;">higher than average</span>
               </div>
+              <% } %>
 
               <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
-                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %> (<%= bill.daysUntil %> days)</div>
-                <div>📊 Avg: $<%= bill.averageAmount.toLocaleString() %></div>
-                <div>🏷️ Category: <%= bill.category %></div>
-                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+                <div>📅 Due: <%= bill.predictedBillDate ? new Date(bill.predictedBillDate).toLocaleDateString() : 'N/A' %> (<%= bill.daysUntil !== undefined ? bill.daysUntil : 'N/A' %> days)</div>
+                <div>📊 Avg: $<%= (bill.averageAmount || 0).toLocaleString() %></div>
+                <div>🏷️ Category: <%= bill.category || 'Uncategorized' %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence || 'monthly' %></div>
               </div>
             </div>
             
@@ -201,23 +203,23 @@
               <% } %>
 
               <div class="bill-amount <%= bill.isUnusual ? 'unusual' : 'normal' %>">
-                $<%= bill.predictedAmount.toLocaleString() %>
+                $<%= (bill.predictedAmount || 0).toLocaleString() %>
               </div>
 
-              <% if (bill.deviation !== 0) { %>
+              <% if (bill.deviation !== undefined && bill.deviation !== null && bill.deviation !== 0) { %>
                 <div class="deviation-indicator <%= bill.deviation > 0 ? 'positive' : '' %>">
                   <span style="font-weight: bold;">
                     <%= bill.deviation > 0 ? '↑' : '↓' %> 
-                    $<%= Math.abs(bill.deviation).toLocaleString() %>
+                    $<%= Math.abs(bill.deviation || 0).toLocaleString() %>
                   </span>
-                  <span style="color: #6c757d;">vs average ($<%= bill.averageAmount.toLocaleString() %>)</span>
+                  <span style="color: #6c757d;">vs average ($<%= (bill.averageAmount || 0).toLocaleString() %>)</span>
                 </div>
               <% } %>
 
               <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
-                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %></div>
-                <div>🏷️ Category: <%= bill.category %></div>
-                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+                <div>📅 Due: <%= bill.predictedBillDate ? new Date(bill.predictedBillDate).toLocaleDateString() : 'N/A' %></div>
+                <div>🏷️ Category: <%= bill.category || 'Uncategorized' %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence || 'monthly' %></div>
               </div>
             </div>
             
@@ -250,23 +252,23 @@
               <% } %>
 
               <div class="bill-amount <%= bill.isUnusual ? 'unusual' : 'normal' %>">
-                $<%= bill.predictedAmount.toLocaleString() %>
+                $<%= (bill.predictedAmount || 0).toLocaleString() %>
               </div>
 
-              <% if (bill.deviation !== 0) { %>
+              <% if (bill.deviation !== undefined && bill.deviation !== null && bill.deviation !== 0) { %>
                 <div class="deviation-indicator <%= bill.deviation > 0 ? 'positive' : '' %>">
                   <span style="font-weight: bold;">
                     <%= bill.deviation > 0 ? '↑' : '↓' %> 
-                    $<%= Math.abs(bill.deviation).toLocaleString() %>
+                    $<%= Math.abs(bill.deviation || 0).toLocaleString() %>
                   </span>
-                  <span style="color: #6c757d;">vs average ($<%= bill.averageAmount.toLocaleString() %>)</span>
+                  <span style="color: #6c757d;">vs average ($<%= (bill.averageAmount || 0).toLocaleString() %>)</span>
                 </div>
               <% } %>
 
               <div style="margin-top: 1rem; color: #6c757d; font-size: 0.9rem;">
-                <div>📅 Due: <%= new Date(bill.predictedBillDate).toLocaleDateString() %> (<%= bill.daysUntil %> days)</div>
-                <div>🏷️ Category: <%= bill.category %></div>
-                <div>🔄 Recurrence: <%= bill.recurrence %></div>
+                <div>📅 Due: <%= bill.predictedBillDate ? new Date(bill.predictedBillDate).toLocaleDateString() : 'N/A' %> (<%= bill.daysUntil !== undefined ? bill.daysUntil : 'N/A' %> days)</div>
+                <div>🏷️ Category: <%= bill.category || 'Uncategorized' %></div>
+                <div>🔄 Recurrence: <%= bill.recurrence || 'monthly' %></div>
               </div>
             </div>
           </div>

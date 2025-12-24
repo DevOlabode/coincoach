@@ -1,19 +1,30 @@
-const BillPredictor = require('../models/billsPredictor');
+const BillPrediction = require('../models/billsPredictor');
 const { generateBillPredictions, getPendingNotifications } = require('../services/billPredictionService');
 
 module.exports.billDashboard = async (req, res) => {
     try {
         // Get all predictions for user
-        const predictions = await BillPredictor.find({ userId: req.user._id })
+        const predictions = await BillPrediction.find({ userId: req.user._id })
             .sort({ predictedBillDate: 1 })
             .lean();
 
+        // Calculate daysUntil for each prediction and filter
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        const predictionsWithDays = predictions.map(pred => {
+            const predDate = new Date(pred.predictedBillDate);
+            predDate.setHours(0, 0, 0, 0);
+            const daysUntil = Math.ceil((predDate - today) / (1000 * 60 * 60 * 24));
+            return { ...pred, daysUntil };
+        }).filter(pred => pred.daysUntil >= 0); // Only future bills
+
         // Separate into upcoming and unusual bills
-        const upcomingBills = predictions.filter(p => p.daysUntil <= 7);
-        const unusualBills = predictions.filter(p => p.isUnusual);
+        const upcomingBills = predictionsWithDays.filter(p => p.daysUntil <= 7);
+        const unusualBills = predictionsWithDays.filter(p => p.isUnusual);
 
         res.render('bills/dashboard', { 
-            predictions, 
+            predictions: predictionsWithDays, 
             upcomingBills, 
             unusualBills 
         });
@@ -51,7 +62,7 @@ module.exports.dismissPrediction = async (req, res) => {
     try {
         const { id } = req.params;
         
-        await BillPredictor.findOneAndUpdate(
+        await BillPrediction.findOneAndUpdate(
             { _id: id, userId: req.user._id },
             { notified: true }
         );
