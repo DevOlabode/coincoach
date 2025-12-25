@@ -23,3 +23,7 @@ PAGES TO ADD TO THE APPLICATION.
 - COACH
 - PROFILE
 - HELP (Help users understand the app easier)
+
+TODO : 
+- write the INSIGHT frontend.
+- Style the entire app.
