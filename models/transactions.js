@@ -25,6 +25,11 @@ const transactionSchema = new Schema({
         required : true,
         default : 'CAD'
     },
+    convertedAmount : {
+        type : Number,
+        reqiured : true,
+        default : function() { return this.amount; } 
+    },
     date : {
         type : Date,
         required : true,
