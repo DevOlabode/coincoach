@@ -1,8 +1,4 @@
 
-TODO :
-- forgotten Password
-- edit Email (controller, routes and frontend)
-
 copilot TODO
 - [ ] Input validation + sanitization middleware.
 - [ ] CSRF protection.
@@ -10,7 +6,8 @@ copilot TODO
 - [ ] Error pages (404, 500).
 - [ ] Email verification + password reset flow.
 - [ ] Confirmation step for account deletion.
-- [] Responsive + accessible EJS templates.
+- [ ] Responsive + accessible EJS templates.
+- [ ] Add mobile responsive styling
 
 
 Potential Look alike
@@ -27,3 +24,9 @@ PAGES TO ADD TO THE APPLICATION.
 TODO : 
 - write the INSIGHT frontend.
 - Style the entire app.
+
+
+future plan : 
+
+let the app be able to help users plan their financial goals like buy a house or car or smth like that.
+Add currency conversion to all the transactions. From the currency in the transactions vs the preferred transaction in the users profile.
