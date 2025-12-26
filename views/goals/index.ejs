@@ -1,3 +1,8 @@
 <%- layout('./layout/boilerplate.ejs') %>
 
 <h3>The Goals Homepage</h3>
+
+<form action="/goals" method="post" class="needs-validation" novalidate>
+    <textarea name="explain" id="explain" placeholder="explain your financial goal to the best of your terms" cols="50" rows="12"></textarea>
+    <button class="btn btn-primary">Enter</button>
+</form>
