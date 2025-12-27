@@ -69,3 +69,8 @@ module.exports.goals = async (req, res) => {
   req.flash('success', 'Goal created successfully!');
   res.redirect('/goals');
 };
+
+module.exports.show = async(req, res)=>{
+    const goal = await Goals.findById(req.params.id);
+    res.render('goals/show', {goal})
+}

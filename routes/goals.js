@@ -10,6 +10,8 @@ router.use(isLoggedIn);
 
 router.get('/', catchAsync(controller.index));
 
+router.get('/:id', catchAsync(controller.show));
+
 router.post('/', catchAsync(controller.goals));
 
 module.exports = router

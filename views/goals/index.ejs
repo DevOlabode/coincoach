@@ -11,7 +11,7 @@
 <% goals.forEach(goal => { %>
   <div class="card mb-3">
     <div class="card-body">
-      <h5>Target: $<%= goal.goalSummary.targetAmount %></h5>
+      <a href="/goals/<%= goal._id %>"><h5>Target: $<%= goal.goalSummary.targetAmount %></h5></a>
       <p>
         Progress:
         <strong><%= goal.progress.completionPercentage.toFixed(1) %>%</strong>
