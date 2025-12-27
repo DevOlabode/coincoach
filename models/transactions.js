@@ -32,7 +32,17 @@ const transactionSchema = new Schema({
     },
     category : {
         type : String,
-        required : true
+        required : true,
+        enum: [
+            'rent',
+            'food',
+            'transport',
+            'shopping',
+            'salary',
+            'investment',
+            'goal-savings',
+            'other'
+          ],
     },
     description : {
         type : String,

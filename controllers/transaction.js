@@ -6,7 +6,6 @@ const XLSX = require('xlsx');
 
 const generateInsights = require('../utils/generateInsights');
 
-
 module.exports.newTransactionForm = (req, res) => {
     res.render('transactions/new');
 };
@@ -27,6 +26,8 @@ module.exports.createTransaction = async (req, res) => {
         inputMethod : 'manual'
     });
     await transaction.save();
+
+    await updateGoalProgressFromTransaction(transaction);
 
     // Generate insights in the background (don't wait for it)
     generateInsights(req.user._id).catch(err => {
