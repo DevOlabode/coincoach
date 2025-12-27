@@ -94,7 +94,7 @@ const recieptRoutes = require('./routes/reciept');
 const insightsRoutes = require('./routes/insights');
 const exportRoutes = require('./routes/export');
 const billRoutes = require('./routes/bill');
-const goalsRoutes = require('./routes/goals')
+const goalsRoutes = require('./routes/goals');
 
 // Add after existing route uses
 app.use('/chat', chatSessionRoutes);

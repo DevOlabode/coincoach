@@ -26,7 +26,6 @@ TODO :
 
 
 future plan : 
-
 - let the app be able to help users plan their financial goals like buy a house or car or smth like that. (ongoing)
 - Update the frontend transaction category be a dropdown for a new and editing transactions. 
 - Add currency conversion to all the transactions. From the currency in the transactions vs the preferred transaction in the users profile.
