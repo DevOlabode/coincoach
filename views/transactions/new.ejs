@@ -19,9 +19,16 @@
     <label for="date" class="form-label">Date</label>
     <input type="date" class="form-control" name="date" id="date" required>
 
-    <label for="category" class="form-label">Category</label>
-    <input type="text" name="category" class="form-control" placeholder="Enter the transaction category" id="category" required>
-
+    <label class="form-label">Category</label>
+    <select name="category" class="form-select" required>
+        <option value="select">Select a category</option>
+        <option value="rent">Rent</option>
+        <option value="food">Food</option>
+        <option value="shopping">Shopping</option>
+        <option value="salary">Salary</option>
+        <option value="goal-savings">Goal Savings 💰</option>
+    </select>
+    
     <label for="description" class="form-label">Description</label>
     <textarea name="description" id="description" class="form-control" placeholder="Description"></textarea>
 
