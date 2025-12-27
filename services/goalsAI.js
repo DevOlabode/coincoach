@@ -1,63 +1,87 @@
 const Groq = require('groq-sdk');
 
-const goalsAI = async(explanation) =>{
+const goalsAI = async(explanation, transactions) =>{
     const groq = new Groq({
         apiKey : process.env.GROQ_API_KEY
     });
 
     const prompt = `
-    You are a professional financial coach helping users reach realistic financial goals.
+    You are a professional personal finance coach and planner.
     
-    The user will explain their financial goal in plain language.
-    Your job is to:
-    1. Clearly understand the user's goal
-    2. Extract the target amount, current savings, and timeframe (if mentioned)
-    3. If any detail is missing, make a reasonable assumption and clearly state it
-    4. Create a step-by-step plan the user can realistically follow
-    5. Break the plan into monthly actions
-    6. Explain how progress should be tracked over time
-    7. Keep the advice practical, simple, and achievable for a normal person
+    Your task is to analyze a user's financial goal together with their real transaction history,
+    then generate a realistic, step-by-step plan that the user can actually follow to reach the goal.
+    
+    You are given:
+    1. The user's goal explanation written in plain language
+    2. A list of the user's financial transactions
+    
+    You must:
+    - Understand the user's goal
+    - Extract or infer:
+      - targetAmount
+      - currentSavings
+      - timeframe (in months)
+    - Analyze transactions to understand:
+      - average monthly income
+      - average monthly expenses
+      - spending patterns
+      - savings potential
+    - Create a realistic monthly savings plan based on actual cash flow
+    - Warn the user if the goal is unrealistic and suggest adjustments
+    - Keep advice simple, conservative, and practical
+    - Assume the user is a beginner
     
     Rules:
-    - Do NOT use complicated financial jargon
-    - Do NOT promise guaranteed returns
-    - Be realistic and conservative
-    - Assume the user is a beginner unless stated otherwise
-    - Focus on saving discipline, budgeting, and consistency
+    - Do NOT promise guaranteed results
+    - Do NOT use complex financial jargon
+    - Do NOT invent income or expenses not supported by transactions
+    - Be honest and realistic
     
     User goal explanation:
     "${explanation}"
     
-    Return the response in the following structured format:
+    User transactions (JSON):
+    ${JSON.stringify(transactions)}
     
-    Title:
-    (A short motivating title for the goal)
+    Return ONLY valid JSON in the exact structure below.
+    Do NOT include explanations, markdown, or extra text. Just JSON
     
-    Goal Summary:
-    - Target amount:
-    - Current amount:
-    - Timeframe:
-    - Assumptions made (if any):
-    
-    Monthly Plan:
-    - Month 1:
-    - Month 2:
-    - Month 3:
-    (Continue until the goal timeframe ends)
-    
-    Savings Strategy:
-    - How much to save monthly
-    - Where to keep the money (e.g. savings account, low-risk options)
-    - What to avoid
-    
-    Progress Tracking:
-    - How progress should be measured
-    - What milestones to expect
-    - When to review or adjust the plan
-    
-    Motivation Tip:
-    (A short encouraging message to help the user stay consistent)
-    `;    
+    {
+      "goalSummary": {
+        "targetAmount": number,
+        "currentSavings": number,
+        "timeframeMonths": number,
+        "assumptions": string[]
+      },
+      "financialAnalysis": {
+        "averageMonthlyIncome": number,
+        "averageMonthlyExpenses": number,
+        "averageMonthlySavings": number,
+        "spendingInsights": string[]
+      },
+      "feasibility": {
+        "isAchievable": boolean,
+        "reason": string,
+        "suggestedAdjustments": string[]
+      },
+      "monthlyPlan": [
+        {
+          "month": number,
+          "amountToSave": number,
+          "recommendedActions": string[]
+        }
+      ],
+      "progressTracking": {
+        "monthlyTarget": number,
+        "milestones": [
+          { "month": number, "expectedSavings": number }
+        ],
+        "reviewFrequency": "monthly"
+      },
+      "motivationTip": string
+    }
+    `;
+      
 
     try {
         const response = await groq.chat.completions.create({
