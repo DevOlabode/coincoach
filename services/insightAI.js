@@ -123,7 +123,6 @@ RULES
 ────────────────────────────────────────
 TRANSACTIONS INPUT
 ────────────────────────────────────────
-
 ${JSON.stringify(transactions)}
 `;
 

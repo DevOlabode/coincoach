@@ -6,5 +6,4 @@ module.exports.index = (req, res)=>{
 
 module.exports.goals = async(req, res)=>{
     const {explain} = req.body;
-    res.send(explain);
 };
