@@ -1,41 +1,114 @@
-const mongoose = require('mongoose');
-const { Schema } = mongoose;
+const mongoose = require("mongoose");
+const {Schema} = mongoose;
 
-const GoalSchema = new Schema({
-    userId : {
-        type : Schema.Types.ObjectId,
-        ref : 'User',
-        required : true
+const MonthlyPlanSchema = new Schema({
+  month: {
+    type: Number,
+    required: true
+  },
+  amountToSave: {
+    type: Number,
+    required: true
+  },
+  recommendedActions: [String]
+});
+
+const MilestoneSchema = new Schema({
+  month: {
+    type: Number,
+    required: true
+  },
+  expectedSavings: {
+    type: Number,
+    required: true
+  }
+});
+
+const GoalSchema = new Schema(
+  {
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true
     },
-    title : {
-        type : String,
-        required : true,
-        trim : true
+
+    // ===== Goal Summary =====
+    goalSummary: {
+      targetAmount: {
+        type: Number,
+        required: true
+      },
+      currentSavings: {
+        type: Number,
+        required: true
+      },
+      timeframeMonths: {
+        type: Number,
+        required: true
+      },
+      assumptions: [String]
     },
-    targetAmount : {
-        type : Number,
-        required : true,
-        min : 0
+
+    // ===== Financial Analysis =====
+    financialAnalysis: {
+      averageMonthlyIncome: Number,
+      averageMonthlyExpenses: Number,
+      averageMonthlySavings: Number,
+      spendingInsights: [String]
     },
-    currentAmount : {
-        type : Number,
-        default : 0,
-        min : 0
+
+    // ===== Feasibility =====
+    feasibility: {
+      isAchievable: {
+        type: Boolean,
+        required: true
+      },
+      reason: String,
+      suggestedAdjustments: [String]
     },
-    completed :  {
-        type : Boolean,
-        required : true,
-        default : false
+
+    // ===== Monthly Plan =====
+    monthlyPlan: [MonthlyPlanSchema],
+
+    // ===== Progress Tracking =====
+    progressTracking: {
+      monthlyTarget: Number,
+      milestones: [MilestoneSchema],
+      reviewFrequency: {
+        type: String,
+        enum: ["weekly", "monthly", "quarterly"],
+        default: "monthly"
+      }
+    },
+
+    // ===== User Progress (Dynamic) =====
+    progress: {
+      totalSavedSoFar: {
+        type: Number,
+        default: 0
+      },
+      currentMonth: {
+        type: Number,
+        default: 1
+      },
+      completionPercentage: {
+        type: Number,
+        default: 0
+      },
+      lastReviewedAt: Date
+    },
+
+    motivationTip: {
+      type: String
+    },
+
+    status: {
+      type: String,
+      enum: ["active", "completed", "paused"],
+      default: "active"
     }
-},{timestamps : true});
+  },
+  { timestamps: true }
+);
 
-GoalSchema.virtual("progress").get(function () {
-    if (!this.targetAmount || this.targetAmount === 0) return 0;
-    return (this.currentAmount / this.targetAmount) * 100;
-  });
-  
-GoalSchema.set("toJSON", { virtuals: true });
-GoalSchema.set("toObject", { virtuals: true });
-  
 module.exports = mongoose.model("Goal", GoalSchema);
-  
