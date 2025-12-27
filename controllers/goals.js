@@ -26,7 +26,7 @@ module.exports.goals = async (req, res) => {
 
   const normalizedGoal = {
     user: req.user._id,
-
+    title : aiResult.title,
     goalSummary: {
       targetAmount: aiResult.goalSummary.targetAmount,
       currentSavings: aiResult.goalSummary.currentSavings,
@@ -72,5 +72,20 @@ module.exports.goals = async (req, res) => {
 
 module.exports.show = async(req, res)=>{
     const goal = await Goals.findById(req.params.id);
+    console.log(goal)
+    if (!goal) {
+        req.flash('error', 'Goal not found');
+        return res.redirect('/goals');
+    };
     res.render('goals/show', {goal})
+};
+
+module.exports.deleteGoal = async(req, res)=>{
+    const goal = await Goals.findByIdAndDelete(req.params.id);
+    if (!goal) {
+        req.flash('error', 'Goal not found');
+        return res.redirect('/goals');
+    };
+    req.flash('success',`Deleted the ${goal.title}`)
+    res.redirect('/goals')
 }

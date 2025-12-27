@@ -17,6 +17,7 @@ const prompt = `
     Your responsibilities:
     - Clearly understand the user's goal
     - Extract or reasonably infer:
+    - A good title for the goal
     - targetAmount
     - currentSavings
     - timeframeMonths
@@ -46,6 +47,7 @@ const prompt = `
     Do NOT include any explanations, markdown, or extra text outside the JSON.
 
     {
+    "title" : String,
     "goalSummary": {
         "targetAmount": number,
         "currentSavings": number,

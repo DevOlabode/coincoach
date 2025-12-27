@@ -31,7 +31,10 @@ const GoalSchema = new Schema(
       ref: "User",
       required: true
     },
-
+    title :{
+        type : String,
+        required : true,
+    },
     // ===== Goal Summary =====
     goalSummary: {
       targetAmount: {
