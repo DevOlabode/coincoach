@@ -8,7 +8,7 @@ const catchAsync = require('../utils/catchAsync')
 
 router.use(isLoggedIn);
 
-router.get('/',controller.index);
+router.get('/', catchAsync(controller.index));
 
 router.post('/', catchAsync(controller.goals));
 
