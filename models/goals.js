@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
-const {Schema} = mongoose;
+const Schema = mongoose.Schema;
 
-const MonthlyPlanSchema = new Schema({
-  month: {
+const PlanStepSchema = new Schema({
+  periodNumber: {
     type: Number,
     required: true
   },
@@ -14,7 +14,7 @@ const MonthlyPlanSchema = new Schema({
 });
 
 const MilestoneSchema = new Schema({
-  month: {
+  periodNumber: {
     type: Number,
     required: true
   },
@@ -42,18 +42,25 @@ const GoalSchema = new Schema(
         type: Number,
         required: true
       },
-      timeframeMonths: {
+
+      timeframeValue: {
         type: Number,
         required: true
       },
+      timeframeUnit: {
+        type: String,
+        enum: ["week", "month", "quarter"],
+        required: true
+      },
+
       assumptions: [String]
     },
 
     // ===== Financial Analysis =====
     financialAnalysis: {
-      averageMonthlyIncome: Number,
-      averageMonthlyExpenses: Number,
-      averageMonthlySavings: Number,
+      averageIncomePerPeriod: Number,
+      averageExpensesPerPeriod: Number,
+      averageSavingsPerPeriod: Number,
       spendingInsights: [String]
     },
 
@@ -67,27 +74,27 @@ const GoalSchema = new Schema(
       suggestedAdjustments: [String]
     },
 
-    // ===== Monthly Plan =====
-    monthlyPlan: [MonthlyPlanSchema],
+    // ===== Plan (Weekly / Monthly / Quarterly) =====
+    plan: [PlanStepSchema],
 
     // ===== Progress Tracking =====
     progressTracking: {
-      monthlyTarget: Number,
+      targetPerPeriod: Number,
       milestones: [MilestoneSchema],
       reviewFrequency: {
         type: String,
-        enum: ["weekly", "monthly", "quarterly"],
+        enum: ["weekly", "monthly"],
         default: "monthly"
       }
     },
 
-    // ===== User Progress (Dynamic) =====
+    // ===== User Progress =====
     progress: {
       totalSavedSoFar: {
         type: Number,
         default: 0
       },
-      currentMonth: {
+      currentPeriod: {
         type: Number,
         default: 1
       },
@@ -98,9 +105,7 @@ const GoalSchema = new Schema(
       lastReviewedAt: Date
     },
 
-    motivationTip: {
-      type: String
-    },
+    motivationTip: String,
 
     status: {
       type: String,
