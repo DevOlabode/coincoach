@@ -1,14 +1,38 @@
-<%- layout('./layout/boilerplate.ejs') %>
-<h3>Explain your financial goals in simple terms</h3>
+<%- layout('./layout/boilerplate') %>
 
-<p>Include the target amount you are trying to reach, 
-    the current amount you have in savings or deposit for this goal and 
-    we will give you a plan to reach this goal 
-    and also show you how are you progressing towards this goal
+<h2>Your Financial Goals</h2>
 
-</p>
+<a href="#createGoal" class="btn btn-primary mb-3">Create New Goal</a>
 
-<form action="/goals" method="post" class="needs-validation" novalidate>
-    <textarea name="explanation" id="explanation" placeholder="explain your financial goal to the best of your terms" cols="50" rows="12"></textarea>
-    <button class="btn btn-primary">Enter</button>
+<% if (goals.length === 0) { %>
+  <p>No goals yet. Start by creating one below.</p>
+<% } %>
+
+<% goals.forEach(goal => { %>
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5>Target: $<%= goal.goalSummary.targetAmount %></h5>
+      <p>
+        Progress:
+        <strong><%= goal.progress.completionPercentage.toFixed(1) %>%</strong>
+      </p>
+      <p>Status: <%= goal.status %></p>
+      <small><%= goal.motivationTip %></small>
+    </div>
+  </div>
+<% }) %>
+
+<hr>
+
+<h3 id="createGoal">Explain your financial goal</h3>
+
+<form action="/goals" method="POST">
+  <textarea
+    name="explanation"
+    class="form-control mb-3"
+    rows="6"
+    placeholder="Example: I want to save $500 in 4 weeks for an emergency fund..."
+    required
+  ></textarea>
+  <button class="btn btn-success">Create Goal</button>
 </form>
