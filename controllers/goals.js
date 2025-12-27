@@ -27,6 +27,7 @@ module.exports.goals = async (req, res) => {
   const normalizedGoal = {
     user: req.user._id,
     title : aiResult.title,
+    userInput : explanation,
     goalSummary: {
       targetAmount: aiResult.goalSummary.targetAmount,
       currentSavings: aiResult.goalSummary.currentSavings,
@@ -72,7 +73,6 @@ module.exports.goals = async (req, res) => {
 
 module.exports.show = async(req, res)=>{
     const goal = await Goals.findById(req.params.id);
-    console.log(goal)
     if (!goal) {
         req.flash('error', 'Goal not found');
         return res.redirect('/goals');

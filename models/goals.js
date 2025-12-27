@@ -35,6 +35,10 @@ const GoalSchema = new Schema(
         type : String,
         required : true,
     },
+    userInput : {
+        type : String,
+        required : true
+    },
     // ===== Goal Summary =====
     goalSummary: {
       targetAmount: {
