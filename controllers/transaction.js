@@ -5,6 +5,7 @@ const fs = require('fs');
 const XLSX = require('xlsx');
 
 const generateInsights = require('../utils/generateInsights');
+const updateGoalProgressFromTransaction = require('../services/updateGoalProgress')
 
 module.exports.newTransactionForm = (req, res) => {
     res.render('transactions/new');

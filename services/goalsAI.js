@@ -27,6 +27,7 @@ const prompt = `
     - spending patterns
     - realistic savings capacity
     - Build a monthly savings plan based strictly on real cash flow
+    - Extend the plan throughout the timeframe the user gave for the goal to be acheived
     - Identify if the goal is unrealistic and explain why
     - Suggest practical adjustments when needed
     - Keep all advice simple, conservative, and beginner-friendly

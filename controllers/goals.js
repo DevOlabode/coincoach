@@ -68,7 +68,7 @@ module.exports.goals = async (req, res) => {
   await goal.save();
 
   req.flash('success', 'Goal created successfully!');
-  res.redirect('/goals');
+  res.redirect(`/goals/${goal._id}`);
 };
 
 module.exports.show = async(req, res)=>{
