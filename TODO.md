@@ -17,7 +17,7 @@ Potential Look alike
 PAGES TO ADD TO THE APPLICATION.
 - DASHBOARD
 - INSIGHTS
-- COACH
+- COACH (CHAT)
 - PROFILE
 - HELP (Help users understand the app easier)
 
