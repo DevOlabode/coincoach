@@ -1,331 +1,242 @@
 const Transaction = require('../models/transactions');
+const Goals = require('../models/goals');
 
 const csv = require('csv-parser');
 const fs = require('fs');
 const XLSX = require('xlsx');
 
 const generateInsights = require('../utils/generateInsights');
-const updateGoalProgressFromTransaction = require('../services/updateGoalProgress')
+const updateGoalProgressFromTransaction = require('../services/updateGoalProgress');
 
 module.exports.newTransactionForm = (req, res) => {
     res.render('transactions/new');
 };
 
 module.exports.createTransaction = async (req, res) => {
-    const { amount, type, date, description, category, name,recurrence, recurring, currency } = req.body;
+    const { amount, type, date, description, category, name, recurrence, recurring, currency } = req.body;
+
     const transaction = new Transaction({
         userId: req.user._id,
         amount,
         type,
         date,
         description,
-        category, 
+        category,
         name,
         recurring,
         recurrence,
         currency,
-        inputMethod : 'manual'
+        inputMethod: 'manual'
     });
+
     await transaction.save();
 
     await updateGoalProgressFromTransaction(transaction);
 
-    // Generate insights in the background (don't wait for it)
-    generateInsights(req.user._id).catch(err => {
-        console.error('Failed to generate insights after transaction creation:', err);
-    });
+    generateInsights(req.user._id).catch(console.error);
 
-    req.flash('success', 'Transaction recorded successfully! Insights are being generated.');
-    res.redirect(`/transactions/${transaction._id}`); 
+    req.flash('success', 'Transaction recorded successfully!');
+    res.redirect(`/transactions/${transaction._id}`);
 };
 
 module.exports.getTransactions = async (req, res) => {
-    const transactions = await Transaction.find({ userId : req.user._id });
-    const count = await Transaction.countDocuments({userId : req.user._id});
+    const transactions = await Transaction.find({ userId: req.user._id });
+    const count = await Transaction.countDocuments({ userId: req.user._id });
     res.render('transactions/index', { transactions, count });
 };
 
-module.exports.getTransactionById = async (req, res) =>{
-    const { id } = req.params;
+module.exports.getTransactionById = async (req, res) => {
+    const transaction = await Transaction.findById(req.params.id);
 
-    const transaction = await Transaction.findById(id);
-    
-
-    if(!transaction){
+    if (!transaction || !transaction.userId.equals(req.user._id)) {
         req.flash('error', 'Transaction not found');
-        return res.redirect('/transactions');
-    }
-
-    if(!transaction.userId.equals(req.user._id)){
-        req.flash('error', 'You do not have permission to view this transaction');
         return res.redirect('/transactions');
     }
 
     res.render('transactions/show', { transaction });
 };
 
-module.exports.deleteTransaction = async (req, res) =>{
-    const { id } = req.params;
-    await Transaction.findByIdAndDelete(id);
-    req.flash('success', 'Transaction deleted successfully');
-    res.redirect('/transactions');
-};
+module.exports.deleteTransaction = async (req, res) => {
+    const transaction = await Transaction.findById(req.params.id);
 
-module.exports.editTransactionsForm = async(req, res) =>{
-    const { id } = req.params;
-    const transaction = await Transaction.findById(id);
-
-    if(!transaction){
+    if (!transaction || !transaction.userId.equals(req.user._id)) {
         req.flash('error', 'Transaction not found');
         return res.redirect('/transactions');
     }
 
-    if(!transaction.userId.equals(req.user._id)){
-        req.flash('error', 'You do not have permission to edit this transaction');
+    await Transaction.findByIdAndDelete(req.params.id);
+
+    await Goals.updateMany(
+        { user: req.user._id },
+        { $set: { 'progress.totalSavedSoFar': 0, 'progress.completionPercentage': 0 } }
+    );
+
+    req.flash('success', 'Transaction deleted successfully');
+    res.redirect('/transactions');
+};
+
+module.exports.editTransactionsForm = async (req, res) => {
+    const transaction = await Transaction.findById(req.params.id);
+
+    if (!transaction || !transaction.userId.equals(req.user._id)) {
+        req.flash('error', 'Transaction not found');
         return res.redirect('/transactions');
     }
+
     res.render('transactions/edit', { transaction });
 };
 
-
-module.exports.updateTransaction = async(req, res) =>{
-    const { id } = req.params;
+module.exports.updateTransaction = async (req, res) => {
     const { amount, type, date, description, category, name } = req.body;
-    const transaction = await Transaction.findByIdAndUpdate(id, {
-        amount,
-        type,
-        date,
-        description,
-        category,
-        name
-    }, { new: true });
+
+    const transaction = await Transaction.findByIdAndUpdate(
+        req.params.id,
+        { amount, type, date, description, category, name },
+        { new: true }
+    );
+
+    // 🔥 Update goal progress
+    await updateGoalProgressFromTransaction(transaction);
 
     req.flash('success', 'Transaction updated successfully');
     res.redirect(`/transactions/${transaction._id}`);
 };
 
+/* ======================
+   BULK UPLOAD (CSV / XLSX)
+====================== */
 
-// Helper function to parse dates from Excel
 function parseExcelDate(value) {
     if (!value) return null;
-    
-    // If it's already a Date object
-    if (value instanceof Date) {
-        return value;
-    }
-    
-    // If it's an Excel serial number (numeric)
+    if (value instanceof Date) return value;
+
     if (typeof value === 'number') {
         const excelEpoch = new Date(1899, 11, 30);
-        const date = new Date(excelEpoch.getTime() + value * 86400000);
-        return date;
+        return new Date(excelEpoch.getTime() + value * 86400000);
     }
-    
 
-    if (typeof value === 'string') {
-
-        const parts = value.trim().split('/');
-        if (parts.length === 3) {
-            const month = parseInt(parts[0]) - 1;
-            const day = parseInt(parts[1]);
-            const year = parseInt(parts[2]);
-            const date = new Date(year, month, day);
-            if (!isNaN(date.getTime())) {
-                return date;
-            }
-        }
-        
-        const date = new Date(value);
-        if (!isNaN(date.getTime())) {
-            return date;
-        }
-    }
-    
-    return null;
-};
+    const parsed = new Date(value);
+    return isNaN(parsed.getTime()) ? null : parsed;
+}
 
 module.exports.bulkUploadForm = (req, res) => {
     res.render('transactions/bulkUpload');
 };
 
-module.exports.bulkUpload = async(req, res) => {
+module.exports.bulkUpload = async (req, res) => {
     const results = [];
     const errors = [];
     const filePath = req.file.path;
-    const fileExt = req.file.originalname.split('.').pop().toLowerCase();
-    
+    const ext = req.file.originalname.split('.').pop().toLowerCase();
+
+    let data = [];
+
     try {
-        let data = [];
-        
-        if (fileExt === 'csv') {
+        if (ext === 'csv') {
             await new Promise((resolve, reject) => {
                 fs.createReadStream(filePath)
                     .pipe(csv())
-                    .on('data', (row) => data.push(row))
+                    .on('data', row => data.push(row))
                     .on('end', resolve)
                     .on('error', reject);
             });
-        } else if (fileExt === 'xlsx' || fileExt === 'xls') {
-            const workbook = XLSX.readFile(filePath);
-            const sheetName = workbook.SheetNames[0];
-            const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
-            
-            data = rawData.slice(1).map(row => ({
-                date: row[0],
-                type: row[1],
-                category: row[2],
-                amount: row[3],
-                description: row[4],
-                name: row[5],
-                recurring: row[6],
-                recurrence: row[7],
-                currency: row[8]
-            }));
         } else {
-            throw new Error('Unsupported file format. Please upload CSV or Excel files.');
+            const workbook = XLSX.readFile(filePath);
+            const sheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            data = rows.slice(1).map(r => ({
+                date: r[0],
+                type: r[1],
+                category: r[2],
+                amount: r[3],
+                description: r[4],
+                name: r[5],
+                recurring: r[6],
+                recurrence: r[7],
+                currency: r[8]
+            }));
         }
-        
+
         for (let i = 0; i < data.length; i++) {
-            try {
-                const row = data[i];
-                
-                const parsedDate = parseExcelDate(row.date);
-                
-                const transaction = {
-                    userId: req.user._id,
-                    date: parsedDate,
-                    type: (row.type || '').toLowerCase().trim(),
-                    category: (row.category || '').trim(),
-                    amount: parseFloat(row.amount),
-                    description: (row.description || '').trim(),
-                    name: row.name || `${row.category || 'Transaction'} - ${row.amount || 0}`,
-                    recurring: row.recurring ? String(row.recurring).toLowerCase().trim() === 'true' : false,
-                    recurrence: row.recurrence ? row.recurrence.toLowerCase().trim() : undefined,
-                    currency: row.currency ? row.currency.trim() : 'CAD',
-                    inputMethod : 'CSV'
-                };
-                
-                if (!transaction.date || isNaN(transaction.date.getTime())) {
-                    errors.push(`Row ${i + 2}: Invalid date (got: "${row.date}")`);
-                    continue;
-                }
-                
-                if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
-                    errors.push(`Row ${i + 2}: Missing type or amount`);
-                    continue;
-                }
-                
-                if (transaction.type !== 'income' && transaction.type !== 'expense') {
-                    errors.push(`Row ${i + 2}: Type must be 'income' or 'expense', got '${transaction.type}'`);
-                    continue;
-                }
-                
-                await Transaction.create(transaction);
-                results.push(transaction);
-                
-            } catch (err) {
-                errors.push(`Row ${i + 2}: ${err.message}`);
-            }
-        }
-        
-        fs.unlinkSync(filePath);
-        
-        // Generate insights after successful bulk upload
-        if (results.length > 0) {
-            generateInsights(req.user._id).catch(err => {
-                console.error('Failed to generate insights after bulk upload:', err);
+            const row = data[i];
+
+            const transaction = new Transaction({
+                userId: req.user._id,
+                date: parseExcelDate(row.date),
+                type: String(row.type || '').toLowerCase(),
+                category: row.category,
+                amount: Number(row.amount),
+                description: row.description,
+                name: row.name,
+                recurring: row.recurring === true || row.recurring === 'true',
+                recurrence: row.recurrence,
+                currency: row.currency || 'CAD',
+                inputMethod: 'CSV'
             });
+
+            if (!transaction.date || isNaN(transaction.amount)) {
+                errors.push(`Row ${i + 2}: Invalid data`);
+                continue;
+            }
+
+            await transaction.save();
+            await updateGoalProgressFromTransaction(transaction);
+
+            results.push(transaction);
         }
-        
-        req.flash('success', `Imported ${results.length} transactions successfully. Insights are being generated.`);
-        if (errors.length > 0) {
-            req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
-        }
+
+        generateInsights(req.user._id).catch(console.error);
+
+        req.flash('success', `Imported ${results.length} transactions`);
+        if (errors.length) req.flash('error', errors.slice(0, 3).join(', '));
+
         res.redirect('/transactions');
-        
     } catch (err) {
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
-        }
-        req.flash('error', `Upload failed: ${err.message}`);
+        req.flash('error', err.message);
         res.redirect('/transactions/bulk-upload');
+    } finally {
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     }
 };
 
+/* ======================
+   BULK UPLOAD JSON
+====================== */
+
 module.exports.bulkUploadJSONFrontend = (req, res) => {
     res.render('transactions/bulkUploadJSON');
-}
+};
 
 module.exports.bulkUploadJSON = async (req, res) => {
     const { transactions } = req.body;
-    const errors = [];
-    const results = [];
 
-    // Validate JSON structure
-    if (!transactions || !Array.isArray(transactions)) {
-        req.flash('error', 'Invalid JSON format. Expected { "transactions": [...] }');
+    if (!Array.isArray(transactions)) {
+        req.flash('error', 'Invalid JSON format');
         return res.redirect('/transactions/bulk-upload-json');
     }
 
-    for (let i = 0; i < transactions.length; i++) {
-        try {
-            const t = transactions[i];
-
-            const parsedDate = parseExcelDate(t.date);
-
-            const transaction = {
-                userId: req.user._id,
-                date: parsedDate,
-                type: (t.type || '').toLowerCase().trim(),
-                category: (t.category || '').trim(),
-                amount: parseFloat(t.amount),
-                description: (t.description || '').trim(),
-                name: t.name || `${t.category || 'Transaction'} - ${t.amount || 0}`,
-                recurring: t.recurring ? String(t.recurring).toLowerCase().trim() === 'true' : false,
-                recurrence: t.recurrence ? t.recurrence.toLowerCase().trim() : undefined,
-                currency: t.currency ? t.currency.trim() : 'CAD',
-                inputMethod: 'JSON'
-            };
-
-            // Validate date
-            if (!transaction.date || isNaN(transaction.date.getTime())) {
-                errors.push(`Transaction ${i + 1}: Invalid date`);
-                continue;
-            }
-
-            // Validate type + amount
-            if (!transaction.type || !transaction.amount || isNaN(transaction.amount)) {
-                errors.push(`Transaction ${i + 1}: Missing type or amount`);
-                continue;
-            }
-
-            if (transaction.type !== 'income' && transaction.type !== 'expense') {
-                errors.push(`Transaction ${i + 1}: Type must be 'income' or 'expense'`);
-                continue;
-            }
-
-            await Transaction.create(transaction);
-            results.push(transaction);
-
-        } catch (err) {
-            errors.push(`Transaction ${i + 1}: ${err.message}`);
-        }
-    }
-
-    // Handle errors
-    if (errors.length > 0) {
-        req.flash('error', `${errors.length} errors: ${errors.slice(0, 3).join(', ')}`);
-        return res.redirect('/transactions/bulk-upload-json');
-    }
-
-    // Generate insights after successful JSON upload
-    if (results.length > 0) {
-        generateInsights(req.user._id).catch(err => {
-            console.error('Failed to generate insights after JSON upload:', err);
+    for (const t of transactions) {
+        const transaction = new Transaction({
+            userId: req.user._id,
+            date: parseExcelDate(t.date),
+            type: t.type,
+            category: t.category,
+            amount: Number(t.amount),
+            description: t.description,
+            name: t.name,
+            recurring: t.recurring,
+            recurrence: t.recurrence,
+            currency: t.currency || 'CAD',
+            inputMethod: 'JSON'
         });
+
+        await transaction.save();
+        await updateGoalProgressFromTransaction(transaction);
     }
 
-    // Success
-    req.flash('success', `Imported ${results.length} transactions successfully. Insights are being generated.`);
-    return res.redirect('/transactions');
+    generateInsights(req.user._id).catch(console.error);
+
+    req.flash('success', 'Transactions imported successfully');
+    res.redirect('/transactions');
 };
