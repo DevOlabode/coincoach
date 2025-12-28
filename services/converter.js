@@ -1,1 +1,1 @@
-const Transactions = require('../models/transactions')
+const Transactions = require('../models/transactions');
