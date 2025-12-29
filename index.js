@@ -95,6 +95,7 @@ const insightsRoutes = require('./routes/insights');
 const exportRoutes = require('./routes/export');
 const billRoutes = require('./routes/bill');
 const goalsRoutes = require('./routes/goals');
+const conversionRoutes = require('./routes/conversion')
 
 // Add after existing route uses
 app.use('/chat', chatSessionRoutes);
@@ -107,7 +108,8 @@ app.use('/user', userRoutes);
 app.use('/insights', insightsRoutes);
 app.use('/export', exportRoutes);
 app.use('/', billRoutes);
-app.use('/goals', goalsRoutes)
+app.use('/goals', goalsRoutes);
+app.use('/conversion', conversionRoutes);
 
 // Add after database connection
 initializeBillScheduler();
