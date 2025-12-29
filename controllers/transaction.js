@@ -7,6 +7,7 @@ const XLSX = require('xlsx');
 
 const generateInsights = require('../utils/generateInsights');
 const updateGoalProgressFromTransaction = require('../services/updateGoalProgress');
+const conversion = require('../services/conversion')
 
 module.exports.newTransactionForm = (req, res) => {
     res.render('transactions/new');
@@ -14,6 +15,8 @@ module.exports.newTransactionForm = (req, res) => {
 
 module.exports.createTransaction = async (req, res) => {
     const { amount, type, date, description, category, name, recurrence, recurring, currency } = req.body;
+    const conversionRate = await conversion(currency, req.user.preferredCurrency);
+    console.log(conversionRate);
 
     const transaction = new Transaction({
         userId: req.user._id,
