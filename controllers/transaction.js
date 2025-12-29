@@ -91,15 +91,17 @@ module.exports.editTransactionsForm = async (req, res) => {
 };
 
 module.exports.updateTransaction = async (req, res) => {
-    const { amount, type, date, description, category, name } = req.body;
+    const { amount, type, date, description, category, name, currency } = req.body;
+    const conversionRate = await conversion(currency, req.user.preferredCurrency);
+    const convertedAmount = Math.abs(amount * conversionRate);
 
     const transaction = await Transaction.findByIdAndUpdate(
         req.params.id,
-        { amount, type, date, description, category, name },
+        { amount, type, date, description, category, name, convertedAmount, currency },
         { new: true }
     );
 
-    // 🔥 Update goal progress
+    // Update goal progress
     await updateGoalProgressFromTransaction(transaction);
 
     req.flash('success', 'Transaction updated successfully');

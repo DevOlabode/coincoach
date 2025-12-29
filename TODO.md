@@ -24,14 +24,8 @@ PAGES TO ADD TO THE APPLICATION.
 TODO : 
 - write the INSIGHT frontend.
 
-
-future plan : 
-- Add currency conversion to all the transactions. From the currency in the transactions vs the preferred transaction in the users profile.
-
-
 today TODO :
 - Add the currency feature
-- Add the conversion to each transactions
 
 
 Update On the Goal Feature:
