@@ -7,7 +7,7 @@
 
   <style>
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: system-ui, sans-serif;
       background: #0f172a;
       color: #e5e7eb;
       display: flex;
@@ -22,13 +22,13 @@
       padding: 2rem;
       border-radius: 12px;
       width: 100%;
-      max-width: 420px;
+      max-width: 460px;
       box-shadow: 0 10px 30px rgba(0,0,0,0.4);
     }
 
     h1 {
       margin-bottom: 0.5rem;
-      font-size: 1.5rem;
+      font-size: 1.6rem;
     }
 
     .subtitle {
@@ -43,7 +43,7 @@
       margin-bottom: 0.25rem;
     }
 
-    input, select {
+    input, button {
       width: 100%;
       padding: 0.65rem;
       border-radius: 8px;
@@ -54,22 +54,45 @@
     }
 
     button {
-      width: 100%;
-      padding: 0.75rem;
       background: #2563eb;
-      color: white;
       border: none;
-      border-radius: 8px;
-      cursor: pointer;
       font-weight: 600;
+      cursor: pointer;
     }
 
     button:hover {
       background: #1d4ed8;
     }
 
+    .dropdown {
+      position: relative;
+      margin-bottom: 1rem;
+    }
+
+    .dropdown-list {
+      position: absolute;
+      width: 100%;
+      max-height: 180px;
+      overflow-y: auto;
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      display: none;
+      z-index: 10;
+    }
+
+    .dropdown-item {
+      padding: 0.5rem;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .dropdown-item:hover {
+      background: #1e293b;
+    }
+
     .result {
-      margin-top: 1.25rem;
+      margin-top: 1rem;
       padding: 1rem;
       background: #020617;
       border: 1px solid #1e293b;
@@ -80,91 +103,122 @@
     .rate {
       font-size: 0.8rem;
       color: #9ca3af;
-      margin-top: 0.25rem;
     }
   </style>
 </head>
 
 <body>
-  <div class="converter">
-    <h1>Currency Converter</h1>
-    <p class="subtitle">
-      Convert between currencies using live exchange rates.
-    </p>
+<div class="converter">
+  <h1>Currency Converter</h1>
+  <p class="subtitle">Convert between global currencies using live exchange rates.</p>
 
-    <form id="converterForm">
-      <label for="amount">Amount</label>
-      <input
-        id="amount"
-        type="number"
-        step="0.01"
-        name="amount"
-        placeholder="Enter amount"
-        required
-      />
+  <form id="converterForm">
+    <label>Amount</label>
+    <input type="number" step="0.01" name="amount" required />
 
-      <label for="fromCurrency">From</label>
-      <select id="fromCurrency" name="fromCurrency">
-        <option value="USD">USD</option>
-        <option value="CAD">CAD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="NGN">NGN</option>
-      </select>
-
-      <label for="toCurrency">To</label>
-      <select id="toCurrency" name="toCurrency">
-        <option value="USD">USD</option>
-        <option value="CAD">CAD</option>
-        <option value="EUR">EUR</option>
-        <option value="GBP">GBP</option>
-        <option value="NGN">NGN</option>
-      </select>
-
-      <button type="submit">Convert</button>
-    </form>
-
-    <div class="result" id="resultBox">
-      <strong id="convertedAmount"></strong>
-      <div class="rate" id="exchangeRate"></div>
+    <label>From</label>
+    <div class="dropdown">
+      <input type="text" id="fromInput" placeholder="Search currency..." autocomplete="off" />
+      <div class="dropdown-list" id="fromList"></div>
     </div>
+
+    <label>To</label>
+    <div class="dropdown">
+      <input type="text" id="toInput" placeholder="Search currency..." autocomplete="off" />
+      <div class="dropdown-list" id="toList"></div>
+    </div>
+
+    <input type="hidden" name="fromCurrency" />
+    <input type="hidden" name="toCurrency" />
+
+    <button type="submit">Convert</button>
+  </form>
+
+  <div class="result" id="resultBox">
+    <strong id="convertedAmount"></strong>
+    <div class="rate" id="exchangeRate"></div>
   </div>
+</div>
 
-  <script>
-    const form = document.getElementById("converterForm");
-    const resultBox = document.getElementById("resultBox");
-    const convertedAmountEl = document.getElementById("convertedAmount");
-    const exchangeRateEl = document.getElementById("exchangeRate");
+<script>
+  const currencies = [
+    { code: "USD", name: "United States Dollar", flag: "🇺🇸" },
+    { code: "CAD", name: "Canadian Dollar", flag: "🇨🇦" },
+    { code: "EUR", name: "Euro", flag: "🇪🇺" },
+    { code: "GBP", name: "British Pound", flag: "🇬🇧" },
+    { code: "NGN", name: "Nigerian Naira", flag: "🇳🇬" },
+    { code: "JPY", name: "Japanese Yen", flag: "🇯🇵" },
+    { code: "AUD", name: "Australian Dollar", flag: "🇦🇺" },
+    { code: "CNY", name: "Chinese Yuan", flag: "🇨🇳" },
+    { code: "INR", name: "Indian Rupee", flag: "🇮🇳" },
+    { code: "ZAR", name: "South African Rand", flag: "🇿🇦" },
+    { code: "BRL", name: "Brazilian Real", flag: "🇧🇷" },
+    { code: "CHF", name: "Swiss Franc", flag: "🇨🇭" },
+    { code: "AED", name: "UAE Dirham", flag: "🇦🇪" }
+  ];
 
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
+  function setupDropdown(input, list, hiddenInput) {
+    input.addEventListener("focus", () => renderList(""));
+    input.addEventListener("input", () => renderList(input.value));
 
-      const data = {
-        amount: form.amount.value,
-        fromCurrency: form.fromCurrency.value,
-        toCurrency: form.toCurrency.value
-      };
+    function renderList(search) {
+      list.innerHTML = "";
+      list.style.display = "block";
 
-      try {
-        const res = await fetch("/api/convert", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data)
+      currencies
+        .filter(c => c.code.toLowerCase().includes(search.toLowerCase()) ||
+                     c.name.toLowerCase().includes(search.toLowerCase()))
+        .forEach(c => {
+          const div = document.createElement("div");
+          div.className = "dropdown-item";
+          div.textContent = `${c.flag} ${c.code} — ${c.name}`;
+          div.onclick = () => {
+            input.value = `${c.code} — ${c.name}`;
+            hiddenInput.value = c.code;
+            list.style.display = "none";
+          };
+          list.appendChild(div);
         });
+    }
 
-        const result = await res.json();
-
-        resultBox.style.display = "block";
-        convertedAmountEl.textContent =
-          `${data.amount} ${data.fromCurrency} = ${result.convertedAmount} ${data.toCurrency}`;
-
-        exchangeRateEl.textContent =
-          `Exchange rate: 1 ${data.fromCurrency} = ${result.rate} ${data.toCurrency}`;
-
-      } catch (error) {
-        alert("Unable to convert currency. Please try again.");
-      }
+    document.addEventListener("click", e => {
+      if (!input.contains(e.target)) list.style.display = "none";
     });
-  </script>
+  }
+
+  const fromInput = document.getElementById("fromInput");
+  const toInput = document.getElementById("toInput");
+  const fromList = document.getElementById("fromList");
+  const toList = document.getElementById("toList");
+
+  setupDropdown(fromInput, fromList, document.querySelector("[name='fromCurrency']"));
+  setupDropdown(toInput, toList, document.querySelector("[name='toCurrency']"));
+
+  const form = document.getElementById("converterForm");
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const data = {
+      amount: form.amount.value,
+      fromCurrency: form.fromCurrency.value,
+      toCurrency: form.toCurrency.value
+    };
+
+    const res = await fetch("/api/convert", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    document.getElementById("resultBox").style.display = "block";
+    document.getElementById("convertedAmount").textContent =
+      `${data.amount} ${data.fromCurrency} = ${result.convertedAmount} ${data.toCurrency}`;
+    document.getElementById("exchangeRate").textContent =
+      `Rate: 1 ${data.fromCurrency} = ${result.rate} ${data.toCurrency}`;
+  });
+</script>
 </body>
 </html>
