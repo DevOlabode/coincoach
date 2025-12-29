@@ -16,7 +16,7 @@ module.exports.newTransactionForm = (req, res) => {
 module.exports.createTransaction = async (req, res) => {
     const { amount, type, date, description, category, name, recurrence, recurring, currency } = req.body;
     const conversionRate = await conversion(currency, req.user.preferredCurrency);
-    console.log(conversionRate);
+    const convertedAmount = Math.floor(amount * conversionRate);
 
     const transaction = new Transaction({
         userId: req.user._id,
@@ -29,6 +29,7 @@ module.exports.createTransaction = async (req, res) => {
         recurring,
         recurrence,
         currency,
+        convertedAmount,
         inputMethod: 'manual'
     });
 

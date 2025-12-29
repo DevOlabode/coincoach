@@ -18,6 +18,9 @@
     <label for="amount" class="form-label">Amount</label>
     <input type="number" class="form-control" name="amount" id="amount" placeholder="Amount In $" value="<%= transaction.amount %>" required>
 
+    <label for="currency" class="form-label">Currency</label>
+    <input type="text" class="form-control" name="currency" id="currency" placeholder="Currency" value="<%= transaction.currency %>" required>
+
     <label for="date" class="form-label">Date</label>
     <input type="date" class="form-control" name="date" id="date" value="<%= transaction.date %>" required>
 
