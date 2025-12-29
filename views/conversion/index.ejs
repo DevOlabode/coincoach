@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Currency Converter | CoinCoach</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f172a;
+      color: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .converter {
+      background: #020617;
+      padding: 2rem;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h1 {
+      margin-bottom: 0.5rem;
+      font-size: 1.5rem;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: #9ca3af;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 0.65rem;
+      border-radius: 8px;
+      border: 1px solid #1e293b;
+      margin-bottom: 1rem;
+      background: #020617;
+      color: #e5e7eb;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .result {
+      margin-top: 1.25rem;
+      padding: 1rem;
+      background: #020617;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      display: none;
+    }
+
+    .rate {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="converter">
+    <h1>Currency Converter</h1>
+    <p class="subtitle">
+      Convert between currencies using live exchange rates.
+    </p>
+
+    <form id="converterForm">
+      <label for="amount">Amount</label>
+      <input
+        id="amount"
+        type="number"
+        step="0.01"
+        name="amount"
+        placeholder="Enter amount"
+        required
+      />
+
+      <label for="fromCurrency">From</label>
+      <select id="fromCurrency" name="fromCurrency">
+        <option value="USD">USD</option>
+        <option value="CAD">CAD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="NGN">NGN</option>
+      </select>
+
+      <label for="toCurrency">To</label>
+      <select id="toCurrency" name="toCurrency">
+        <option value="USD">USD</option>
+        <option value="CAD">CAD</option>
+        <option value="EUR">EUR</option>
+        <option value="GBP">GBP</option>
+        <option value="NGN">NGN</option>
+      </select>
+
+      <button type="submit">Convert</button>
+    </form>
+
+    <div class="result" id="resultBox">
+      <strong id="convertedAmount"></strong>
+      <div class="rate" id="exchangeRate"></div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("converterForm");
+    const resultBox = document.getElementById("resultBox");
+    const convertedAmountEl = document.getElementById("convertedAmount");
+    const exchangeRateEl = document.getElementById("exchangeRate");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        amount: form.amount.value,
+        fromCurrency: form.fromCurrency.value,
+        toCurrency: form.toCurrency.value
+      };
+
+      try {
+        const res = await fetch("/api/convert", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+
+        resultBox.style.display = "block";
+        convertedAmountEl.textContent =
+          `${data.amount} ${data.fromCurrency} = ${result.convertedAmount} ${data.toCurrency}`;
+
+        exchangeRateEl.textContent =
+          `Exchange rate: 1 ${data.fromCurrency} = ${result.rate} ${data.toCurrency}`;
+
+      } catch (error) {
+        alert("Unable to convert currency. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
