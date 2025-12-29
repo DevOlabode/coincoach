@@ -32,3 +32,7 @@ future plan :
 today TODO :
 - Add the currency feature
 - Add the conversion to each transactions
+
+
+Update On the Goal Feature:
+- Update the show page along with the progress. 
