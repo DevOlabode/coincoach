@@ -1,6 +1,8 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <form action="/user/complete-profile" method="post">
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
     <label for="displayName" class="form-labe">Display Name</label>
     <input type="text" name="displayName" class="form-control" id="displayName"  required>
 

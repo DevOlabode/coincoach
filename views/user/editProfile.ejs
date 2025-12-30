@@ -1,8 +1,10 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <h2>Edit Profile</h2>
 
 <form action="/user/edit-profile" method="post" class="needs-validation" novalidate>
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
     <label for="fullName" class="form-labe">Full Name</label>
     <input type="text" name="fullName" id="fullName" class="form-control" value="<%= user.fullName %>" required>
     <label for="displayName" class="form-label">Display Name</label>

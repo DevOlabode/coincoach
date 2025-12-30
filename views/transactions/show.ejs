@@ -1,4 +1,4 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <h1><%= transaction.name %></h1>
 
@@ -17,6 +17,10 @@
 
 
 <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
+    <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+        <button class="btn btn-danger m-2">Delete Transaction</button>
+    </form>
     <button class="btn btn-danger m-2">Delete Transaction</button>
 </form>
 

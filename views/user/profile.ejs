@@ -1,10 +1,14 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <form action="/logout" method="post">
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
     <button class="btn btn-warning">Logout</button>
 </form>
 
 <form action="/user/<%= user.displayName %>/delete?_method=delete" method="post" onsubmit="return confirmDelete()">
+    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
     <button class="btn btn-danger">Delete Account</button>
 </form>
 

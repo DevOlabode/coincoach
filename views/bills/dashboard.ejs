@@ -1,4 +1,4 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <style>
   .bill-card {
@@ -106,6 +106,8 @@
     <div>
       <a href="/transactions" class="btn btn-secondary" style="margin-right: 0.5rem;">← Transactions</a>
       <form action="/bills/generate" method="POST" style="display: inline;">
+        <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
         <button type="submit" class="btn btn-primary">🔄 Regenerate Predictions</button>
       </form>
     </div>
@@ -171,6 +173,8 @@
             </div>
             
             <form action="/bills/<%= bill._id %>/dismiss" method="POST" style="margin: 0;">
+              <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
               <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss notification">
                 ✓ Dismiss
               </button>
@@ -225,6 +229,8 @@
             
             <% if (!bill.notified && bill.daysUntil <= 3) { %>
             <form action="/bills/<%= bill._id %>/dismiss" method="POST" style="margin: 0;">
+              <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+
               <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss notification">
                 ✓ Dismiss
               </button>

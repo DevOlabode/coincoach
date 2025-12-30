@@ -1,4 +1,4 @@
-<% layout('layout/boilerplate.ejs') %>
+<% layout('layout/boilerplate') %>
 
 <div style="max-width: 800px; margin: 0 auto;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
@@ -9,6 +9,11 @@
   <div class="card" style="background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
     <h4 style="margin-bottom: 1rem;">Upload CSV or Excel File</h4>
     <form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
+      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+            
+      <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
+        <button class="btn btn-danger m-2">Delete Transaction</button>
+    </form>
       <div class="mb-3">
         <label for="csvFile" class="form-label">Select File</label>
         <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv,.xlsx,.xls" required>
