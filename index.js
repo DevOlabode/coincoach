@@ -26,23 +26,28 @@ const { initializeBillScheduler } = require('./utils/billScheduler');
 const { sendDailyBillAlerts } = require('./services/billEmailService');
 
 
-// Add after body parsers
-app.use(xssProtection);
-app.use(sanitizeInputs);
-
 app.use(session(sessionConfig));
 app.use(flash());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add after body parsers
+app.use(xssProtection);
+app.use(sanitizeInputs);
+
 app.use(methodOverride('_method'));
 
 const csrf = require('csurf');
 const csrfProtection = csrf({ cookie: false });
 
-// Add after session middleware
-app.use(csrfProtection);
+app.use((req, res, next) => {
+    // Skip CSRF for API endpoints
+    if (req.path.startsWith('/api/')) {
+        return next();
+    }
+    csrfProtection(req, res, next);
+});
 
 // Add CSRF token to all responses
 app.use((req, res, next) => {
