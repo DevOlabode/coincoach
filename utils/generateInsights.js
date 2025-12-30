@@ -1,5 +1,6 @@
 const Transaction = require('../models/transactions');
 const Insight = require('../models/insights');
+const Goals = require('../models/goals')
 const transactionInsight = require('../services/insightAI');
 
 /**
@@ -13,12 +14,12 @@ async function generateInsights(userId) {
         .lean();
     
     const count = await Transaction.countDocuments({ userId });
-    
+    const goals = await Goals.find({user : userId});    
     if (count === 0) {
         throw new Error('No transactions found. Add some transactions to generate insights.');
     }
 
-    const insightData = await transactionInsight(transactions);
+    const insightData = await transactionInsight(transactions, goals);
     
     const lastTransactionAt = transactions[0]?.updatedAt || transactions[0]?.date || new Date();
 
@@ -58,4 +59,3 @@ async function generateInsights(userId) {
 }
 
 module.exports = generateInsights;
-

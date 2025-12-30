@@ -23,5 +23,9 @@ PAGES TO ADD TO THE APPLICATION.
 TODO : 
 - Change the content of the insight PDF download.
 
+current Doing :
+- Making the insight include the goals property
+
 Update On the Goal Feature:
-- Update the show page along with the progress. 
+- Make the show page of the goals update along with the progress of the users.
+- Let users be able to edit the status from active or paused etc

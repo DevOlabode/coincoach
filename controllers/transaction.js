@@ -15,6 +15,8 @@ module.exports.newTransactionForm = (req, res) => {
 
 module.exports.createTransaction = async (req, res) => {
     const { amount, type, date, description, category, name, recurrence, recurring, currency } = req.body;
+    const goals = await Goals.find({user : req.user._id})
+
     const conversionRate = await conversion(currency, req.user.preferredCurrency);
     const convertedAmount = Math.abs(amount * conversionRate);
 
@@ -37,7 +39,7 @@ module.exports.createTransaction = async (req, res) => {
 
     await updateGoalProgressFromTransaction(transaction);
 
-    generateInsights(req.user._id).catch(console.error);
+    await generateInsights(req.user._id).catch(console.error);
 
     req.flash('success', 'Transaction recorded successfully!');
     res.redirect(`/transactions/${transaction._id}`);
