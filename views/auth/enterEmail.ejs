@@ -1,8 +1,10 @@
 <% layout('layout/boilerplate.ejs') %>
+<h2>Forgot Password</h2>
+<h5>Enter Email</h5>
 
 <form action="/send-reset-code" method="post" class="needs-validation" no-validate>
-    <h2>Forgot Password</h2>
-    <h5>Enter Email</h5>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
     <label for="email" class="form-label">Email</label>
     <input type="email" class="form-control" name="email" id="email" required>
 
