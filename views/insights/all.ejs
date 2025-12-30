@@ -1,3 +1,198 @@
 <% layout('layout/boilerplate.ejs') %>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      padding: 2rem;
+      color: #222;
+    }
 
-<h3>Insight Page</h3>
+    h1, h2 {
+      margin-bottom: 0.5rem;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    section {
+      background: #fff;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    ul {
+      padding-left: 1.2rem;
+    }
+
+    li {
+      margin-bottom: 0.4rem;
+    }
+
+    .stat {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.3rem;
+    }
+
+    .badge {
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #fff;
+    }
+
+    .high { background: #e74c3c; }
+    .medium { background: #f39c12; }
+    .low { background: #2ecc71; }
+
+    .muted {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .actions {
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    a.button {
+      text-decoration: none;
+      padding: 0.6rem 1.2rem;
+      background: #4f46e5;
+      color: #fff;
+      border-radius: 6px;
+      margin: 0 0.5rem;
+      display: inline-block;
+    }
+  </style>
+</head>
+<body>
+
+<h1>📊 Financial Insights</h1>
+
+<% if (!insight) { %>
+  <section>
+    <p class="muted"><%= message || "No insights available yet." %></p>
+  </section>
+<% } else { %>
+
+  <!-- SUMMARY -->
+  <section>
+    <h2>Executive Summary</h2>
+    <p><%= insight.summary %></p>
+  </section>
+
+  <!-- INCOME VS EXPENSES -->
+  <section>
+    <h2>Income vs Expenses</h2>
+    <div class="stat"><strong>Total Income:</strong> $<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %></div>
+    <div class="stat"><strong>Total Expenses:</strong> $<%= insight.incomeVsExpenses.totalExpenses.toLocaleString() %></div>
+    <div class="stat"><strong>Net:</strong> $<%= insight.incomeVsExpenses.net.toLocaleString() %></div>
+  </section>
+
+  <!-- MONTHLY AVERAGES -->
+  <section>
+    <h2>Monthly Averages</h2>
+    <div class="stat">Income: $<%= insight.monthlyAverages.averageMonthlyIncome.toLocaleString() %></div>
+    <div class="stat">Spending: $<%= insight.monthlyAverages.averageMonthlySpend.toLocaleString() %></div>
+    <div class="stat">Net: $<%= insight.monthlyAverages.averageMonthlyNet.toLocaleString() %></div>
+  </section>
+
+  <!-- SPENDING EFFICIENCY -->
+  <section>
+    <h2>Spending Efficiency</h2>
+    <p><strong><%= insight.spendingEfficiencyScore %>/100</strong></p>
+  </section>
+
+  <!-- EXPENSE BREAKDOWN -->
+  <section>
+    <h2>Expense Breakdown</h2>
+    <ul>
+      <% insight.expenseBreakdown.categories.forEach(cat => { %>
+        <li><%= cat.category %>: $<%= cat.total.toLocaleString() %></li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- TOP EXPENSES -->
+  <section>
+    <h2>Top Expenses</h2>
+    <ul>
+      <% insight.topExpenses.forEach(exp => { %>
+        <li>
+          <strong><%= exp.name %></strong> —
+          $<%= exp.amount.toLocaleString() %>
+          (<%= exp.category %>)
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- INCOME SOURCES -->
+  <section>
+    <h2>Income Sources</h2>
+    <ul>
+      <% insight.incomeSources.sources.forEach(src => { %>
+        <li><%= src.category %>: $<%= src.total.toLocaleString() %></li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- RECURRING INSIGHTS -->
+  <section>
+    <h2>Recurring Insights</h2>
+    <p>Total Recurring Income: $<%= insight.recurringInsights.totalRecurringIncome.toLocaleString() %></p>
+    <p>Total Recurring Expenses: $<%= insight.recurringInsights.totalRecurringExpenses.toLocaleString() %></p>
+    <p><%= insight.recurringInsights.notes %></p>
+  </section>
+
+  <!-- RISK SIGNALS -->
+  <section>
+    <h2>⚠️ Risk Signals</h2>
+    <ul>
+      <% insight.riskSignals.forEach(risk => { %>
+        <li>
+          <span class="badge <%= risk.severity %>"><%= risk.severity %></span>
+          <strong><%= risk.type %></strong> — <%= risk.message %>
+        </li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- OPTIMIZATION -->
+  <section>
+    <h2>💡 Optimization Suggestions</h2>
+    <ul>
+      <% insight.optimizationSuggestions.forEach(s => { %>
+        <li><strong><%= s.area %>:</strong> <%= s.suggestion %></li>
+      <% }) %>
+    </ul>
+  </section>
+
+  <!-- BEHAVIOR -->
+  <section>
+    <h2>Behavior Patterns</h2>
+    <p>Highest Income Month: <%= insight.behaviorPatterns.highestIncomeMonth %></p>
+    <p>Highest Expense Month: <%= insight.behaviorPatterns.highestExpenseMonth %></p>
+    <p><%= insight.behaviorPatterns.notes %></p>
+  </section>
+
+  <!-- FUTURE -->
+  <section>
+    <h2>🔮 Future Projection</h2>
+    <p>Projected Monthly Net: $<%= insight.futureProjection.projectedMonthlyNet.toLocaleString() %></p>
+    <p>Projected Yearly Net: $<%= insight.futureProjection.projectedYearlyNet.toLocaleString() %></p>
+    <p>Confidence: <%= insight.futureProjection.confidence %></p>
+  </section>
+
+<% } %>
+
+<div class="actions">
+  <a class="button" href="/insights/generate">Regenerate Insights</a>
+  <a class="button" href="/insights/download-pdf">Download PDF</a>
+</div>
+
+</body>
