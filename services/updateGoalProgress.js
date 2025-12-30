@@ -1,4 +1,6 @@
 const Goals = require('../models/goals');
+const { sendGoalCompletionEmail } = require('./emailService');
+const User = require('../models/user');
 
 module.exports = async function updateGoalProgressFromTransaction(transaction) {
   if (
@@ -24,9 +26,21 @@ module.exports = async function updateGoalProgressFromTransaction(transaction) {
       goal.progress.currentPeriod += 1;
     }
 
-    if (goal.progress.completionPercentage >= 100) {
+    // Auto-complete goal
+    if (goal.progress.completionPercentage >= 100 && goal.status !== 'completed') {
       goal.status = 'completed';
       goal.progress.completionPercentage = 100;
+      
+      // Send completion email
+      const user = await User.findById(transaction.userId);
+      if (user) {
+        await sendGoalCompletionEmail(
+          user.email,
+          user.displayName || user.fullName,
+          goal.title,
+          goal.goalSummary.targetAmount
+        );
+      }
     }
 
     goal.progress.lastReviewedAt = new Date();

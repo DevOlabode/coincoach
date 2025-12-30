@@ -16,4 +16,6 @@ router.post('/', catchAsync(controller.goals));
 
 router.delete('/:id', catchAsync(controller.deleteGoal));
 
+router.patch('/:id/status', catchAsync(controller.updateGoalStatus));
+
 module.exports = router

@@ -27,6 +27,23 @@
         </div>
       </div>
 
+      <!-- Add after progress card -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+      <h5 class="card-title">Goal Status</h5>
+      <form action="/goals/<%= goal._id %>/status?_method=PATCH" method="POST">
+          <div class="input-group">
+              <select name="status" class="form-select" required>
+                  <option value="active" <%= goal.status === 'active' ? 'selected' : '' %>>Active</option>
+                  <option value="paused" <%= goal.status === 'paused' ? 'selected' : '' %>>Paused</option>
+                  <option value="completed" <%= goal.status === 'completed' ? 'selected' : '' %>>Completed</option>
+              </select>
+              <button class="btn btn-primary" type="submit">Update Status</button>
+          </div>
+      </form>
+  </div>
+</div>
+
       <p class="mb-1">
         Saved: <strong>$<%= goal.progress.totalSavedSoFar %></strong>
         / $<%= goal.goalSummary.targetAmount %>

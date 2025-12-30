@@ -74,3 +74,55 @@ module.exports.sendPasswordResetEmail = async function (to, displayName, resetCo
         `,  
   });
 };
+
+
+module.exports.sendGoalCompletionEmail = async function (to, userName, goalTitle, targetAmount) {
+  return transporter.sendMail({
+    from: '"CoinCoach App" <solabode499@gmail.com>',
+    to,
+    subject: "🎉 Congratulations! You've Completed Your Financial Goal!",
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; background: #f7f7f7;">
+        <div style="max-width: 600px; margin: auto; background: #ffffff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+          
+          <div style="text-align: center; margin-bottom: 2rem;">
+            <h1 style="color: #28a745; font-size: 2.5rem; margin: 0;">🎉</h1>
+            <h1 style="color: #333; margin-top: 0.5rem;">Congratulations, ${userName}!</h1>
+          </div>
+
+          <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 1rem; margin-bottom: 1.5rem; border-radius: 4px;">
+            <p style="margin: 0; color: #155724; font-size: 1.1rem;">
+              <strong>You've successfully completed your goal:</strong><br>
+              "${goalTitle}"
+            </p>
+          </div>
+
+          <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 8px; margin-bottom: 1.5rem;">
+            <p style="font-size: 0.9rem; color: #6c757d; margin: 0 0 0.5rem 0;">Target Amount Achieved</p>
+            <p style="font-size: 2.5rem; font-weight: bold; color: #28a745; margin: 0;">
+              $${targetAmount.toLocaleString()}
+            </p>
+          </div>
+
+          <p style="font-size: 16px; color: #555;">
+            This is a huge accomplishment! Your dedication and financial discipline have paid off.
+          </p>
+
+          <p style="font-size: 16px; color: #555;">
+            Keep up the great work and consider setting your next financial goal to continue building your financial future.
+          </p>
+
+          <a href="https://yourwebsite.com/goals"
+            style="display: inline-block; margin-top: 20px; padding: 12px 20px; background: #28a745; color: #fff; text-decoration: none; border-radius: 6px; font-weight: bold;">
+            View Your Goals
+          </a>
+
+          <p style="margin-top: 30px; font-size: 14px; color: #777;">
+            — The CoinCoach Team
+          </p>
+
+        </div>
+      </div>
+    `
+  });
+};

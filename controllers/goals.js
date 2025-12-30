@@ -89,3 +89,18 @@ module.exports.deleteGoal = async(req, res)=>{
     req.flash('success',`Deleted the ${goal.title}`)
     res.redirect('/goals')
 }
+
+module.exports.updateGoalStatus = async (req, res) => {
+  const goal = await Goals.findById(req.params.id);
+  
+  if (!goal || goal.user.toString() !== req.user._id.toString()) {
+      req.flash('error', 'Goal not found');
+      return res.redirect('/goals');
+  }
+  
+  goal.status = req.body.status;
+  await goal.save();
+  
+  req.flash('success', `Goal status updated to ${req.body.status}`);
+  res.redirect(`/goals/${goal._id}`);
+};
