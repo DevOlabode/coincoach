@@ -12,6 +12,7 @@ const methodOverride = require('method-override');
 const session = require('express-session');
 const flash = require('connect-flash');
 
+const { sanitizeInputs, xssProtection } = require('./middleware');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
@@ -24,6 +25,11 @@ const {sessionConfig} = require('./config/session');
 const { initializeBillScheduler } = require('./utils/billScheduler');
 const { sendDailyBillAlerts } = require('./services/billEmailService');
 
+
+// Add after body parsers
+app.use(xssProtection);
+app.use(sanitizeInputs);
+
 app.use(session(sessionConfig));
 app.use(flash());
 
@@ -31,6 +37,18 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(methodOverride('_method'));
+
+const csrf = require('csurf');
+const csrfProtection = csrf({ cookie: false });
+
+// Add after session middleware
+app.use(csrfProtection);
+
+// Add CSRF token to all responses
+app.use((req, res, next) => {
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -126,12 +144,28 @@ app.all(/(.*)/, (req, res, next) => {
     next(new ExpressError('Page not found', 404))
 });
 
-app.use((err, req, res, next)=>{
-    const {statusCode = 500} = err;
-    if(!err.message){
-        err.message = 'Something Went Wrong!'
+// 404 handler (add before error handler)
+app.use((req, res, next) => {
+    res.status(404).render('error/404');
+});
+
+// Error handler (update existing)
+app.use((err, req, res, next) => {
+    const { statusCode = 500 } = err;
+    if (!err.message) {
+        err.message = 'Something Went Wrong!';
     }
-    res.status(statusCode).render('error', {err})
+    
+    if (statusCode === 404) {
+        return res.status(404).render('error/404');
+    }
+    
+    if (statusCode === 500 || !statusCode) {
+        console.error(err);
+        return res.status(500).render('error/500');
+    }
+    
+    res.status(statusCode).render('error', { err });
 });
 
 const PORT = process.env.PORT || 3000;

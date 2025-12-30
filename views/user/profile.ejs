@@ -4,9 +4,20 @@
     <button class="btn btn-warning">Logout</button>
 </form>
 
-<form action="/user/<%= user.displayName %>/delete?_method=delete" method="post">
-    <button class="btn btn-danger">Delete Acount</button>
+<form action="/user/<%= user.displayName %>/delete?_method=delete" method="post" onsubmit="return confirmDelete()">
+    <button class="btn btn-danger">Delete Account</button>
 </form>
+
+<script>
+function confirmDelete() {
+    const username = prompt('Type your display name to confirm deletion:');
+    if (username !== '<%= user.displayName %>') {
+        alert('Display name does not match. Account deletion cancelled.');
+        return false;
+    }
+    return confirm('Are you absolutely sure? This action cannot be undone.');
+}
+</script>
 <h1>User Profile</h1>
 
 <ul>
@@ -17,3 +28,4 @@
     <li><%= user.location %></li>    
     <li><%= user.bio %></li>    
 </ul>
+
