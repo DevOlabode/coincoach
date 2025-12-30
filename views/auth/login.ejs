@@ -1,13 +1,21 @@
-<% layout('layout/boilerplate.ejs') %>
-<h3>Login</h3>
-<form action="/login" method="POST" class="needs-validation" novalidate>
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" name="email" id="email" required>
+<% layout('layout/boilerplate') %>
 
-    <label for="password" class="form-label">Password</label>
-    <input type="password" name="password" id="password" class="form-control" required>
+<h3 class="mb-3">Login</h3>
 
-    <button type="submit" class="mt-2">Login</button>
+<form action="/login" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+    <div class="mb-3">
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required>
+    </div>
+
+    <button class="btn btn-primary">Login</button>
 </form>
 
-    <a href="/enter-email">Forgotten Password</a>
+<a href="/enter-email" class="d-block mt-3">Forgotten password?</a>
