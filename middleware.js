@@ -4,25 +4,25 @@ const {transactionSchema, userSchema} = require('./schema');
 const validator = require('validator');
 
 
-module.exports.validateTransaction = (req, res, next) => {
-    const { error } = transactionSchema.validate(req.body);
-    if(error){
-        const message = error.details.map(el => el.message).join(',');
-        throw new ExpressError(message, 400)
-    }else{
-        next();
-    }
-};
+// module.exports.validateTransaction = (req, res, next) => {
+//     const { error } = transactionSchema.validate(req.body);
+//     if(error){
+//         const message = error.details.map(el => el.message).join(',');
+//         throw new ExpressError(message, 400)
+//     }else{
+//         next();
+//     }
+// };
 
-module.exports.validateUser = (req, res, next) => {
-    const { error } = userSchema.validate(req.body);
-    if(error){
-        const message = error.details.map(el => el.message).join(',');
-        throw new ExpressError(message, 400)
-    }else{
-        next();
-    }
-};
+// module.exports.validateUser = (req, res, next) => {
+//     const { error } = userSchema.validate(req.body);
+//     if(error){
+//         const message = error.details.map(el => el.message).join(',');
+//         throw new ExpressError(message, 400)
+//     }else{
+//         next();
+//     }
+// };
 
 module.exports.loginAuthenticate = passport.authenticate('local', {
     failureFlash: true,

@@ -27,10 +27,9 @@ const { sendDailyBillAlerts } = require('./services/billEmailService');
 /* VIEW ENGINE                                      */
 /* ------------------------------------------------ */
 
-app.engine('ejs', ejsMate); 
+app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
 
 /* ------------------------------------------------ */
 /* STATIC + BODY PARSERS                             */
@@ -42,35 +41,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 /* ------------------------------------------------ */
-/* SESSION (REQUIRED BEFORE CSRF)                    */
+/* SESSION                                          */
 /* ------------------------------------------------ */
 
 app.use(session(sessionConfig));
 app.use(flash());
-
-/* ------------------------------------------------ */
-/* CSRF — MUST COME BEFORE SANITIZATION              */
-/* ------------------------------------------------ */
-
-const csrfProtection = csrf();
-
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/')) return next();
-    csrfProtection(req, res, next);
-});
-
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/')) return next();
-    res.locals.csrfToken = req.csrfToken();
-    next();
-});
-
-/* ------------------------------------------------ */
-/* SECURITY (AFTER CSRF)                             */
-/* ------------------------------------------------ */
-
-app.use(xssProtection);
-app.use(sanitizeInputs);
 
 /* ------------------------------------------------ */
 /* PASSPORT                                         */
@@ -100,15 +75,41 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 /* ------------------------------------------------ */
-/* GLOBAL LOCALS                                    */
+/* CSRF (AFTER SESSION, BEFORE SANITIZATION)        */
+/* ------------------------------------------------ */
+
+const csrfProtection = csrf();
+
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
+    csrfProtection(req, res, next);
+});
+
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/')) return next();
+    res.locals.csrfToken = req.csrfToken();
+    next();
+});
+
+/* ------------------------------------------------ */
+/* SECURITY (AFTER CSRF)                             */
+/* ------------------------------------------------ */
+
+app.use(xssProtection);
+app.use(sanitizeInputs);
+
+/* ------------------------------------------------ */
+/* GLOBAL LOCALS (FLASH + USER)                     */
 /* ------------------------------------------------ */
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
+
     res.locals.success = req.flash('success');
     res.locals.error = req.flash('error');
-    res.locals.info = req.flash('info');
     res.locals.warning = req.flash('warning');
+    res.locals.info = req.flash('info');
+
     next();
 });
 
@@ -149,17 +150,23 @@ setInterval(() => {
 }, 60000);
 
 /* ------------------------------------------------ */
-/* ERRORS                                           */
+/* 404 HANDLER                                      */
 /* ------------------------------------------------ */
 
 app.use((req, res, next) => {
-    next(new ExpressError('Page not found', 404));
+    next(new ExpressError('Page Not Found', 404));
 });
 
+/* ------------------------------------------------ */
+/* ERROR HANDLER                                    */
+/* ------------------------------------------------ */
 
 app.use((err, req, res, next) => {
     const status = err.statusCode || 500;
-    if (status === 404) return res.status(404).render('error/404');
+
+    if (status === 404) {
+        return res.status(404).render('error/404');
+    }
 
     console.error(err);
     res.status(status).render('error/500');
@@ -171,5 +178,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`CoinCoach running on port ${PORT}`);
 });
