@@ -15,7 +15,7 @@ module.exports.newTransactionForm = (req, res) => {
 
 module.exports.createTransaction = async (req, res) => {
     const { amount, type, date, description, category, name, recurrence, recurring, currency } = req.body;
-    const goals = await Goals.find({user : req.user._id})
+    const goals = await Goals.find({user : req.user._id});
 
     const conversionRate = await conversion(currency, req.user.preferredCurrency);
     const convertedAmount = Math.abs(amount * conversionRate);
@@ -68,7 +68,7 @@ module.exports.deleteTransaction = async (req, res) => {
     if (!transaction || !transaction.userId.equals(req.user._id)) {
         req.flash('error', 'Transaction not found');
         return res.redirect('/transactions');
-    }
+    };
 
     await Transaction.findByIdAndDelete(req.params.id);
 

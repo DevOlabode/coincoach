@@ -18,7 +18,7 @@ module.exports.generateResponse = async (req, res) => {
         const systemPrompt = `You are a personal finance coach helping users make smarter financial decisions.
 
 Context - User's Recent Transactions:
-${transactionSummary}
+${transactionSummary};
 
 Guidelines:
 1. Focus on improving financial health with actionable advice

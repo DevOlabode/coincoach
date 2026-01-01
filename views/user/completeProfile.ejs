@@ -1,4 +1,4 @@
-<% layout('layout/boilerplate') %>
+<% layout('./layout/boilerplate') %>
 
 <form action="/user/complete-profile" method="post">
     <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">

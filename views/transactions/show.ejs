@@ -1,4 +1,4 @@
-<% layout('layout/boilerplate') %>
+<% layout('./layout/boilerplate') %>
 
 <h1><%= transaction.name %></h1>
 
@@ -21,7 +21,6 @@
         <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
         <button class="btn btn-danger m-2">Delete Transaction</button>
     </form>
-    <button class="btn btn-danger m-2">Delete Transaction</button>
 </form>
 
 <a href="/transactions/<%= transaction._id %>/edit" class="btn btn-warning m-2">Edit Transaction</a>
