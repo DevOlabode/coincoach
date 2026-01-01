@@ -11,9 +11,6 @@
     <form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
       <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
             
-      <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
-        <button class="btn btn-danger m-2">Delete Transaction</button>
-    </form>
       <div class="mb-3">
         <label for="csvFile" class="form-label">Select File</label>
         <input type="file" class="form-control" id="csvFile" name="csvFile" accept=".csv,.xlsx,.xls" required>
