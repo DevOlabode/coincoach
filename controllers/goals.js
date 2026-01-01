@@ -1,106 +1,134 @@
 const Goals = require('../models/goals');
 const Transactions = require('../models/transactions');
 const goalsAI = require('../services/goalsAI');
+const validator = require('validator');
 
+/**
+ * =========================
+ * INDEX
+ * =========================
+ */
 module.exports.index = async (req, res) => {
-  const goals = await Goals.find({ user: req.user._id });
-  res.render('goals/index', { goals });
+    const goals = await Goals.find({ user: req.user._id });
+    res.render('goals/index', { goals });
 };
 
+/**
+ * =========================
+ * CREATE GOAL
+ * =========================
+ */
 module.exports.goals = async (req, res) => {
-  const { explanation } = req.body;
 
-  // 1️⃣ Fetch transactions
-  const transactions = await Transactions.find({
-    userId: req.user._id
-  }).lean();
+    let { explanation } = req.body;
 
-  // 2️⃣ Call AI
-  const aiResult = await goalsAI(explanation, transactions);
+    // ✅ Explicit, safe sanitization
+    explanation = validator.escape(explanation.trim());
 
-  /**
-   * 3️⃣ Normalize AI output → match Goal schema
-   */
+    const transactions = await Transactions.find({
+        userId: req.user._id
+    }).lean();
 
-  const timeframeValue = aiResult.goalSummary.timeframeMonths;
+    const aiResult = await goalsAI(explanation, transactions);
 
-  const normalizedGoal = {
-    user: req.user._id,
-    title : aiResult.title,
-    userInput : explanation,
-    goalSummary: {
-      targetAmount: aiResult.goalSummary.targetAmount,
-      currentSavings: aiResult.goalSummary.currentSavings,
-      timeframeValue,
-      timeframeUnit: 'month',
-      assumptions: aiResult.goalSummary.assumptions || []
-    },
+    const timeframeValue = aiResult.goalSummary.timeframeMonths;
 
-    financialAnalysis: {
-      averageIncomePerPeriod: aiResult.financialAnalysis.averageMonthlyIncome,
-      averageExpensesPerPeriod: aiResult.financialAnalysis.averageMonthlyExpenses,
-      averageSavingsPerPeriod: aiResult.financialAnalysis.averageMonthlySavings,
-      spendingInsights: aiResult.financialAnalysis.spendingInsights || []
-    },
+    const normalizedGoal = {
+        user: req.user._id,
+        title: aiResult.title,
+        userInput: explanation,
 
-    feasibility: aiResult.feasibility,
+        goalSummary: {
+            targetAmount: aiResult.goalSummary.targetAmount,
+            currentSavings: aiResult.goalSummary.currentSavings,
+            timeframeValue,
+            timeframeUnit: 'month',
+            assumptions: aiResult.goalSummary.assumptions || []
+        },
 
-    plan: aiResult.monthlyPlan.map(item => ({
-      periodNumber: item.month,
-      amountToSave: item.amountToSave,
-      recommendedActions: item.recommendedActions || []
-    })),
+        financialAnalysis: {
+            averageIncomePerPeriod: aiResult.financialAnalysis.averageMonthlyIncome,
+            averageExpensesPerPeriod: aiResult.financialAnalysis.averageMonthlyExpenses,
+            averageSavingsPerPeriod: aiResult.financialAnalysis.averageMonthlySavings,
+            spendingInsights: aiResult.financialAnalysis.spendingInsights || []
+        },
 
-    progressTracking: {
-      targetPerPeriod: aiResult.progressTracking.monthlyTarget,
-      milestones: aiResult.progressTracking.milestones.map(m => ({
-        periodNumber: m.month,
-        expectedSavings: m.expectedSavings
-      })),
-      reviewFrequency: 'monthly'
-    },
+        feasibility: aiResult.feasibility,
 
-    motivationTip: aiResult.motivationTip
-  };
+        plan: aiResult.monthlyPlan.map(item => ({
+            periodNumber: item.month,
+            amountToSave: item.amountToSave,
+            recommendedActions: item.recommendedActions || []
+        })),
 
-  // 4️⃣ Save goal
-  const goal = new Goals(normalizedGoal);
-  await goal.save();
+        progressTracking: {
+            targetPerPeriod: aiResult.progressTracking.monthlyTarget,
+            milestones: aiResult.progressTracking.milestones.map(m => ({
+                periodNumber: m.month,
+                expectedSavings: m.expectedSavings
+            })),
+            reviewFrequency: 'monthly'
+        },
 
-  req.flash('success', 'Goal created successfully!');
-  res.redirect(`/goals/${goal._id}`);
+        motivationTip: aiResult.motivationTip
+    };
+
+    const goal = new Goals(normalizedGoal);
+    await goal.save();
+
+    req.flash('success', 'Goal created successfully!');
+    res.redirect(`/goals/${goal._id}`);
 };
 
-module.exports.show = async(req, res)=>{
+/**
+ * =========================
+ * SHOW
+ * =========================
+ */
+module.exports.show = async (req, res) => {
     const goal = await Goals.findById(req.params.id);
+
     if (!goal) {
         req.flash('error', 'Goal not found');
         return res.redirect('/goals');
-    };
-    res.render('goals/show', {goal})
+    }
+
+    res.render('goals/show', { goal });
 };
 
-module.exports.deleteGoal = async(req, res)=>{
+/**
+ * =========================
+ * DELETE
+ * =========================
+ */
+module.exports.deleteGoal = async (req, res) => {
     const goal = await Goals.findByIdAndDelete(req.params.id);
+
     if (!goal) {
         req.flash('error', 'Goal not found');
         return res.redirect('/goals');
-    };
-    req.flash('success',`Deleted the ${goal.title}`)
-    res.redirect('/goals')
-}
+    }
 
+    req.flash('success', `Deleted the ${goal.title}`);
+    res.redirect('/goals');
+};
+
+/**
+ * =========================
+ * UPDATE STATUS
+ * =========================
+ */
 module.exports.updateGoalStatus = async (req, res) => {
-  const goal = await Goals.findById(req.params.id);
-  
-  if (!goal || goal.user.toString() !== req.user._id.toString()) {
-      req.flash('error', 'Goal not found');
-      return res.redirect('/goals');
-  }
-  
-  goal.status = req.body.status;
-  await goal.save();
-  
-  req.flash('success', `Goal status updated to ${req.body.status}`);
-  res.redirect(`/goals/${goal._id}`);
+    const goal = await Goals.findById(req.params.id);
+
+    if (!goal || goal.user.toString() !== req.user._id.toString()) {
+        req.flash('error', 'Goal not found');
+        return res.redirect('/goals');
+    }
+
+    goal.status = validator.escape(req.body.status);
+    await goal.save();
+
+    req.flash('success', `Goal status updated to ${goal.status}`);
+    res.redirect(`/goals/${goal._id}`);
 };

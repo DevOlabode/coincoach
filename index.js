@@ -161,10 +161,7 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
     const status = err.statusCode || 500;
 
-    if (err.code === 'EBADCSRFTOKEN') {
-        req.flash('error', 'Session expired. Please try again.');
-        return res.redirect('back');
-    }
+
 
     if (status === 404) return res.status(404).render('error/404');
 
