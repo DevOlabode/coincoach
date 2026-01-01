@@ -42,9 +42,7 @@ module.exports.redirectIfCompletedProfile = (req, res, next)=>{
     next();
 };
 
-// Sanitize user inputs
 module.exports.sanitizeInputs = (req, res, next) => {
-
     const sanitize = (obj) => {
         if (typeof obj === 'string') {
             return validator.escape(obj.trim());

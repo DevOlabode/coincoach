@@ -41,7 +41,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 /* ------------------------------------------------ */
-/* SESSION                                          */
+/* SESSION (MUST BE BEFORE CSRF + PASSPORT)          */
 /* ------------------------------------------------ */
 
 app.use(session(sessionConfig));
@@ -75,7 +75,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 /* ------------------------------------------------ */
-/* CSRF (AFTER SESSION, BEFORE SANITIZATION)        */
+/* CSRF (AFTER SESSION, BEFORE ROUTES)               */
 /* ------------------------------------------------ */
 
 const csrfProtection = csrf();
@@ -92,23 +92,23 @@ app.use((req, res, next) => {
 });
 
 /* ------------------------------------------------ */
-/* SECURITY (AFTER CSRF)                             */
+/* SECURITY                                         */
 /* ------------------------------------------------ */
 
 app.use(xssProtection);
 app.use(sanitizeInputs);
 
 /* ------------------------------------------------ */
-/* GLOBAL LOCALS (FLASH + USER)                     */
+/* GLOBAL LOCALS (FLASH SAFETY)                      */
 /* ------------------------------------------------ */
 
 app.use((req, res, next) => {
     res.locals.currentUser = req.user;
 
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
-    res.locals.warning = req.flash('warning');
-    res.locals.info = req.flash('info');
+    res.locals.success = req.flash('success') || [];
+    res.locals.error = req.flash('error') || [];
+    res.locals.warning = req.flash('warning') || [];
+    res.locals.info = req.flash('info') || [];
 
     next();
 });
@@ -150,23 +150,23 @@ setInterval(() => {
 }, 60000);
 
 /* ------------------------------------------------ */
-/* 404 HANDLER                                      */
+/* 404 + ERRORS                                     */
 /* ------------------------------------------------ */
 
 app.use((req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
 });
 
-/* ------------------------------------------------ */
-/* ERROR HANDLER                                    */
-/* ------------------------------------------------ */
 
 app.use((err, req, res, next) => {
     const status = err.statusCode || 500;
 
-    if (status === 404) {
-        return res.status(404).render('error/404');
+    if (err.code === 'EBADCSRFTOKEN') {
+        req.flash('error', 'Session expired. Please try again.');
+        return res.redirect('back');
     }
+
+    if (status === 404) return res.status(404).render('error/404');
 
     console.error(err);
     res.status(status).render('error/500');
