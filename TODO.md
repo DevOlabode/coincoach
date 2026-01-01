@@ -1,32 +1,26 @@
+# TODO: Remove CSRF from Codebase
 
- Security TODO
-- [ ] Input validation + sanitization middleware.
-- [ ] CSRF protection.
-- [ ] Rate limiting for auth routes.
-- [ ] Error pages (404, 500).
-- [ ] Confirmation step for account deletion.
-
-UI/UX TODO:
-- [ ] Responsive + accessible EJS templates.
-- [ ] Add mobile responsive styling
-
-
-Potential Look alike:
-- https://solabode499.bubbleapps.io/version-test/profile_settings?debug_mode=true
-
-
-PAGES TO ADD TO THE APPLICATION.
-- DASHBOARD
-- INSIGHTS
-- COACH (CHAT)
-- PROFILE
-- HELP (Help users understand the app easier)
-
-TODO : 
-- Change the content of the insight PDF download.
-- Making the insight also use the goals property (not just the transactions)(ongoing);
-
-TODO On the Goal Feature:
-- Make the show page of the goals update along with the progress of the users.
-- Let users be able to edit the status from active or paused or completed
-- Let the goals be completed automatically and we send an email to the user after completion.
+- [x] Remove CSRF middleware from index.js (require, setup, and locals)
+- [x] Remove hidden CSRF inputs from views/user/profile.ejs
+- [ ] Remove hidden CSRF inputs from views/user/editProfile.ejs
+- [ ] Remove hidden CSRF inputs from views/user/editAcct.ejs
+- [ ] Remove hidden CSRF inputs from views/user/completeProfile.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/bulkUpload.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/new.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/show.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/edit.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/bulkUploadJSON.ejs
+- [ ] Remove hidden CSRF inputs from views/reciept/getReciept.ejs
+- [ ] Remove hidden CSRF inputs from views/goals/show.ejs
+- [ ] Remove hidden CSRF inputs from views/goals/index.ejs
+- [ ] Remove hidden CSRF inputs from views/conversion/index.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/resetPassword.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/register.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/login.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/enterEmail.ejs
+- [ ] Remove hidden CSRF inputs from views/bills/dashboard.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/confirmCode.ejs
+- [ ] Remove '_csrf' special case from middleware.js sanitizeInputs
+- [ ] Remove 'csurf' from package.json dependencies
+- [ ] Run npm uninstall csurf
+- [ ] Update TODO.md to mark all tasks as completed

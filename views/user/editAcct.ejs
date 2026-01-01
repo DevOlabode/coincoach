@@ -4,8 +4,6 @@
 <div>Edit Your Account Settings and Change Password Here</div>
 
 <form action="/user/edit-account" method="post" class="needs-validation" novalidate>
-    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
-
     <label for="currentPassword" class="form-label">Current Password</label>
     <input type="password" name="currentPassword" class="form-control" placeholder="Type Current Password" required>
 

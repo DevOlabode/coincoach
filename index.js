@@ -12,7 +12,6 @@ const flash = require('connect-flash');
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-const csrf = require('csurf');
 
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
@@ -41,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 
 /* ------------------------------------------------ */
-/* SESSION (MUST BE BEFORE CSRF + PASSPORT)          */
+/* SESSION (MUST BE BEFORE PASSPORT)                 */
 /* ------------------------------------------------ */
 
 app.use(session(sessionConfig));
@@ -73,23 +72,6 @@ passport.use(
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
-/* ------------------------------------------------ */
-/* CSRF (AFTER SESSION, BEFORE ROUTES)               */
-/* ------------------------------------------------ */
-
-const csrfProtection = csrf();
-
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/')) return next();
-    csrfProtection(req, res, next);
-});
-
-app.use((req, res, next) => {
-    if (req.path.startsWith('/api/')) return next();
-    res.locals.csrfToken = req.csrfToken();
-    next();
-});
 
 /* ------------------------------------------------ */
 /* SECURITY                                         */

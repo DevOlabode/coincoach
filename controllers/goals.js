@@ -22,7 +22,7 @@ module.exports.goals = async (req, res) => {
 
     let { explanation } = req.body;
 
-    // ✅ Explicit, safe sanitization
+    // Explicit, safe sanitization
     explanation = validator.escape(explanation.trim());
 
     const transactions = await Transactions.find({
