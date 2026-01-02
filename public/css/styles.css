@@ -1157,6 +1157,10 @@ blockquote {
     outline-offset: 2px;
 }
 
+.nav-link:focus {
+    outline: none;
+}
+
 .sr-only {
     position: absolute;
     width: 1px;

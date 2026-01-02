@@ -1,33 +1,228 @@
 <% layout('./layout/boilerplate') %>
 
-<form action="/logout" method="post">
-    <button class="btn btn-warning">Logout</button>
-</form>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Page Header -->
+      <div class="text-center mb-5 fade-in">
+        <h1 class="fw-bold mb-2">
+          <i class="fas fa-user-circle text-primary me-2"></i>
+          My Profile
+        </h1>
+        <p class="lead text-muted">Manage your account information and preferences</p>
+      </div>
 
-<form action="/user/<%= user.displayName %>/delete?_method=delete" method="post" onsubmit="return confirmDelete()">
-    <button class="btn btn-danger">Delete Account</button>
-</form>
+      <div class="row g-4">
+        <!-- Profile Information Card -->
+        <div class="col-lg-8">
+          <div class="card shadow-lg border-0 rounded-lg fade-in" style="animation-delay: 0.1s;">
+            <div class="card-header bg-gradient-primary text-white py-4">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-white p-2 me-3">
+                  <i class="fas fa-id-card text-primary"></i>
+                </div>
+                <div>
+                  <h4 class="mb-0 text-white">Profile Information</h4>
+                  <small class="opacity-75">Your personal details and preferences</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-user me-2"></i>Full Name
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.fullName || 'Not provided' %></p>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-at me-2"></i>Display Name
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.displayName %></p>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-envelope me-2"></i>Email Address
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.email %></p>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-dollar-sign me-2"></i>Preferred Currency
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.preferredCurrency %></p>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-map-marker-alt me-2"></i>Location
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.location || 'Not provided' %></p>
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <div class="profile-info-item">
+                    <label class="form-label text-muted small mb-1">
+                      <i class="fas fa-info-circle me-2"></i>Bio
+                    </label>
+                    <p class="mb-0 fw-semibold"><%= user.bio || 'No bio provided' %></p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-4 border-top">
+                <div class="d-flex gap-3">
+                  <a href="/user/edit-profile" class="btn btn-primary hover-lift">
+                    <i class="fas fa-edit me-2"></i>Edit Profile
+                  </a>
+                  <a href="/user/settings" class="btn btn-outline-primary hover-lift">
+                    <i class="fas fa-cog me-2"></i>Account Settings
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Account Actions Card -->
+        <div class="col-lg-4">
+          <div class="card shadow-lg border-0 rounded-lg fade-in" style="animation-delay: 0.2s;">
+            <div class="card-header bg-gradient-secondary text-white py-4">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-white p-2 me-3">
+                  <i class="fas fa-shield-alt text-secondary"></i>
+                </div>
+                <div>
+                  <h5 class="mb-0 text-white">Account Actions</h5>
+                  <small class="opacity-75">Manage your account</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="d-grid gap-3">
+                <form action="/logout" method="post">
+                  <button type="submit" class="btn btn-outline-warning w-100 hover-lift">
+                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                  </button>
+                </form>
+
+                <button type="button" class="btn btn-outline-danger w-100 hover-lift" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                  <i class="fas fa-trash-alt me-2"></i>Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Card -->
+          <div class="card shadow-lg border-0 rounded-lg mt-4 fade-in" style="animation-delay: 0.3s;">
+            <div class="card-header bg-gradient-dark text-white py-4">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-white p-2 me-3">
+                  <i class="fas fa-chart-bar text-dark"></i>
+                </div>
+                <div>
+                  <h5 class="mb-0 text-white">Quick Stats</h5>
+                  <small class="opacity-75">Your activity overview</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-body p-4">
+              <div class="row g-3 text-center">
+                <div class="col-6">
+                  <div class="p-3 rounded-lg bg-primary bg-opacity-10">
+                    <div class="h4 mb-0 text-primary fw-bold"><%= user.transactions ? user.transactions.length : 0 %></div>
+                    <small class="text-muted">Transactions</small>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="p-3 rounded-lg bg-success bg-opacity-10">
+                    <div class="h4 mb-0 text-success fw-bold"><%= user.goals ? user.goals.length : 0 %></div>
+                    <small class="text-muted">Goals</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteModalLabel">
+          <i class="fas fa-exclamation-triangle me-2"></i>Delete Account
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p class="mb-3">Are you sure you want to delete your account? This action cannot be undone.</p>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-circle me-2"></i>
+          All your data including transactions, goals, and settings will be permanently removed.
+        </div>
+        <div class="mb-3">
+          <label for="confirmName" class="form-label">Type your display name to confirm:</label>
+          <input type="text" class="form-control" id="confirmName" placeholder="<%= user.displayName %>">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="/user/<%= user.displayName %>/delete?_method=delete" method="post" id="deleteForm">
+          <button type="submit" class="btn btn-danger" onclick="return confirmDelete()">
+            <i class="fas fa-trash-alt me-2"></i>Delete Account
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 function confirmDelete() {
-    const username = prompt('Type your display name to confirm deletion:');
-    if (username !== '<%= user.displayName %>') {
-        alert('Display name does not match. Account deletion cancelled.');
-        return false;
-    }
-    return confirm('Are you absolutely sure? This action cannot be undone.');
+  const confirmName = document.getElementById('confirmName').value;
+  if (confirmName !== '<%= user.displayName %>') {
+    alert('Display name does not match. Account deletion cancelled.');
+    return false;
+  }
+  return confirm('Are you absolutely sure? This action cannot be undone.');
 }
 </script>
-<h1>User Profile</h1>
 
-<ul>
-    <li><%= user.fullName %></li>    
-    <li><%= user.displayName %></li>    
-    <li><%= user.email %></li>    
-    <li><%= user.preferredCurrency %></li>    
-    <li><%= user.location %></li>    
-    <li><%= user.bio %></li>    
-</ul>
+<style>
+.profile-info-item {
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
 
-<a href="/user/edit-profile" class="btn btn-warning">Edit Profile</a>
+.profile-info-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+</style>
 

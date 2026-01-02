@@ -169,40 +169,5 @@
   document.addEventListener('DOMContentLoaded', function() {
     const now = new Date();
     document.getElementById('lastUpdate').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
-
-    // Add swap button functionality
-    document.getElementById('swapButton').addEventListener('click', function() {
-      const fromInput = document.getElementById('fromInput');
-      const toInput = document.getElementById('toInput');
-      const fromCurrency = document.querySelector('[name="fromCurrency"]');
-      const toCurrency = document.querySelector('[name="toCurrency"]');
-
-      // Swap values
-      const tempValue = fromInput.value;
-      const tempCurrency = fromCurrency.value;
-
-      fromInput.value = toInput.value;
-      fromCurrency.value = toCurrency.value;
-
-      toInput.value = tempValue;
-      toCurrency.value = tempCurrency;
-    });
-  });
-
-  // Style dropdown items
-  document.addEventListener('DOMContentLoaded', function() {
-    const observer = new MutationObserver(function(mutations) {
-      mutations.forEach(function(mutation) {
-        if (mutation.addedNodes.length) {
-          const items = document.querySelectorAll('.dropdown-item');
-          items.forEach(item => {
-            item.classList.add('p-3', 'border-bottom', 'hover-bright');
-          });
-        }
-      });
-    });
-
-    observer.observe(document.getElementById('fromList'), { childList: true });
-    observer.observe(document.getElementById('toList'), { childList: true });
   });
 </script>

@@ -1,170 +1,205 @@
 <% layout('./layout/boilerplate') %>
 
-<style>
-  .btn {
-    padding: 0.5rem 1rem;
-    border-radius: 4px;
-    text-decoration: none;
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-  }
-
-  .btn-primary {
-    background: #0066cc;
-    color: white;
-  }
-
-  .btn-primary:hover {
-    background: #0052a3;
-  }
-
-  .btn-success {
-    background: #28a745;
-    color: white;
-  }
-
-  .btn-success:hover {
-    background: #218838;
-  }
-
-  .btn-secondary {
-    background: #6c757d;
-    color: white;
-  }
-
-  .btn-secondary:hover {
-    background: #5a6268;
-  }
-
-  .transaction-card {
-    background: #fff;
-    padding: 1.5rem;
-    border-radius: 8px;
-    margin-bottom: 1rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: box-shadow 0.2s;
-  }
-
-  .transaction-card:hover {
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-  }
-
-  .transaction-card h3 {
-    margin-top: 0;
-    margin-bottom: 0.75rem;
-  }
-
-  .transaction-card a {
-    color: #0066cc;
-    text-decoration: none;
-  }
-
-  .transaction-card a:hover {
-    text-decoration: underline;
-  }
-
-  .transaction-card ul {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 0;
-  }
-
-  .transaction-card li {
-    padding: 0.25rem 0;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.85rem;
-    font-weight: normal;
-  }
-
-  .badge-income {
-    background: #d4edda;
-    color: #155724;
-  }
-
-  .badge-expense {
-    background: #f8d7da;
-    color: #721c24;
-  }
-
-  .badge-recurring {
-    background: #d1ecf1;
-    color: #0c5460;
-  }
-</style>
-
-<div style="max-width: 1200px; margin: 0 auto; padding: 2rem;">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-    <h2>All Transactions</h2>
-    <div>
-      <a href="/insights" class="btn btn-primary" style="margin-right: 0.5rem;">📊 View Insights</a>
-      
-      <!-- Export Dropdown -->
-      <div class="btn-group" style="display: inline-block; position: relative; margin-right: 0.5rem;">
-        <button class="btn btn-secondary dropdown-toggle" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-          📥 Export
-        </button>
-        <ul class="dropdown-menu" aria-labelledby="exportDropdown">
-          <li><a class="dropdown-item" href="/export/excel">📊 Export to Excel</a></li>
-          <li><a class="dropdown-item" href="/export/csv">📄 Export to CSV</a></li>
-          <li><a class="dropdown-item" href="/export/google-sheets">📗 Export for Google Sheets</a></li>
-        </ul>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Page Header -->
+      <div class="text-center mb-5 fade-in">
+        <h1 class="fw-bold mb-2">
+          <i class="fas fa-exchange-alt text-primary me-2"></i>
+          All Transactions
+        </h1>
+        <p class="lead text-muted">Track and manage your financial transactions</p>
       </div>
-      
-      <a href="/transactions/new" class="btn btn-success" style="margin-right: 0.5rem;">+ Add Transaction</a>
-      <a href="/transactions/bulk-upload" class="btn btn-secondary">📤 Bulk Upload</a>
+
+      <!-- Action Buttons -->
+      <div class="d-flex flex-wrap justify-content-center gap-3 mb-5 fade-in" style="animation-delay: 0.1s;">
+        <a href="/insights" class="btn btn-primary hover-lift">
+          <i class="fas fa-chart-line me-2"></i>View Insights
+        </a>
+
+        <!-- Export Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle hover-lift" type="button" id="exportDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-download me-2"></i>Export Data
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="exportDropdown">
+            <li><a class="dropdown-item" href="/export/excel">
+              <i class="fas fa-file-excel me-2 text-success"></i>Export to Excel
+            </a></li>
+            <li><a class="dropdown-item" href="/export/csv">
+              <i class="fas fa-file-csv me-2 text-primary"></i>Export to CSV
+            </a></li>
+            <li><a class="dropdown-item" href="/export/google-sheets">
+              <i class="fab fa-google me-2 text-warning"></i>Export for Google Sheets
+            </a></li>
+          </ul>
+        </div>
+
+        <a href="/transactions/new" class="btn btn-success hover-lift">
+          <i class="fas fa-plus me-2"></i>Add Transaction
+        </a>
+        <a href="/transactions/bulk-upload" class="btn btn-outline-info hover-lift">
+          <i class="fas fa-upload me-2"></i>Bulk Upload
+        </a>
+      </div>
+
+      <% if(transactions.length === 0){ %>
+        <!-- Empty State -->
+        <div class="card shadow-lg border-0 rounded-lg text-center py-5 fade-in" style="animation-delay: 0.2s;">
+          <div class="card-body p-5">
+            <div class="rounded-circle bg-light p-4 d-inline-flex mb-4">
+              <i class="fas fa-receipt text-muted fa-3x"></i>
+            </div>
+            <h4 class="mb-3">No Transactions Yet</h4>
+            <p class="text-muted mb-4">Start tracking your finances by adding your first transaction or importing data from a file.</p>
+            <div class="d-flex justify-content-center gap-3">
+              <a href="/transactions/new" class="btn btn-primary hover-lift">
+                <i class="fas fa-plus me-2"></i>Add Transaction
+              </a>
+              <a href="/transactions/bulk-upload" class="btn btn-outline-secondary hover-lift">
+                <i class="fas fa-upload me-2"></i>Bulk Upload
+              </a>
+            </div>
+          </div>
+        </div>
+      <% }else{ %>
+        <!-- Transactions Count -->
+        <div class="alert alert-info border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.2s;">
+          <i class="fas fa-info-circle me-2"></i>
+          Showing <strong><%= count %></strong> transaction<%= count !== 1 ? 's' : '' %>
+        </div>
+
+        <!-- Transactions List -->
+        <div class="row g-4">
+          <% for(let transaction of transactions){ %>
+            <div class="col-lg-6">
+              <div class="card shadow-sm border-0 rounded-lg hover-lift fade-in" style="animation-delay: <%= 0.3 + (transactions.indexOf(transaction) * 0.1) %>s;">
+                <div class="card-header bg-white border-bottom-0 py-3">
+                  <div class="d-flex align-items-center justify-content-between">
+                    <h5 class="mb-0">
+                      <a href="/transactions/<%= transaction._id %>" class="text-decoration-none text-dark fw-semibold">
+                        <%= transaction.name %>
+                      </a>
+                    </h5>
+                    <span class="badge fs-6 <%= transaction.type === 'income' ? 'bg-success' : 'bg-danger' %>">
+                      <i class="fas fa-<%= transaction.type === 'income' ? 'arrow-up' : 'arrow-down' %> me-1"></i>
+                      <%= transaction.type %>
+                    </span>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="row g-3">
+                    <div class="col-6">
+                      <div class="transaction-detail">
+                        <label class="text-muted small mb-1">
+                          <i class="fas fa-dollar-sign me-1"></i>Amount
+                        </label>
+                        <p class="mb-0 fw-bold <%= transaction.type === 'income' ? 'text-success' : 'text-danger' %>">
+                          <%= transaction.type === 'income' ? '+' : '-' %>$<%= transaction.amount?.toLocaleString() || '0' %>
+                          <small class="text-muted"><%= transaction.currency || 'CAD' %></small>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="col-6">
+                      <div class="transaction-detail">
+                        <label class="text-muted small mb-1">
+                          <i class="fas fa-calendar me-1"></i>Date
+                        </label>
+                        <p class="mb-0 fw-semibold">
+                          <%= transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A' %>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="col-6">
+                      <div class="transaction-detail">
+                        <label class="text-muted small mb-1">
+                          <i class="fas fa-tag me-1"></i>Category
+                        </label>
+                        <p class="mb-0 fw-semibold">
+                          <%= transaction.category || 'Uncategorized' %>
+                        </p>
+                      </div>
+                    </div>
+
+                    <div class="col-6">
+                      <div class="transaction-detail">
+                        <label class="text-muted small mb-1">
+                          <i class="fas fa-cog me-1"></i>Input Method
+                        </label>
+                        <p class="mb-0 fw-semibold">
+                          <%= transaction.inputMethod || 'Manual' %>
+                        </p>
+                      </div>
+                    </div>
+
+                    <% if(transaction.description){ %>
+                      <div class="col-12">
+                        <div class="transaction-detail">
+                          <label class="text-muted small mb-1">
+                            <i class="fas fa-comment me-1"></i>Description
+                          </label>
+                          <p class="mb-0 fw-semibold">
+                            <%= transaction.description %>
+                          </p>
+                        </div>
+                      </div>
+                    <% } %>
+
+                    <% if(transaction.recurring){ %>
+                      <div class="col-12">
+                        <div class="transaction-detail">
+                          <span class="badge bg-info">
+                            <i class="fas fa-redo me-1"></i>
+                            Recurring<%= transaction.recurrence ? ` (${transaction.recurrence})` : '' %>
+                          </span>
+                        </div>
+                      </div>
+                    <% } %>
+                  </div>
+                </div>
+
+                <div class="card-footer bg-light border-top-0 py-3">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <small class="text-muted">
+                      <i class="fas fa-clock me-1"></i>
+                      Added <%= new Date(transaction.createdAt || Date.now()).toLocaleDateString() %>
+                    </small>
+                    <a href="/transactions/<%= transaction._id %>" class="btn btn-sm btn-outline-primary">
+                      <i class="fas fa-eye me-1"></i>View Details
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% } %>
+        </div>
+      <% } %>
     </div>
   </div>
-  </div>
-
-  <% if(transactions.length === 0){ %>
-    <div class="card" style="background: #fff; padding: 3rem; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-      <h4 style="margin-bottom: 1rem;">No Transactions Added</h4>
-      <p style="color: #6c757d; margin-bottom: 1.5rem;">Get started by adding your first transaction or uploading a CSV/JSON file.</p>
-      <div>
-        <a href="/transactions/new" class="btn btn-primary" style="margin-right: 0.5rem;">Add Transaction</a>
-        <a href="/transactions/bulk-upload" class="btn btn-secondary">Bulk Upload</a>
-      </div>
-    </div>
-  <% }else{ %>
-    <div style="margin-bottom: 1.5rem; padding: 0.75rem; background: #f8f9fa; border-radius: 4px;">
-      <span>Showing <strong><%= count %></strong> transaction<%= count !== 1 ? 's' : '' %></span>
-    </div>
-    <% for(let transaction of transactions){ %>
-      <div class="transaction-card">
-        <h3>
-          <a href="/transactions/<%= transaction._id %>"><%= transaction.name %></a>
-        </h3>
-        <ul>
-          <li><b>Type:</b> 
-            <span class="badge <%= transaction.type === 'income' ? 'badge-income' : 'badge-expense' %>">
-              <%= transaction.type %>
-            </span>
-          </li>
-          <li><b>Category:</b> <%= transaction.category || 'N/A' %></li>
-          <li><b>Amount:</b> $<%= transaction.amount?.toLocaleString() || '0' %> <%= transaction.currency || 'CAD' %></li>
-          <li><b>Date:</b> <%= transaction.date ? new Date(transaction.date).toLocaleDateString() : 'N/A' %></li>
-          <% if(transaction.description){ %>
-          <li><b>Description:</b> <%= transaction.description %></li>
-          <% } %>
-          <li><b>Input Method:</b> <%= transaction.inputMethod || 'manual' %></li>
-          <% if(transaction.recurring){ %>
-          <li><b>Recurring:</b> 
-            <span class="badge badge-recurring">
-              <%= transaction.recurring ? 'Yes' : 'No' %>
-              <% if(transaction.recurrence){ %> (<%= transaction.recurrence %>)<% } %>
-            </span>
-          </li>
-          <% } %>
-        </ul>
-      </div>
-    <% } %>
-  <% } %>
 </div>
+
+<style>
+.transaction-detail {
+  padding: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.transaction-detail:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+</style>
     

@@ -1,198 +1,402 @@
 <% layout('./layout/boilerplate') %>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      padding: 2rem;
-      color: #222;
-    }
 
-    h1, h2 {
-      margin-bottom: 0.5rem;
-    }
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-10">
+      <!-- Page Header -->
+      <div class="text-center mb-5 fade-in">
+        <h1 class="fw-bold mb-2">
+          <i class="fas fa-chart-line text-primary me-2"></i>
+          Financial Insights
+        </h1>
+        <p class="lead text-muted">AI-powered analysis of your financial data</p>
+      </div>
 
-    h1 {
-      text-align: center;
-    }
+      <% if (!insight) { %>
+        <!-- No Insights State -->
+        <div class="card shadow-lg border-0 rounded-lg text-center py-5 fade-in" style="animation-delay: 0.1s;">
+          <div class="card-body p-5">
+            <div class="rounded-circle bg-light p-4 d-inline-flex mb-4">
+              <i class="fas fa-brain text-muted fa-3x"></i>
+            </div>
+            <h4 class="mb-3">No Insights Available</h4>
+            <p class="text-muted mb-4"><%= message || "Generate insights to get AI-powered analysis of your financial data." %></p>
+            <a href="/insights/generate" class="btn btn-primary hover-lift">
+              <i class="fas fa-magic me-2"></i>Generate Insights
+            </a>
+          </div>
+        </div>
+      <% } else { %>
 
-    section {
-      background: #fff;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
+        <!-- Executive Summary -->
+        <div class="card shadow-lg border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.1s;">
+          <div class="card-header bg-gradient-primary text-white py-4">
+            <div class="d-flex align-items-center">
+              <div class="rounded-circle bg-white p-2 me-3">
+                <i class="fas fa-file-alt text-primary"></i>
+              </div>
+              <div>
+                <h4 class="mb-0 text-white">Executive Summary</h4>
+                <small class="opacity-75">AI-generated overview of your finances</small>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <p class="mb-0 lead"><%= insight.summary %></p>
+          </div>
+        </div>
 
-    ul {
-      padding-left: 1.2rem;
-    }
+        <div class="row g-4">
+          <!-- Income vs Expenses -->
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 0.2s;">
+              <div class="card-header bg-gradient-success text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-balance-scale me-2"></i>Income vs Expenses
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Total Income</label>
+                      <p class="mb-0 fw-bold text-success h5">
+                        <i class="fas fa-arrow-up me-2"></i>$<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Total Expenses</label>
+                      <p class="mb-0 fw-bold text-danger h5">
+                        <i class="fas fa-arrow-down me-2"></i>$<%= insight.incomeVsExpenses.totalExpenses.toLocaleString() %>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Net Income</label>
+                      <p class="mb-0 fw-bold <%= insight.incomeVsExpenses.net >= 0 ? 'text-success' : 'text-danger' %> h5">
+                        <i class="fas fa-<%= insight.incomeVsExpenses.net >= 0 ? 'plus' : 'minus' %> me-2"></i>
+                        $<%= insight.incomeVsExpenses.net.toLocaleString() %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    li {
-      margin-bottom: 0.4rem;
-    }
+          <!-- Monthly Averages -->
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 0.3s;">
+              <div class="card-header bg-gradient-info text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-calendar-alt me-2"></i>Monthly Averages
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Average Monthly Income</label>
+                      <p class="mb-0 fw-bold text-success h6">$<%= insight.monthlyAverages.averageMonthlyIncome.toLocaleString() %></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Average Monthly Spending</label>
+                      <p class="mb-0 fw-bold text-danger h6">$<%= insight.monthlyAverages.averageMonthlySpend.toLocaleString() %></p>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="insight-stat">
+                      <label class="text-muted small mb-1">Average Monthly Net</label>
+                      <p class="mb-0 fw-bold <%= insight.monthlyAverages.averageMonthlyNet >= 0 ? 'text-success' : 'text-danger' %> h6">
+                        $<%= insight.monthlyAverages.averageMonthlyNet.toLocaleString() %>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    .stat {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 0.3rem;
-    }
+        <!-- Spending Efficiency Score -->
+        <div class="card shadow-lg border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.4s;">
+          <div class="card-header bg-gradient-warning text-white py-4">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <div class="rounded-circle bg-white p-2 me-3">
+                  <i class="fas fa-tachometer-alt text-warning"></i>
+                </div>
+                <div>
+                  <h4 class="mb-0 text-white">Spending Efficiency Score</h4>
+                  <small class="opacity-75">How efficiently you manage your money</small>
+                </div>
+              </div>
+              <div class="text-center">
+                <div class="display-4 fw-bold text-white"><%= insight.spendingEfficiencyScore %></div>
+                <small class="opacity-75">/100</small>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    .badge {
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      color: #fff;
-    }
+        <div class="row g-4">
+          <!-- Expense Breakdown -->
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg fade-in" style="animation-delay: 0.5s;">
+              <div class="card-header bg-gradient-danger text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-chart-pie me-2"></i>Expense Breakdown
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="list-group list-group-flush">
+                  <% insight.expenseBreakdown.categories.forEach(cat => { %>
+                    <div class="list-group-item px-0 py-3 border-0">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold"><%= cat.category %></span>
+                        <span class="badge bg-danger">$<%= cat.total.toLocaleString() %></span>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
 
-    .high { background: #e74c3c; }
-    .medium { background: #f39c12; }
-    .low { background: #2ecc71; }
+          <!-- Income Sources -->
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg fade-in" style="animation-delay: 0.6s;">
+              <div class="card-header bg-gradient-success text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-money-bill-wave me-2"></i>Income Sources
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="list-group list-group-flush">
+                  <% insight.incomeSources.sources.forEach(src => { %>
+                    <div class="list-group-item px-0 py-3 border-0">
+                      <div class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold"><%= src.category %></span>
+                        <span class="badge bg-success">$<%= src.total.toLocaleString() %></span>
+                      </div>
+                    </div>
+                  <% }) %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-    .muted {
-      color: #666;
-      font-size: 0.9rem;
-    }
+        <!-- Top Expenses -->
+        <div class="card shadow-sm border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.7s;">
+          <div class="card-header bg-gradient-secondary text-white py-3">
+            <h5 class="mb-0">
+              <i class="fas fa-star me-2"></i>Top Expenses
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-3">
+              <% insight.topExpenses.forEach((exp, index) => { %>
+                <div class="col-md-6">
+                  <div class="d-flex justify-content-between align-items-center p-3 rounded-lg bg-light">
+                    <div>
+                      <div class="fw-bold"><%= exp.name %></div>
+                      <small class="text-muted"><%= exp.category %></small>
+                    </div>
+                    <div class="text-end">
+                      <div class="fw-bold text-danger">$<%= exp.amount.toLocaleString() %></div>
+                      <small class="badge bg-primary">#<%= index + 1 %></small>
+                    </div>
+                  </div>
+                </div>
+              <% }) %>
+            </div>
+          </div>
+        </div>
 
-    .actions {
-      text-align: center;
-      margin-top: 2rem;
-    }
+        <!-- Recurring Insights -->
+        <div class="card shadow-sm border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.8s;">
+          <div class="card-header bg-gradient-info text-white py-3">
+            <h5 class="mb-0">
+              <i class="fas fa-redo me-2"></i>Recurring Insights
+            </h5>
+          </div>
+          <div class="card-body">
+            <div class="row g-4">
+              <div class="col-md-6">
+                <div class="text-center">
+                  <div class="h4 mb-1 text-success">$<%= insight.recurringInsights.totalRecurringIncome.toLocaleString() %></div>
+                  <small class="text-muted">Recurring Income</small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="text-center">
+                  <div class="h4 mb-1 text-danger">$<%= insight.recurringInsights.totalRecurringExpenses.toLocaleString() %></div>
+                  <small class="text-muted">Recurring Expenses</small>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <p class="mb-0 text-muted"><%= insight.recurringInsights.notes %></p>
+          </div>
+        </div>
 
-    a.button {
-      text-decoration: none;
-      padding: 0.6rem 1.2rem;
-      background: #4f46e5;
-      color: #fff;
-      border-radius: 6px;
-      margin: 0 0.5rem;
-      display: inline-block;
-    }
-  </style>
-</head>
-<body>
+        <!-- Risk Signals -->
+        <% if (insight.riskSignals && insight.riskSignals.length > 0) { %>
+          <div class="card shadow-sm border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.9s;">
+            <div class="card-header bg-gradient-danger text-white py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-exclamation-triangle me-2"></i>Risk Signals
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <% insight.riskSignals.forEach(risk => { %>
+                  <div class="col-12">
+                    <div class="d-flex align-items-start p-3 rounded-lg bg-danger bg-opacity-10 border border-danger border-opacity-25">
+                      <i class="fas fa-exclamation-circle text-danger me-3 mt-1"></i>
+                      <div class="flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                          <strong class="text-danger"><%= risk.type %></strong>
+                          <span class="badge bg-<%= risk.severity === 'high' ? 'danger' : risk.severity === 'medium' ? 'warning' : 'success' %>">
+                            <%= risk.severity %>
+                          </span>
+                        </div>
+                        <p class="mb-0 text-muted"><%= risk.message %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+        <% } %>
 
-<h1>📊 Financial Insights</h1>
+        <!-- Optimization Suggestions -->
+        <% if (insight.optimizationSuggestions && insight.optimizationSuggestions.length > 0) { %>
+          <div class="card shadow-sm border-0 rounded-lg mb-4 fade-in" style="animation-delay: 1.0s;">
+            <div class="card-header bg-gradient-primary text-white py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-lightbulb me-2"></i>Optimization Suggestions
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="row g-3">
+                <% insight.optimizationSuggestions.forEach(s => { %>
+                  <div class="col-12">
+                    <div class="d-flex align-items-start p-3 rounded-lg bg-primary bg-opacity-10 border border-primary border-opacity-25">
+                      <i class="fas fa-lightbulb text-primary me-3 mt-1"></i>
+                      <div>
+                        <strong class="text-primary d-block mb-1"><%= s.area %></strong>
+                        <p class="mb-0 text-muted"><%= s.suggestion %></p>
+                      </div>
+                    </div>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          </div>
+        <% } %>
 
-<% if (!insight) { %>
-  <section>
-    <p class="muted"><%= message || "No insights available yet." %></p>
-  </section>
-<% } else { %>
+        <!-- Behavior Patterns & Future Projection -->
+        <div class="row g-4 mb-4">
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 1.1s;">
+              <div class="card-header bg-gradient-dark text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-brain me-2"></i>Behavior Patterns
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="text-muted small">Highest Income Month</label>
+                  <p class="mb-2 fw-bold"><%= insight.behaviorPatterns.highestIncomeMonth %></p>
+                </div>
+                <div class="mb-3">
+                  <label class="text-muted small">Highest Expense Month</label>
+                  <p class="mb-2 fw-bold"><%= insight.behaviorPatterns.highestExpenseMonth %></p>
+                </div>
+                <hr>
+                <p class="mb-0 text-muted small"><%= insight.behaviorPatterns.notes %></p>
+              </div>
+            </div>
+          </div>
 
-  <!-- SUMMARY -->
-  <section>
-    <h2>Executive Summary</h2>
-    <p><%= insight.summary %></p>
-  </section>
+          <div class="col-lg-6">
+            <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 1.2s;">
+              <div class="card-header bg-gradient-secondary text-white py-3">
+                <h5 class="mb-0">
+                  <i class="fas fa-crystal-ball me-2"></i>Future Projection
+                </h5>
+              </div>
+              <div class="card-body">
+                <div class="row g-3">
+                  <div class="col-6">
+                    <div class="text-center">
+                      <div class="h5 mb-1 text-primary">$<%= insight.futureProjection.projectedMonthlyNet.toLocaleString() %></div>
+                      <small class="text-muted">Monthly Net</small>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="text-center">
+                      <div class="h5 mb-1 text-primary">$<%= insight.futureProjection.projectedYearlyNet.toLocaleString() %></div>
+                      <small class="text-muted">Yearly Net</small>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <hr>
+                    <div class="text-center">
+                      <span class="badge bg-info fs-6">Confidence: <%= insight.futureProjection.confidence %></span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
 
-  <!-- INCOME VS EXPENSES -->
-  <section>
-    <h2>Income vs Expenses</h2>
-    <div class="stat"><strong>Total Income:</strong> $<%= insight.incomeVsExpenses.totalIncome.toLocaleString() %></div>
-    <div class="stat"><strong>Total Expenses:</strong> $<%= insight.incomeVsExpenses.totalExpenses.toLocaleString() %></div>
-    <div class="stat"><strong>Net:</strong> $<%= insight.incomeVsExpenses.net.toLocaleString() %></div>
-  </section>
+      <% } %>
 
-  <!-- MONTHLY AVERAGES -->
-  <section>
-    <h2>Monthly Averages</h2>
-    <div class="stat">Income: $<%= insight.monthlyAverages.averageMonthlyIncome.toLocaleString() %></div>
-    <div class="stat">Spending: $<%= insight.monthlyAverages.averageMonthlySpend.toLocaleString() %></div>
-    <div class="stat">Net: $<%= insight.monthlyAverages.averageMonthlyNet.toLocaleString() %></div>
-  </section>
-
-  <!-- SPENDING EFFICIENCY -->
-  <section>
-    <h2>Spending Efficiency</h2>
-    <p><strong><%= insight.spendingEfficiencyScore %>/100</strong></p>
-  </section>
-
-  <!-- EXPENSE BREAKDOWN -->
-  <section>
-    <h2>Expense Breakdown</h2>
-    <ul>
-      <% insight.expenseBreakdown.categories.forEach(cat => { %>
-        <li><%= cat.category %>: $<%= cat.total.toLocaleString() %></li>
-      <% }) %>
-    </ul>
-  </section>
-
-  <!-- TOP EXPENSES -->
-  <section>
-    <h2>Top Expenses</h2>
-    <ul>
-      <% insight.topExpenses.forEach(exp => { %>
-        <li>
-          <strong><%= exp.name %></strong> —
-          $<%= exp.amount.toLocaleString() %>
-          (<%= exp.category %>)
-        </li>
-      <% }) %>
-    </ul>
-  </section>
-
-  <!-- INCOME SOURCES -->
-  <section>
-    <h2>Income Sources</h2>
-    <ul>
-      <% insight.incomeSources.sources.forEach(src => { %>
-        <li><%= src.category %>: $<%= src.total.toLocaleString() %></li>
-      <% }) %>
-    </ul>
-  </section>
-
-  <!-- RECURRING INSIGHTS -->
-  <section>
-    <h2>Recurring Insights</h2>
-    <p>Total Recurring Income: $<%= insight.recurringInsights.totalRecurringIncome.toLocaleString() %></p>
-    <p>Total Recurring Expenses: $<%= insight.recurringInsights.totalRecurringExpenses.toLocaleString() %></p>
-    <p><%= insight.recurringInsights.notes %></p>
-  </section>
-
-  <!-- RISK SIGNALS -->
-  <section>
-    <h2>⚠️ Risk Signals</h2>
-    <ul>
-      <% insight.riskSignals.forEach(risk => { %>
-        <li>
-          <span class="badge <%= risk.severity %>"><%= risk.severity %></span>
-          <strong><%= risk.type %></strong> — <%= risk.message %>
-        </li>
-      <% }) %>
-    </ul>
-  </section>
-
-  <!-- OPTIMIZATION -->
-  <section>
-    <h2>💡 Optimization Suggestions</h2>
-    <ul>
-      <% insight.optimizationSuggestions.forEach(s => { %>
-        <li><strong><%= s.area %>:</strong> <%= s.suggestion %></li>
-      <% }) %>
-    </ul>
-  </section>
-
-  <!-- BEHAVIOR -->
-  <section>
-    <h2>Behavior Patterns</h2>
-    <p>Highest Income Month: <%= insight.behaviorPatterns.highestIncomeMonth %></p>
-    <p>Highest Expense Month: <%= insight.behaviorPatterns.highestExpenseMonth %></p>
-    <p><%= insight.behaviorPatterns.notes %></p>
-  </section>
-
-  <!-- FUTURE -->
-  <section>
-    <h2>🔮 Future Projection</h2>
-    <p>Projected Monthly Net: $<%= insight.futureProjection.projectedMonthlyNet.toLocaleString() %></p>
-    <p>Projected Yearly Net: $<%= insight.futureProjection.projectedYearlyNet.toLocaleString() %></p>
-    <p>Confidence: <%= insight.futureProjection.confidence %></p>
-  </section>
-
-<% } %>
-
-<div class="actions">
-  <a class="button" href="/insights/generate">Regenerate Insights</a>
-  <a class="button" href="/insights/download-pdf">Download PDF</a>
+      <!-- Action Buttons -->
+      <div class="text-center fade-in" style="animation-delay: 1.3s;">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/insights/generate" class="btn btn-primary hover-lift">
+            <i class="fas fa-sync-alt me-2"></i>Regenerate Insights
+          </a>
+          <a href="/insights/download-pdf" class="btn btn-outline-secondary hover-lift">
+            <i class="fas fa-download me-2"></i>Download PDF
+          </a>
+          <a href="/transactions" class="btn btn-outline-primary hover-lift">
+            <i class="fas fa-arrow-left me-2"></i>Back to Transactions
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
-</body>
+<style>
+.insight-stat {
+  padding: 1rem;
+  background-color: rgba(0, 0, 0, 0.02);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease-in-out;
+}
+
+.insight-stat:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  transition: transform 0.2s ease-in-out;
+}
+</style>
