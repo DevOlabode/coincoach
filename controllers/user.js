@@ -1,15 +1,18 @@
 const Transaction = require('../models/transactions');
+const Goals = require('../models/goals');
 const User = require('../models/user');
 
 module.exports.userProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
+    const TransactionCount = await Transaction.countDocuments({userId: req.user._id});
+    const GoalCount = await Goals.countDocuments({userId: req.user._id});
 
     if (!user) {
       return res.status(404).send('User not found');
     }
 
-    res.render('user/profile', { user });
+    res.render('user/profile', { user, TransactionCount, GoalCount });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server error');

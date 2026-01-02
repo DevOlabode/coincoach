@@ -1,26 +1,138 @@
 <% layout('./layout/boilerplate') %>
 
-<h1><%= transaction.name %></h1>
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Page Header -->
+      <div class="text-center mb-5 fade-in">
+        <h1 class="fw-bold mb-2">
+          <i class="fas fa-receipt text-primary me-2"></i>
+          Transaction Details
+        </h1>
+        <p class="lead text-muted">Detailed information about your transaction</p>
+      </div>
 
-<ul>
-    <li><b>Transaction Type : </b><%= transaction.type %></li>
-    <li><b>Category : </b><%= transaction.category %></li>
-    <li><b>Amount : </b><%= transaction.amount %></li>
-    <li><b>Date : </b><%= transaction.date %></li>
-    <li><b>Description : </b><%= transaction.description %></li>
-    <li><b>Recurrence : </b><%= transaction.recurrence %></li>
-    <li><b>Currency : </b><%= transaction.currency %></li>
-    <li><b>Converted Amount : </b><%= transaction.convertedAmount %></li>
-    <li><b>Input Method : </b><%= transaction.inputMethod %></li>
-    <li><b>Recurring : </b><%= transaction.recurring %></li>
-</ul>
+      <!-- Transaction Overview Card -->
+      <div class="card shadow-lg border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.1s;">
+        <div class="card-header bg-gradient-primary text-white py-4">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle bg-white p-2 me-3">
+              <i class="fas fa-<%= transaction.type === 'income' ? 'arrow-up' : 'arrow-down' %> text-primary"></i>
+            </div>
+            <div>
+              <h4 class="mb-0 text-white"><%= transaction.name %></h4>
+              <small class="opacity-75"><%= transaction.category %> • <%= transaction.type %></small>
+            </div>
+          </div>
+        </div>
+        <div class="card-body p-4">
+          <div class="row g-4">
+            <div class="col-md-6">
+              <div class="text-center">
+                <div class="display-6 fw-bold <%= transaction.type === 'income' ? 'text-success' : 'text-danger' %> mb-2">
+                  <%= transaction.type === 'income' ? '+' : '-' %>$<%= transaction.amount.toLocaleString() %>
+                </div>
+                <small class="text-muted">Transaction Amount</small>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="text-center">
+                <div class="h4 mb-1 text-primary">$<%= transaction.convertedAmount.toLocaleString() %></div>
+                <small class="text-muted">Converted Amount (<%= transaction.currency %>)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
+      <!-- Transaction Details -->
+      <div class="row g-4 mb-4">
+        <!-- Basic Information -->
+        <div class="col-lg-6">
+          <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 0.2s;">
+            <div class="card-header bg-gradient-secondary text-white py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-info-circle me-2"></i>Basic Information
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Category</label>
+                <p class="mb-0 fw-semibold"><%= transaction.category %></p>
+              </div>
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Type</label>
+                <p class="mb-0 fw-semibold"><%= transaction.type %></p>
+              </div>
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Date</label>
+                <p class="mb-0 fw-semibold"><%= transaction.date %></p>
+              </div>
+              <div class="mb-0">
+                <label class="text-muted small mb-1">Currency</label>
+                <p class="mb-0 fw-semibold"><%= transaction.currency %></p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-<form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
-    <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post">
-        <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
-        <button class="btn btn-danger m-2">Delete Transaction</button>
-    </form>
-</form>
+        <!-- Additional Details -->
+        <div class="col-lg-6">
+          <div class="card shadow-sm border-0 rounded-lg h-100 fade-in" style="animation-delay: 0.3s;">
+            <div class="card-header bg-gradient-info text-white py-3">
+              <h5 class="mb-0">
+                <i class="fas fa-cogs me-2"></i>Additional Details
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Recurrence</label>
+                <p class="mb-0 fw-semibold"><%= transaction.recurrence %></p>
+              </div>
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Recurring</label>
+                <p class="mb-0 fw-semibold"><%= transaction.recurring ? 'Yes' : 'No' %></p>
+              </div>
+              <div class="mb-3">
+                <label class="text-muted small mb-1">Input Method</label>
+                <p class="mb-0 fw-semibold"><%= transaction.inputMethod %></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
-<a href="/transactions/<%= transaction._id %>/edit" class="btn btn-warning m-2">Edit Transaction</a>
+      <!-- Description -->
+      <% if (transaction.description) { %>
+        <div class="card shadow-sm border-0 rounded-lg mb-4 fade-in" style="animation-delay: 0.4s;">
+          <div class="card-header bg-gradient-dark text-white py-3">
+            <h5 class="mb-0 text-white">
+              <i class="fas fa-comment me-2 text-white"></i>Description
+            </h5>
+          </div>
+          <div class="card-body">
+            <p class="mb-0"><%= transaction.description %></p>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- Action Buttons -->
+      <div class="text-center fade-in" style="animation-delay: 0.5s;">
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+          <a href="/transactions/<%= transaction._id %>/edit" class="btn btn-warning hover-lift">
+            <i class="fas fa-edit me-2"></i>Edit Transaction
+          </a>
+          <form action="/transactions/<%= transaction._id %>?_method=DELETE" method="post" class="d-inline" onsubmit="return confirm('Are you sure you want to delete this transaction?')">
+            <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+            <button type="submit" class="btn btn-danger hover-lift">
+              <i class="fas fa-trash me-2"></i>Delete Transaction
+            </button>
+          </form>
+          <a href="/transactions" class="btn btn-outline-primary hover-lift">
+            <i class="fas fa-arrow-left me-2"></i>Back to Transactions
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
