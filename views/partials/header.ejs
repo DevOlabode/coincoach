@@ -1,46 +1,102 @@
-<header class="bg-white shadow-md" style="position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); background-color: rgba(255, 255, 255, 0.95); font-family: 'Mozilla Headline', sans-serif;">
-    <nav class="container d-flex justify-content-between align-items-center py-3">
+<header class="bg-white shadow-lg" style="position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%); border-bottom: 1px solid rgba(0, 0, 0, 0.05); font-family: 'Mozilla Headline', sans-serif;">
+    <nav class="container d-flex justify-content-between align-items-center py-4">
         <a href="/" class="d-flex align-items-center text-decoration-none slide-in-left">
-            <i class="fas fa-coins text-primary me-2" style="font-size: 1.5rem; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));"></i>
-            <span class="h4 mb-0 text-primary fw-bold" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">CoinCoach</span>
+            <div class="logo-container me-3">
+                <i class="fas fa-coins text-primary" style="font-size: 2rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));"></i>
+            </div>
+            <span class="h4 mb-0 fw-bold" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.5rem; letter-spacing: -0.5px;">CoinCoach</span>
         </a>
 
-        <div class="d-none d-md-flex">
-            <a href="/" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Home</a>
-            <a href="/transactions" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Transactions</a>
-            <a href="/bills" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Bills</a>
-            <a href="/goals" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Goals</a>
-            <a href="/insights" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Insights</a>
-            <a href="/conversion" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">Conversion</a>
-            <a href="/chat" class="nav-link px-3 py-2 text-dark text-decoration-none hover-bright stagger-item slide-in-up">AI Assistant</a>
+        <div class="d-none d-md-flex align-items-center">
+            <a href="/" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Home</a>
+            <a href="/transactions" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Transactions</a>
+            <a href="/bills" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Bills</a>
+            <a href="/goals" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Goals</a>
+            <a href="/insights" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Insights</a>
+            <a href="/conversion" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Conversion</a>
+            <a href="/chat" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">AI Assistant</a>
         </div>
 
         <div class="d-flex align-items-center">
             <% if (typeof currentUser !== 'undefined' && currentUser) { %>
                 <div class="dropdown">
-                    <button class="btn btn-outline-primary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fas fa-user-circle me-1"></i> Account
+                    <button class="btn btn-outline-primary dropdown-toggle d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="border-radius: 50px; padding: 0.5rem 1rem; font-weight: 500; transition: all 0.3s ease;">
+                        <i class="fas fa-user-circle me-2" style="font-size: 1.1rem;"></i>
+                        <span class="d-none d-lg-inline">Account</span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown">
-                        <li><a class="dropdown-item" href="/user/profile"><i class="fas fa-user me-2"></i> Profile</a></li>
-                        <li><a class="dropdown-item" href="/user/settings"><i class="fas fa-cog me-2"></i> Settings</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="/logout"><i class="fas fa-sign-out-alt me-2"></i> Logout</a></li>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown" style="border-radius: 12px; margin-top: 0.5rem;">
+                        <li><a class="dropdown-item py-3 px-4" href="/user/profile"><i class="fas fa-user me-3"></i> Profile</a></li>
+                        <li><a class="dropdown-item py-3 px-4" href="/user/settings"><i class="fas fa-cog me-3"></i> Settings</a></li>
+                        <li><hr class="dropdown-divider my-2"></li>
+                        <li><a class="dropdown-item py-3 px-4 text-danger" href="/logout"><i class="fas fa-sign-out-alt me-3"></i> Logout</a></li>
                     </ul>
                 </div>
             <% } else { %>
-                <a href="/login" class="btn btn-outline-primary me-2 slide-in-right hover-lift">
-                    <i class="fas fa-sign-in-alt me-1"></i> Login
+                <a href="/login" class="btn btn-outline-primary me-3 slide-in-right hover-lift" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-weight: 500;">
+                    <i class="fas fa-sign-in-alt me-1"></i>
+                    <span class="d-none d-lg-inline">Login</span>
                 </a>
-                <a href="/register" class="btn btn-primary slide-in-right hover-lift" style="animation-delay: 0.1s;">
-                    <i class="fas fa-user-plus me-1"></i> Sign Up
+                <a href="/register" class="btn btn-primary slide-in-right hover-lift" style="border-radius: 50px; padding: 0.5rem 1.5rem; font-weight: 500; animation-delay: 0.1s;">
+                    <i class="fas fa-user-plus me-1"></i>
+                    <span class="d-none d-lg-inline">Sign Up</span>
                 </a>
             <% } %>
 
             <!-- Mobile menu button -->
-            <button class="btn d-md-none ms-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+            <button class="btn d-md-none ms-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="border-radius: 50%; padding: 0.5rem; border: 1px solid var(--gray-light);">
                 <i class="fas fa-bars"></i>
             </button>
         </div>
     </nav>
 </header>
+
+<style>
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 100%;
+}
+
+.nav-link:hover {
+    color: var(--primary) !important;
+    transform: translateY(-1px);
+}
+
+.logo-container {
+    background: linear-gradient(135deg, rgba(44, 62, 80, 0.1) 0%, rgba(52, 152, 219, 0.1) 100%);
+    border-radius: 50%;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.logo-container:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dropdown-menu {
+    animation: fadeInDown 0.3s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
