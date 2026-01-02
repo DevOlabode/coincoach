@@ -9,7 +9,6 @@
   <div class="card" style="background: #fff; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
     <h4 style="margin-bottom: 1rem;">Upload CSV or Excel File</h4>
     <form action="/transactions/bulk-upload" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
             
       <div class="mb-3">
         <label for="csvFile" class="form-label">Select File</label>

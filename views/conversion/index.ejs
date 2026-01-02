@@ -108,7 +108,6 @@
   <p class="subtitle">Convert between global currencies using live exchange rates.</p>
 
   <form id="converterForm" action="/conversion" method="post" class="needs-validation" novalidate>
-    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
 
     <label>Amount</label>
     <input type="number" step="0.01" name="amount" required />

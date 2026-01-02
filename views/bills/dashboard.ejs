@@ -106,7 +106,6 @@
     <div>
       <a href="/transactions" class="btn btn-secondary" style="margin-right: 0.5rem;">← Transactions</a>
       <form action="/bills/generate" method="POST" style="display: inline;">
-        <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
 
         <button type="submit" class="btn btn-primary">🔄 Regenerate Predictions</button>
       </form>

@@ -146,13 +146,13 @@
   <div class="d-flex gap-2 mt-4">
     <a href="/goals" class="btn btn-secondary">Back to Goals</a>
     <form action="/goals/<%= goal._id %>?_method=DELETE" method="POST">
-      <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
       <button class="btn btn-outline-danger">Delete Goal</button>
     </form>
   </div>
 
-  <form action="/goals/<%= goal._id %>/status?_method=PATCH" method="POST">
-    <!-- rest of form -->
+  <!-- Edit goals input -->
+
+<form action="/goals/<%= goal._id %>/status?_method=PATCH" method="POST">
 </form>
 
 </div>

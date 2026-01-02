@@ -202,6 +202,7 @@ module.exports.bulkUpload = async (req, res) => {
         res.redirect('/transactions');
     } catch (err) {
         req.flash('error', err.message);
+        console.error(err)
         res.redirect('/transactions/bulk-upload');
     } finally {
         if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
