@@ -20,8 +20,8 @@ router.get('/edit-account', catchAsync(controller.editAccountForm));
 
 router.post('/edit-account', catchAsync(controller.editAccount));
 
-router.get('/:displayName', catchAsync(controller.userProfile));
+router.get('/profile', catchAsync(controller.userProfile));
 
-router.delete('/:displayName/delete', catchAsync(controller.deleteAcct));
+router.delete('/delete', catchAsync(controller.deleteAcct));
 
 module.exports = router;

@@ -3,8 +3,7 @@ const User = require('../models/user');
 
 module.exports.userProfile = async (req, res) => {
   try {
-    const displayName = req.params.displayName;
-    const user = await User.findOne({ displayName });
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).send('User not found');
