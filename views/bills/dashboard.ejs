@@ -173,8 +173,6 @@
             </div>
             
             <form action="/bills/<%= bill._id %>/dismiss" method="POST" style="margin: 0;">
-              <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
-
               <button type="submit" class="btn btn-sm btn-outline-secondary" title="Dismiss notification">
                 ✓ Dismiss
               </button>

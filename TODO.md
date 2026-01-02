@@ -1,26 +1,17 @@
 # TODO: Remove CSRF from Codebase
 
-- [x] Remove CSRF middleware from index.js (require, setup, and locals)
-- [x] Remove hidden CSRF inputs from views/user/profile.ejs
-- [ ] Remove hidden CSRF inputs from views/user/editProfile.ejs
-- [ ] Remove hidden CSRF inputs from views/user/editAcct.ejs
-- [ ] Remove hidden CSRF inputs from views/user/completeProfile.ejs
-- [ ] Remove hidden CSRF inputs from views/transactions/bulkUpload.ejs
-- [ ] Remove hidden CSRF inputs from views/transactions/new.ejs
-- [ ] Remove hidden CSRF inputs from views/transactions/show.ejs
-- [ ] Remove hidden CSRF inputs from views/transactions/edit.ejs
+- [x] Remove hidden CSRF inputs from views/transactions/show.ejs
+- [x] Remove hidden CSRF inputs from views/transactions/new.ejs
+- [x] Remove hidden CSRF inputs from views/transactions/edit.ejs
 - [ ] Remove hidden CSRF inputs from views/transactions/bulkUploadJSON.ejs
+- [ ] Remove hidden CSRF inputs from views/transactions/bulkUpload.ejs
 - [ ] Remove hidden CSRF inputs from views/reciept/getReciept.ejs
 - [ ] Remove hidden CSRF inputs from views/goals/show.ejs
 - [ ] Remove hidden CSRF inputs from views/goals/index.ejs
 - [ ] Remove hidden CSRF inputs from views/conversion/index.ejs
-- [ ] Remove hidden CSRF inputs from views/auth/resetPassword.ejs
-- [ ] Remove hidden CSRF inputs from views/auth/register.ejs
+- [ ] Remove hidden CSRF inputs from views/bills/dashboard.ejs
 - [ ] Remove hidden CSRF inputs from views/auth/login.ejs
 - [ ] Remove hidden CSRF inputs from views/auth/enterEmail.ejs
-- [ ] Remove hidden CSRF inputs from views/bills/dashboard.ejs
 - [ ] Remove hidden CSRF inputs from views/auth/confirmCode.ejs
-- [ ] Remove '_csrf' special case from middleware.js sanitizeInputs
-- [ ] Remove 'csurf' from package.json dependencies
-- [ ] Run npm uninstall csurf
-- [ ] Update TODO.md to mark all tasks as completed
+- [ ] Remove hidden CSRF inputs from views/auth/resetPassword.ejs
+- [ ] Remove hidden CSRF inputs from views/auth/register.ejs

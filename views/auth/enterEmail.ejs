@@ -3,7 +3,6 @@
 <h5>Enter Email</h5>
 
 <form action="/send-reset-code" method="post" class="needs-validation" no-validate>
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
     <label for="email" class="form-label">Email</label>
     <input type="email" class="form-control" name="email" id="email" required>

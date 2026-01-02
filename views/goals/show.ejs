@@ -152,7 +152,6 @@
   </div>
 
   <form action="/goals/<%= goal._id %>/status?_method=PATCH" method="POST">
-    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
     <!-- rest of form -->
 </form>
 

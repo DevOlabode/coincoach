@@ -55,11 +55,7 @@ module.exports.sanitizeInputs = (req, res, next) => {
         if (obj && typeof obj === 'object') {
             const sanitized = {};
             for (const key in obj) {
-                if (key === '_csrf') {
-                    sanitized[key] = obj[key];
-                } else {
-                    sanitized[key] = sanitize(obj[key]);
-                }
+                sanitized[key] = sanitize(obj[key]);
             }
             return sanitized;
         }

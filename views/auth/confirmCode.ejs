@@ -1,7 +1,6 @@
 <% layout('./layout/boilerplate') %>
 
 <form action="/confirm-code" method="post">
-    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
 
     <input type="text" placeholder="enter code" required name="code" class="form-control">
 
