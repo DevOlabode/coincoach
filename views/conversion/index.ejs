@@ -1,138 +1,208 @@
 <% layout('./layout/boilerplate') %>
 
-  <style>
-    body {
-      font-family: system-ui, sans-serif;
-      background: #0f172a;
-      color: #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
-    }
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <!-- Page Title -->
+      <div class="text-center mb-5 fade-in">
+        <h1 class="fw-bold mb-2">
+          <i class="fas fa-exchange-alt text-primary me-2"></i>
+          Currency Converter
+        </h1>
+        <p class="lead text-muted">Convert between global currencies using live exchange rates</p>
+      </div>
 
-    .converter {
-      background: #020617;
-      padding: 2rem;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 460px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-    }
+      <!-- Converter Card -->
+      <div class="card shadow-lg border-0 rounded-lg mb-5 fade-in" style="animation-delay: 0.1s;">
+        <div class="card-header bg-gradient-primary text-white py-4">
+          <div class="d-flex align-items-center">
+            <div class="rounded-circle bg-white p-2 me-3">
+              <i class="fas fa-dollar-sign text-primary"></i>
+            </div>
+            <div>
+              <h4 class="mb-0">Quick Currency Conversion</h4>
+              <small class="opacity-75">Powered by real-time exchange rates</small>
+            </div>
+          </div>
+        </div>
 
-    h1 {
-      margin-bottom: 0.5rem;
-      font-size: 1.6rem;
-    }
+        <div class="card-body p-4 p-lg-5">
+          <form id="converterForm" action="/conversion" method="post" class="needs-validation" novalidate>
+            <!-- Amount Input -->
+            <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.2s;">
+              <label class="form-label">
+                <i class="fas fa-coins me-2"></i>Amount
+              </label>
+              <input 
+                type="number" 
+                step="0.01" 
+                name="amount" 
+                class="form-control form-control-lg" 
+                placeholder="Enter amount to convert" 
+                required 
+              />
+              <div class="invalid-feedback">Please enter a valid amount</div>
+            </div>
 
-    .subtitle {
-      font-size: 0.9rem;
-      color: #9ca3af;
-      margin-bottom: 1.5rem;
-    }
+            <!-- From Currency -->
+            <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.3s;">
+              <label class="form-label">
+                <i class="fas fa-globe me-2"></i>From Currency
+              </label>
+              <div class="dropdown position-relative">
+                <input 
+                  type="text" 
+                  id="fromInput" 
+                  name="from" 
+                  class="form-control" 
+                  placeholder="Search currency (e.g. USD, EUR, GBP)..." 
+                  autocomplete="off" 
+                />
+                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white" 
+                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;" 
+                     id="fromList">
+                </div>
+              </div>
+            </div>
 
-    label {
-      display: block;
-      font-size: 0.85rem;
-      margin-bottom: 0.25rem;
-    }
+            <!-- Swap Button -->
+            <div class="text-center mb-4 slide-in-up" style="animation-delay: 0.4s;">
+              <button type="button" class="btn btn-outline-secondary rounded-circle p-2" id="swapButton">
+                <i class="fas fa-exchange-alt"></i>
+              </button>
+            </div>
 
-    input, button {
-      width: 100%;
-      padding: 0.65rem;
-      border-radius: 8px;
-      border: 1px solid #1e293b;
-      margin-bottom: 1rem;
-      background: #020617;
-      color: #e5e7eb;
-    }
+            <!-- To Currency -->
+            <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.5s;">
+              <label class="form-label">
+                <i class="fas fa-globe me-2"></i>To Currency
+              </label>
+              <div class="dropdown position-relative">
+                <input 
+                  type="text" 
+                  id="toInput" 
+                  name="to" 
+                  class="form-control" 
+                  placeholder="Search currency (e.g. USD, EUR, GBP)..." 
+                  autocomplete="off" 
+                />
+                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white" 
+                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;" 
+                     id="toList">
+                </div>
+              </div>
+            </div>
 
-    button {
-      background: #2563eb;
-      border: none;
-      font-weight: 600;
-      cursor: pointer;
-    }
+            <input type="hidden" name="fromCurrency" />
+            <input type="hidden" name="toCurrency" />
 
-    button:hover {
-      background: #1d4ed8;
-    }
+            <!-- Convert Button -->
+            <div class="d-grid mt-4 slide-in-up" style="animation-delay: 0.6s;">
+              <button type="submit" class="btn btn-primary btn-lg hover-lift">
+                <i class="fas fa-sync-alt me-2"></i>Convert Currency
+              </button>
+            </div>
+          </form>
 
-    .dropdown {
-      position: relative;
-      margin-bottom: 1rem;
-    }
+          <!-- Result Box -->
+          <div class="mt-5 p-4 rounded-lg bg-light border-left border-primary shadow-sm slide-in-up" 
+               style="display: none; border-left: 4px solid var(--primary);" 
+               id="resultBox">
+            <div class="d-flex align-items-center mb-2">
+              <i class="fas fa-check-circle text-success me-2 fa-lg"></i>
+              <h5 class="mb-0" id="convertedAmount"></h5>
+            </div>
+            <p class="text-muted mb-0" id="exchangeRate"></p>
+          </div>
+        </div>
 
-    .dropdown-list {
-      position: absolute;
-      width: 100%;
-      max-height: 180px;
-      overflow-y: auto;
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      display: none;
-      z-index: 10;
-    }
+        <div class="card-footer bg-light p-4">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-info-circle text-primary me-2"></i>
+            <small class="text-muted">Exchange rates are updated regularly. Last update: <span id="lastUpdate"></span></small>
+          </div>
+        </div>
+      </div>
 
-    .dropdown-item {
-      padding: 0.5rem;
-      cursor: pointer;
-      font-size: 0.9rem;
-    }
-
-    .dropdown-item:hover {
-      background: #1e293b;
-    }
-
-    .result {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: #020617;
-      border: 1px solid #1e293b;
-      border-radius: 8px;
-      display: none;
-    }
-
-    .rate {
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
-  </style>
-</head>
-
-<body>
-<div class="converter">
-  <h1>Currency Converter</h1>
-  <p class="subtitle">Convert between global currencies using live exchange rates.</p>
-
-  <form id="converterForm" action="/conversion" method="post" class="needs-validation" novalidate>
-
-    <label>Amount</label>
-    <input type="number" step="0.01" name="amount" required />
-
-    <label>From</label>
-    <div class="dropdown">
-      <input type="text" id="fromInput" name="from" placeholder="Search currency..." autocomplete="off" />
-      <div class="dropdown-list" id="fromList"></div>
+      <!-- Features Section -->
+      <div class="row g-4 mt-4">
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm hover-lift">
+            <div class="card-body text-center p-4">
+              <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-flex mb-3">
+                <i class="fas fa-bolt text-primary fa-2x"></i>
+              </div>
+              <h5 class="card-title">Real-Time Rates</h5>
+              <p class="card-text">Get the latest exchange rates from global currency markets.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm hover-lift">
+            <div class="card-body text-center p-4">
+              <div class="rounded-circle bg-success bg-opacity-10 p-3 d-inline-flex mb-3">
+                <i class="fas fa-globe text-success fa-2x"></i>
+              </div>
+              <h5 class="card-title">170+ Currencies</h5>
+              <p class="card-text">Support for major and exotic currencies from around the world.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card h-100 border-0 shadow-sm hover-lift">
+            <div class="card-body text-center p-4">
+              <div class="rounded-circle bg-info bg-opacity-10 p-3 d-inline-flex mb-3">
+                <i class="fas fa-history text-info fa-2x"></i>
+              </div>
+              <h5 class="card-title">Historical Data</h5>
+              <p class="card-text">Track currency trends and make informed financial decisions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-    <label>To</label>
-    <div class="dropdown">
-      <input type="text" id="toInput" name="to" placeholder="Search currency..." autocomplete="off" />
-      <div class="dropdown-list" id="toList"></div>
-    </div>
-
-    <input type="hidden" name="fromCurrency" />
-    <input type="hidden" name="toCurrency" />
-
-    <button type="submit">Convert</button>
-  </form>
-
-  <div class="result" id="resultBox">
-    <strong id="convertedAmount"></strong>
-    <div class="rate" id="exchangeRate"></div>
   </div>
 </div>
-</body>
+
+<script>
+  // Set current date for "last update"
+  document.addEventListener('DOMContentLoaded', function() {
+    const now = new Date();
+    document.getElementById('lastUpdate').textContent = now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+
+    // Add swap button functionality
+    document.getElementById('swapButton').addEventListener('click', function() {
+      const fromInput = document.getElementById('fromInput');
+      const toInput = document.getElementById('toInput');
+      const fromCurrency = document.querySelector('[name="fromCurrency"]');
+      const toCurrency = document.querySelector('[name="toCurrency"]');
+
+      // Swap values
+      const tempValue = fromInput.value;
+      const tempCurrency = fromCurrency.value;
+
+      fromInput.value = toInput.value;
+      fromCurrency.value = toCurrency.value;
+
+      toInput.value = tempValue;
+      toCurrency.value = tempCurrency;
+    });
+  });
+
+  // Style dropdown items
+  document.addEventListener('DOMContentLoaded', function() {
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.addedNodes.length) {
+          const items = document.querySelectorAll('.dropdown-item');
+          items.forEach(item => {
+            item.classList.add('p-3', 'border-bottom', 'hover-bright');
+          });
+        }
+      });
+    });
+
+    observer.observe(document.getElementById('fromList'), { childList: true });
+    observer.observe(document.getElementById('toList'), { childList: true });
+  });
+</script>

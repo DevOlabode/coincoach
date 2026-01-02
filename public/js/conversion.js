@@ -173,23 +173,90 @@ const currencies = [
   form.addEventListener("submit", async e => {
     e.preventDefault();
 
-    const data = {
-      amount: form.amount.value,
-      fromCurrency: form.fromCurrency.value,
-      toCurrency: form.toCurrency.value
-    };
+    try {
+      // Show loading state
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn.innerHTML;
+      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Converting...';
+      submitBtn.disabled = true;
 
-    const res = await fetch("/conversion", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+      const data = {
+        amount: form.amount.value,
+        fromCurrency: form.fromCurrency.value,
+        toCurrency: form.toCurrency.value
+      };
 
-    const result = await res.json();
+      // Validate inputs
+      if (!data.amount || !data.fromCurrency || !data.toCurrency) {
+        throw new Error("Please fill in all fields");
+      }
 
-    document.getElementById("resultBox").style.display = "block";
-    document.getElementById("convertedAmount").textContent =
-      `${data.amount} ${data.fromCurrency} = ${result.convertedAmount} ${data.toCurrency}`;
-    document.getElementById("exchangeRate").textContent =
-      `Rate: 1 ${data.fromCurrency} = ${result.rate} ${data.toCurrency}`;
+      const res = await fetch("/conversion", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.error || "Conversion failed");
+      }
+
+      // Format numbers for better display
+      const formattedAmount = parseFloat(data.amount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      const formattedResult = parseFloat(result.convertedAmount).toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+
+      const formattedRate = parseFloat(result.rate).toLocaleString(undefined, {
+        minimumFractionDigits: 4,
+        maximumFractionDigits: 6
+      });
+
+      // Update result display
+      const resultBox = document.getElementById("resultBox");
+      resultBox.style.display = "block";
+
+      // Add animation if not already visible
+      if (resultBox.style.opacity !== "1") {
+        resultBox.style.opacity = "0";
+        resultBox.style.transform = "translateY(10px)";
+        setTimeout(() => {
+          resultBox.style.transition = "all 0.3s ease-out";
+          resultBox.style.opacity = "1";
+          resultBox.style.transform = "translateY(0)";
+        }, 10);
+      }
+
+      document.getElementById("convertedAmount").textContent =
+        `${formattedAmount} ${data.fromCurrency} = ${formattedResult} ${data.toCurrency}`;
+      document.getElementById("exchangeRate").textContent =
+        `Exchange Rate: 1 ${data.fromCurrency} = ${formattedRate} ${data.toCurrency}`;
+
+    } catch (error) {
+      // Handle errors
+      console.error("Conversion error:", error);
+
+      // Show error message
+      const resultBox = document.getElementById("resultBox");
+      resultBox.style.display = "block";
+      resultBox.style.borderLeft = "4px solid var(--danger)";
+      resultBox.classList.add("bg-danger", "bg-opacity-10");
+
+      document.getElementById("convertedAmount").innerHTML =
+        `<i class="fas fa-exclamation-circle text-danger me-2"></i> Error`;
+      document.getElementById("exchangeRate").textContent =
+        error.message || "Something went wrong. Please try again.";
+    } finally {
+      // Restore button state
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.innerHTML = originalBtnText;
+      submitBtn.disabled = false;
+    }
   });
