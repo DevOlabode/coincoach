@@ -2,44 +2,53 @@
 
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
-        <div class="card shadow-lg border-0 rounded-lg mt-4">
-            <div class="card-header bg-primary text-white text-center py-4">
+        <div class="card shadow-lg border-0 rounded-lg mt-4 fade-in">
+            <div class="card-header bg-gradient-primary text-white text-center py-4">
                 <h3 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i>Login to Your Account</h3>
             </div>
-            <div class="card-body p-4">
-                <div class="text-center mb-4">
+            <div class="card-body p-5">
+                <div class="text-center mb-4 slide-in-up">
+                    <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-flex mb-3">
+                        <i class="fas fa-user-circle text-primary fa-2x"></i>
+                    </div>
                     <p class="text-muted">Enter your email and password to access your CoinCoach dashboard</p>
                 </div>
 
                 <form action="/login" method="POST">
-                    <div class="form-group mb-3">
+                    <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.1s;">
                         <label class="form-label"><i class="fas fa-envelope me-2"></i>Email Address</label>
                         <input type="email" name="email" class="form-control" placeholder="name@example.com" required autofocus>
                     </div>
 
-                    <div class="form-group mb-4">
+                    <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.2s;">
                         <label class="form-label"><i class="fas fa-lock me-2"></i>Password</label>
                         <input type="password" name="password" class="form-control" placeholder="••••••••" required>
                     </div>
 
-                    <div class="d-grid">
-                        <button type="submit" class="btn btn-primary btn-lg">
+                    <div class="d-grid slide-in-up" style="animation-delay: 0.3s;">
+                        <button type="submit" class="btn btn-primary btn-lg hover-lift">
                             <i class="fas fa-sign-in-alt me-2"></i>Login
                         </button>
                     </div>
                 </form>
             </div>
             <div class="card-footer bg-light py-3">
-                <div class="text-center">
-                    <a href="/enter-email" class="text-decoration-none">
+                <div class="text-center slide-in-up" style="animation-delay: 0.4s;">
+                    <a href="/enter-email" class="text-decoration-none hover-bright">
                         <i class="fas fa-key me-1"></i> Forgot your password?
                     </a>
                     <hr class="my-3">
                     <p class="mb-0">Don't have an account? 
-                        <a href="/register" class="text-primary fw-bold">Sign up</a>
+                        <a href="/register" class="text-primary fw-bold hover-bright">Sign up</a>
                     </p>
                 </div>
             </div>
+        </div>
+
+        <div class="text-center mt-4 fade-in" style="animation-delay: 0.5s;">
+            <p class="text-muted small">
+                <i class="fas fa-shield-alt me-1"></i> Secure login with 256-bit encryption
+            </p>
         </div>
     </div>
 </div>
