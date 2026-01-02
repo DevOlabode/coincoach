@@ -1,15 +1,55 @@
 <% layout('./layout/boilerplate') %>
-<h3>Register</h3>
-<form action="/register" method="post" class="needs-validation" novalidate>
 
-    <label for="fullName" class="form-label">Full Name</label>
-    <input type="text" class="form-control" name="fullName" id="fullName" required placeholder="Enter your full name">
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-lg border-0 rounded-lg mt-4">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h3 class="mb-0"><i class="fas fa-user-plus me-2"></i>Create an Account</h3>
+            </div>
+            <div class="card-body p-4">
+                <div class="text-center mb-4">
+                    <p class="text-muted">Join CoinCoach today and take control of your finances</p>
+                </div>
 
-    <label for="email" class="form-label">Email</label>
-    <input type="email" class="form-control" name="email" id="email" required placeholder="Enter your email">
+                <form action="/register" method="post" class="needs-validation" novalidate>
+                    <div class="form-group mb-3">
+                        <label for="fullName" class="form-label"><i class="fas fa-user me-2"></i>Full Name</label>
+                        <input type="text" class="form-control" name="fullName" id="fullName" required 
+                               placeholder="John Doe" autofocus>
+                        <div class="invalid-feedback">Please enter your full name.</div>
+                    </div>
 
-    <label for="password" class="form-label">Password</label>
-    <input type="password" name="password"  class="form-control" id="password" required placeholder="Enter your password">
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label"><i class="fas fa-envelope me-2"></i>Email Address</label>
+                        <input type="email" class="form-control" name="email" id="email" required 
+                               placeholder="name@example.com">
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
 
-    <button type="submit" class="mt-2">Register</button>
-</form>
+                    <div class="form-group mb-4">
+                        <label for="password" class="form-label"><i class="fas fa-lock me-2"></i>Password</label>
+                        <input type="password" name="password" class="form-control" id="password" required 
+                               placeholder="••••••••">
+                        <div class="invalid-feedback">Please enter a password.</div>
+                        <small class="form-text text-muted mt-1">
+                            <i class="fas fa-info-circle me-1"></i> Password should be at least 8 characters long.
+                        </small>
+                    </div>
+
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Create Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer bg-light py-3">
+                <div class="text-center">
+                    <p class="mb-0">Already have an account? 
+                        <a href="/login" class="text-primary fw-bold">Login</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
