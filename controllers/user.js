@@ -6,9 +6,70 @@ module.exports.userDashboard = async(req, res)=>{
   const user = await User.findById(req.user._id);
   const TransactionCount = await Transaction.countDocuments({userId: req.user._id});
   const GoalCount = await Goals.countDocuments({user: req.user._id});
-  const income = await Transaction.find({userId: req.user._id, type: 'income'})
-  const expense = await Transaction.find({userId: req.user._id, type: 'expense'})
-  res.render('user/dashboard', {user, TransactionCount, GoalCount, income, expense});
+
+  // Calculate total income
+  const totalIncomeResult = await Transaction.aggregate([
+    { $match: { userId: req.user._id, type: 'income' } },
+    { $group: { _id: null, total: { $sum: '$amount' } } }
+  ]);
+  const totalIncome = totalIncomeResult.length > 0 ? totalIncomeResult[0].total : 0;
+
+  // Calculate total expenses
+  const totalExpensesResult = await Transaction.aggregate([
+    { $match: { userId: req.user._id, type: 'expense' } },
+    { $group: { _id: null, total: { $sum: '$amount' } } }
+  ]);
+  const totalExpenses = totalExpensesResult.length > 0 ? totalExpensesResult[0].total : 0;
+
+  // Calculate net balance
+  const netBalance = totalIncome - totalExpenses;
+
+  // Calculate top expense category
+  const topExpenseCategoryResult = await Transaction.aggregate([
+    { $match: { userId: req.user._id, type: 'expense' } },
+    { $group: { _id: '$category', total: { $sum: '$amount' } } },
+    { $sort: { total: -1 } },
+    { $limit: 1 }
+  ]);
+  const topExpenseCategory = topExpenseCategoryResult.length > 0 ? topExpenseCategoryResult[0]._id : 'None';
+
+  // Get current month and year
+  const now = new Date();
+  const currentMonth = now.getMonth() + 1; // getMonth() returns 0-11
+  const currentYear = now.getFullYear();
+
+  // Calculate transactions this month
+  const startOfMonth = new Date(currentYear, currentMonth - 1, 1);
+  const endOfMonth = new Date(currentYear, currentMonth, 1);
+  const transactionsThisMonth = await Transaction.countDocuments({
+    userId: req.user._id,
+    date: { $gte: startOfMonth, $lt: endOfMonth }
+  });
+
+  // Calculate average transaction
+  const allTransactions = await Transaction.find({ userId: req.user._id });
+  const totalAmount = allTransactions.reduce((sum, t) => sum + t.amount, 0);
+  const averageTransaction = allTransactions.length > 0 ? totalAmount / allTransactions.length : 0;
+
+  // Get recent transactions
+  const recentTransactions = await Transaction.find({ userId: req.user._id })
+    .sort({ date: -1 })
+    .limit(5);
+
+  res.render('user/dashboard', {
+    user,
+    TransactionCount,
+    GoalCount,
+    totalIncome,
+    totalExpenses,
+    netBalance,
+    topExpenseCategory,
+    transactionsThisMonth,
+    averageTransaction,
+    recentTransactions,
+    currentMonth,
+    currentYear
+  });
 }
 
 module.exports.userProfile = async (req, res) => {
