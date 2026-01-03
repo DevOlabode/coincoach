@@ -2,6 +2,15 @@ const Transaction = require('../models/transactions');
 const Goals = require('../models/goals');
 const User = require('../models/user');
 
+module.exports.userDashboard = async(req, res)=>{
+  const user = await User.findById(req.user._id);
+  const TransactionCount = await Transaction.countDocuments({userId: req.user._id});
+  const GoalCount = await Goals.countDocuments({user: req.user._id});
+  const income = await Transaction.find({userId: req.user._id, type: 'income'}).sum('amount');
+  const expense = await Transaction.find({userId: req.user._id, type: 'expense'}).sum('amount');
+  res.render('user/dashboard', {user, TransactionCount, GoalCount, income, expense});
+}
+
 module.exports.userProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);

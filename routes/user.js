@@ -8,6 +8,8 @@ const catchAsync = require('../utils/catchAsync');
 
 router.use(isLoggedIn);
 
+router.get('/dashboard', catchAsync(controller.userDashboard));
+
 router.get('/edit-profile', catchAsync(controller.editProfileForm));
 
 router.post('/edit-profile', catchAsync(controller.editProfile));
