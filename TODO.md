@@ -1,6 +1,6 @@
-# APP FINAL TODO
-[] Make the goals update as the user follows the plan given
-[] Make the chat message more make sense
-[] Edit the content of the landing page.
-[X] Dashboard
-[] Settings Page (eg https://solabode499.bubbleapps.io/version-test/profile_settings?debug_mode=true) so no edirprofile/editAcct, everything will be in the settings.
+# TODO: Implement Different Header Links for Logged-In and Non-Logged-In Users
+
+## Tasks
+- [x] Modify views/partials/header.ejs to conditionally render navigation links based on user login status
+  - For logged-in users: Show Home, Transactions, Bills, Goals, Insights, AI Assistant (hide Conversion)
+  - For non-logged-in users: Show Home and Conversion

@@ -7,15 +7,21 @@
             <span class="h5 h4-md mb-0 fw-bold" style="background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.25rem; letter-spacing: -0.5px;" id="logo-text">CoinCoach</span>
         </a>
 
+        <% if (typeof currentUser !== 'undefined' && currentUser) { %>
         <div class="d-none d-md-flex align-items-center">
             <a href="/" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Home</a>
             <a href="/transactions" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Transactions</a>
             <a href="/bills" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Bills</a>
             <a href="/goals" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Goals</a>
             <a href="/insights" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Insights</a>
-            <a href="/conversion" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Conversion</a>
             <a href="/chat" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">AI Assistant</a>
         </div>
+        <% } else { %>
+        <div class="d-none d-md-flex align-items-center">
+            <a href="/" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Home</a>
+            <a href="/conversion" class="nav-link px-4 py-2 mx-1 text-dark text-decoration-none position-relative slide-in-up stagger-item" style="font-weight: 500; transition: all 0.3s ease;">Conversion</a>
+        </div>
+        <% } %>
 
         <div class="d-flex align-items-center">
             <% if (typeof currentUser !== 'undefined' && currentUser) { %>
