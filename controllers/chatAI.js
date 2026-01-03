@@ -5,21 +5,37 @@ module.exports.generateResponse = async (req, res) => {
     try {
         const { messages, sessionId } = req.body;
         const Transaction = require('../models/transactions');
+        const Goal = require('../models/goals');
         
         // Get user's recent transactions for context
         const transactions = await Transaction.find({ userId: req.user._id })
             .sort({ date: -1 })
             .limit(50);
+
+        const goals = await Goal.find({ user: req.user._id });
         
         const transactionSummary = transactions.map(t => 
-            `${t.date.toISOString().split('T')[0]}: ${t.type} - ${t.category} - $${t.amount} - ${t.description}`
+            `${t.date.toISOString().split('T')[0]}: ${t.type} - ${t.category} - $${t.amount}`
         ).join('\n');
+
+        const goalsSummary = goals.map(g => g.goalSummary);   
 
         const systemPrompt = `
         You are a personal finance coach inside a budgeting application.
-        
+        You are a helpful assistant that can help the user with their finances.
+        You are also a helpful assistant that can help the user with their goals.
+        You are also a helpful assistant that can help the user with their bills.
+        You are also a helpful assistant that can help the user with their insights.
+        You are also a helpful assistant that can help the user with their chat.
+        You are also a helpful assistant that can help the user with their chat.
+
+
         Context – User's Recent Transactions:
         ${transactionSummary}
+
+        Context – User's Goals:
+        ${goalsSummary}
+
         
         Tone rules:
         - Explain finances clearly to a practical adult
@@ -37,6 +53,7 @@ module.exports.generateResponse = async (req, res) => {
         
         Guidelines:
         - Base insights strictly on the transaction data provided
+        - Dont ever return markdown.
         - Do not guess the user's emotions or intentions
         - Avoid unnecessary financial jargon
         - Encourage healthy and responsible money habits
