@@ -5,24 +5,29 @@
     <div class="col-lg-8">
       <!-- Page Title -->
       <div class="text-center mb-5 fade-in">
-        <h1 class="fw-bold mb-2">
-          <i class="fas fa-exchange-alt text-primary me-2"></i>
+        <h1 class="fw-bold mb-2 text-gradient">
+          <i class="fas fa-exchange-alt text-primary me-3 fa-2x pulse"></i>
           Currency Converter
         </h1>
-        <p class="lead text-muted">Convert between global currencies using live exchange rates</p>
+        <p class="lead text-muted glass px-4 py-2 rounded-pill d-inline-block">Convert between global currencies using live exchange rates</p>
       </div>
 
       <!-- Converter Card -->
-      <div class="card shadow-lg border-0 rounded-lg mb-5 fade-in" style="animation-delay: 0.1s;">
-        <div class="card-header bg-gradient-primary text-white py-4">
+      <div class="card shadow-lg border-0 rounded-lg mb-5 fade-in glass" style="animation-delay: 0.1s;">
+        <div class="card-header bg-gradient-primary text-white py-4 position-relative overflow-hidden">
           <div class="d-flex align-items-center">
-            <div class="rounded-circle bg-white p-2 me-3">
-              <i class="fas fa-dollar-sign text-primary"></i>
+            <div class="rounded-circle bg-white bg-opacity-20 p-3 me-3 shadow-sm">
+              <i class="fas fa-dollar-sign text-white fa-lg"></i>
             </div>
             <div>
-              <h4 class="mb-0 text-white">Quick Currency Conversion</h4>
-              <small class="opacity-75">Powered by real-time exchange rates</small>
+              <h4 class="mb-1 text-white fw-bold">Quick Currency Conversion</h4>
+              <small class="opacity-85 d-block">
+                <i class="fas fa-clock me-1"></i>Powered by real-time exchange rates
+              </small>
             </div>
+          </div>
+          <div class="position-absolute top-0 end-0 opacity-10" style="font-size: 4rem;">
+            <i class="fas fa-chart-line"></i>
           </div>
         </div>
 
@@ -30,36 +35,36 @@
           <form id="converterForm" action="/conversion" method="post" class="needs-validation" novalidate>
             <!-- Amount Input -->
             <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.2s;">
-              <label class="form-label">
-                <i class="fas fa-coins me-2"></i>Amount
+              <label class="form-label fw-semibold">
+                <i class="fas fa-coins me-2 text-primary"></i>Amount
               </label>
-              <input 
-                type="number" 
-                step="0.01" 
-                name="amount" 
-                class="form-control form-control-lg" 
-                placeholder="Enter amount to convert" 
-                required 
+              <input
+                type="number"
+                step="0.01"
+                name="amount"
+                class="form-control form-control-lg glass"
+                placeholder="Enter amount to convert"
+                required
               />
               <div class="invalid-feedback">Please enter a valid amount</div>
             </div>
 
             <!-- From Currency -->
             <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.3s;">
-              <label class="form-label">
-                <i class="fas fa-globe me-2"></i>From Currency
+              <label class="form-label fw-semibold">
+                <i class="fas fa-globe me-2 text-primary"></i>From Currency
               </label>
               <div class="dropdown position-relative">
-                <input 
-                  type="text" 
-                  id="fromInput" 
-                  name="from" 
-                  class="form-control" 
-                  placeholder="Search currency (e.g. USD, EUR, GBP)..." 
-                  autocomplete="off" 
+                <input
+                  type="text"
+                  id="fromInput"
+                  name="from"
+                  class="form-control glass"
+                  placeholder="Search currency (e.g. USD, EUR, GBP)..."
+                  autocomplete="off"
                 />
-                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white" 
-                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;" 
+                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white glass"
+                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;"
                      id="fromList">
                 </div>
               </div>
@@ -67,27 +72,27 @@
 
             <!-- Swap Button -->
             <div class="text-center mb-4 slide-in-up" style="animation-delay: 0.4s;">
-              <button type="button" class="btn btn-outline-secondary rounded-circle p-2" id="swapButton">
-                <i class="fas fa-exchange-alt"></i>
+              <button type="button" class="btn btn-outline-primary rounded-circle p-3 hover-lift swap-btn glass" id="swapButton" title="Swap currencies">
+                <i class="fas fa-exchange-alt fa-lg"></i>
               </button>
             </div>
 
             <!-- To Currency -->
             <div class="form-group mb-4 slide-in-up" style="animation-delay: 0.5s;">
-              <label class="form-label">
-                <i class="fas fa-globe me-2"></i>To Currency
+              <label class="form-label fw-semibold">
+                <i class="fas fa-globe me-2 text-primary"></i>To Currency
               </label>
               <div class="dropdown position-relative">
-                <input 
-                  type="text" 
-                  id="toInput" 
-                  name="to" 
-                  class="form-control" 
-                  placeholder="Search currency (e.g. USD, EUR, GBP)..." 
-                  autocomplete="off" 
+                <input
+                  type="text"
+                  id="toInput"
+                  name="to"
+                  class="form-control glass"
+                  placeholder="Search currency (e.g. USD, EUR, GBP)..."
+                  autocomplete="off"
                 />
-                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white" 
-                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;" 
+                <div class="dropdown-list position-absolute w-100 mt-1 shadow-lg rounded-lg bg-white glass"
+                     style="max-height: 250px; overflow-y: auto; z-index: 1000; display: none;"
                      id="toList">
                 </div>
               </div>
@@ -105,14 +110,23 @@
           </form>
 
           <!-- Result Box -->
-          <div class="mt-5 p-4 rounded-lg bg-light border-left border-primary shadow-sm slide-in-up" 
-               style="display: none; border-left: 4px solid var(--primary);" 
+          <div class="mt-5 p-4 rounded-lg glass border-left border-primary shadow-lg slide-in-up result-animation"
+               style="display: none; border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.7) 100%);"
                id="resultBox">
-            <div class="d-flex align-items-center mb-2">
-              <i class="fas fa-check-circle text-success me-2 fa-lg"></i>
-              <h5 class="mb-0" id="convertedAmount"></h5>
+            <div class="d-flex align-items-center mb-3">
+              <div class="rounded-circle bg-success p-2 me-3">
+                <i class="fas fa-check-circle text-white fa-lg"></i>
+              </div>
+              <div>
+                <h5 class="mb-1 fw-bold text-primary" id="convertedAmount"></h5>
+                <small class="text-muted" id="exchangeRate"></small>
+              </div>
             </div>
-            <p class="text-muted mb-0" id="exchangeRate"></p>
+            <div class="text-center">
+              <small class="text-muted">
+                <i class="fas fa-clock me-1"></i>Conversion completed successfully
+              </small>
+            </div>
           </div>
         </div>
 
@@ -127,35 +141,44 @@
       <!-- Features Section -->
       <div class="row g-4 mt-4">
         <div class="col-md-4">
-          <div class="card h-100 border-0 shadow-sm hover-lift">
-            <div class="card-body text-center p-4">
-              <div class="rounded-circle bg-primary bg-opacity-10 p-3 d-inline-flex mb-3">
-                <i class="fas fa-bolt text-primary fa-2x"></i>
+          <div class="card h-100 border-0 shadow-lg hover-lift glass feature-card">
+            <div class="card-body text-center p-4 position-relative">
+              <div class="feature-icon-wrapper mb-4">
+                <div class="rounded-circle bg-gradient-primary p-4 d-inline-flex shadow-sm">
+                  <i class="fas fa-bolt text-white fa-2x"></i>
+                </div>
               </div>
-              <h5 class="card-title">Real-Time Rates</h5>
-              <p class="card-text">Get the latest exchange rates from global currency markets.</p>
+              <h5 class="card-title fw-bold mb-3">Real-Time Rates</h5>
+              <p class="card-text text-muted">Get the latest exchange rates from global currency markets with instant updates.</p>
+              <div class="feature-glow"></div>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 border-0 shadow-sm hover-lift">
-            <div class="card-body text-center p-4">
-              <div class="rounded-circle bg-success bg-opacity-10 p-3 d-inline-flex mb-3">
-                <i class="fas fa-globe text-success fa-2x"></i>
+          <div class="card h-100 border-0 shadow-lg hover-lift glass feature-card">
+            <div class="card-body text-center p-4 position-relative">
+              <div class="feature-icon-wrapper mb-4">
+                <div class="rounded-circle bg-gradient-secondary p-4 d-inline-flex shadow-sm">
+                  <i class="fas fa-globe text-white fa-2x"></i>
+                </div>
               </div>
-              <h5 class="card-title">170+ Currencies</h5>
-              <p class="card-text">Support for major and exotic currencies from around the world.</p>
+              <h5 class="card-title fw-bold mb-3">170+ Currencies</h5>
+              <p class="card-text text-muted">Support for major and exotic currencies from around the world.</p>
+              <div class="feature-glow"></div>
             </div>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card h-100 border-0 shadow-sm hover-lift">
-            <div class="card-body text-center p-4">
-              <div class="rounded-circle bg-info bg-opacity-10 p-3 d-inline-flex mb-3">
-                <i class="fas fa-history text-info fa-2x"></i>
+          <div class="card h-100 border-0 shadow-lg hover-lift glass feature-card">
+            <div class="card-body text-center p-4 position-relative">
+              <div class="feature-icon-wrapper mb-4">
+                <div class="rounded-circle bg-gradient-accent p-4 d-inline-flex shadow-sm">
+                  <i class="fas fa-history text-white fa-2x"></i>
+                </div>
               </div>
-              <h5 class="card-title">Historical Data</h5>
-              <p class="card-text">Track currency trends and make informed financial decisions.</p>
+              <h5 class="card-title fw-bold mb-3">Historical Data</h5>
+              <p class="card-text text-muted">Track currency trends and make informed financial decisions.</p>
+              <div class="feature-glow"></div>
             </div>
           </div>
         </div>

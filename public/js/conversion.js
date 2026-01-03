@@ -168,6 +168,28 @@ const currencies = [
   setupDropdown(fromInput, fromList, document.querySelector("[name='fromCurrency']"));
   setupDropdown(toInput, toList, document.querySelector("[name='toCurrency']"));
 
+  // Swap button functionality
+  const swapButton = document.getElementById("swapButton");
+  swapButton.addEventListener("click", () => {
+    // Swap input values
+    const tempValue = fromInput.value;
+    fromInput.value = toInput.value;
+    toInput.value = tempValue;
+
+    // Swap hidden input values
+    const fromHidden = document.querySelector("[name='fromCurrency']");
+    const toHidden = document.querySelector("[name='toCurrency']");
+    const tempHidden = fromHidden.value;
+    fromHidden.value = toHidden.value;
+    toHidden.value = tempHidden;
+
+    // Add swap animation
+    swapButton.style.transform = "rotate(180deg)";
+    setTimeout(() => {
+      swapButton.style.transform = "rotate(0deg)";
+    }, 300);
+  });
+
   const form = document.getElementById("converterForm");
 
   form.addEventListener("submit", async e => {
@@ -177,8 +199,6 @@ const currencies = [
       // Show loading state
       const submitBtn = form.querySelector('button[type="submit"]');
       const originalBtnText = submitBtn.innerHTML;
-      submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Converting...';
-      submitBtn.disabled = true;
 
       const data = {
         amount: form.amount.value,

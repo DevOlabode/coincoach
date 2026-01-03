@@ -1188,6 +1188,112 @@ blockquote {
     animation: fadeIn 0.5s ease-in-out;
 }
 
+/* Text Gradient */
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Feature Card Enhancements */
+.feature-card {
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.feature-icon-wrapper {
+    position: relative;
+}
+
+.feature-icon-wrapper::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    right: -10px;
+    bottom: -10px;
+    background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.feature-card:hover .feature-icon-wrapper::before {
+    opacity: 1;
+}
+
+.feature-glow {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+    border-radius: var(--border-radius-lg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+.feature-card:hover .feature-glow {
+    opacity: 1;
+}
+
+/* Result Animation */
+@keyframes resultSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.result-animation {
+    animation: resultSlideIn 0.6s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
+
+/* Enhanced Swap Button */
+.swap-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.swap-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.swap-btn:hover::before {
+    width: 120%;
+    height: 120%;
+}
+
+.swap-btn i {
+    transition: transform 0.3s ease;
+}
+
+.swap-btn:hover i {
+    transform: rotate(180deg);
+}
+
 /* Slide In Animation */
 @keyframes slideInUp {
     from {
