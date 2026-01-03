@@ -29,33 +29,79 @@
 
 
     <!-- Mobile menu (off-canvas) -->
-    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-        <div class="offcanvas-header">
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel" style="width: 280px;">
+        <div class="offcanvas-header bg-light border-bottom">
             <h5 class="offcanvas-title" id="mobileMenuLabel">
                 <i class="fas fa-coins text-primary me-2"></i>
                 <span class="text-primary fw-bold">CoinCoach</span>
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
-        <div class="offcanvas-body">
+        <div class="offcanvas-body p-0">
             <div class="d-flex flex-column">
-                <a href="/" class="py-2 text-dark text-decoration-none"><i class="fas fa-home me-2"></i> Home</a>
-                <a href="/transactions" class="py-2 text-dark text-decoration-none"><i class="fas fa-exchange-alt me-2"></i> Transactions</a>
-                <a href="/bills" class="py-2 text-dark text-decoration-none"><i class="fas fa-file-invoice-dollar me-2"></i> Bills</a>
-                <a href="/goals" class="py-2 text-dark text-decoration-none"><i class="fas fa-bullseye me-2"></i> Goals</a>
-                <a href="/insights" class="py-2 text-dark text-decoration-none"><i class="fas fa-chart-line me-2"></i> Insights</a>
-                <a href="/conversion" class="py-2 text-dark text-decoration-none"><i class="fas fa-dollar-sign me-2"></i> Conversion</a>
-                <a href="/chat" class="py-2 text-dark text-decoration-none"><i class="fas fa-robot me-2"></i> AI Assistant</a>
+                <!-- Navigation Links -->
+                <div class="p-3">
+                    <h6 class="text-muted mb-3 text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">Navigation</h6>
+                    <a href="/" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-home me-3" style="width: 20px;"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="/transactions" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-exchange-alt me-3" style="width: 20px;"></i>
+                        <span>Transactions</span>
+                    </a>
+                    <a href="/bills" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-file-invoice-dollar me-3" style="width: 20px;"></i>
+                        <span>Bills</span>
+                    </a>
+                    <a href="/goals" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-bullseye me-3" style="width: 20px;"></i>
+                        <span>Goals</span>
+                    </a>
+                    <a href="/insights" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-chart-line me-3" style="width: 20px;"></i>
+                        <span>Insights</span>
+                    </a>
+                    <a href="/conversion" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-dollar-sign me-3" style="width: 20px;"></i>
+                        <span>Conversion</span>
+                    </a>
+                    <a href="/chat" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                        <i class="fas fa-robot me-3" style="width: 20px;"></i>
+                        <span>AI Assistant</span>
+                    </a>
+                </div>
 
-                <hr>
+                <hr class="my-2">
 
+                <!-- User Section -->
                 <% if (typeof currentUser !== 'undefined' && currentUser) { %>
-                    <a href="/user/profile" class="py-2 text-dark text-decoration-none"><i class="fas fa-user me-2"></i> Profile</a>
-                    <a href="/user/settings" class="py-2 text-dark text-decoration-none"><i class="fas fa-cog me-2"></i> Settings</a>
-                    <a href="/logout" class="py-2 text-dark text-decoration-none"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
+                    <div class="p-3">
+                        <h6 class="text-muted mb-3 text-uppercase fw-bold" style="font-size: 0.8rem; letter-spacing: 0.5px;">Account</h6>
+                        <a href="/user/profile" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                            <i class="fas fa-user me-3" style="width: 20px;"></i>
+                            <span>Profile</span>
+                        </a>
+                        <a href="/user/settings" class="d-flex align-items-center py-3 px-2 text-dark text-decoration-none rounded mb-1 hover-bg-light">
+                            <i class="fas fa-cog me-3" style="width: 20px;"></i>
+                            <span>Settings</span>
+                        </a>
+                        <a href="/logout" class="d-flex align-items-center py-3 px-2 text-danger text-decoration-none rounded mb-1 hover-bg-light">
+                            <i class="fas fa-sign-out-alt me-3" style="width: 20px;"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
                 <% } else { %>
-                    <a href="/login" class="btn btn-outline-primary mb-2"><i class="fas fa-sign-in-alt me-2"></i> Login</a>
-                    <a href="/register" class="btn btn-primary"><i class="fas fa-user-plus me-2"></i> Sign Up</a>
+                    <div class="p-3">
+                        <a href="/login" class="btn btn-outline-primary w-100 mb-2 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-sign-in-alt me-2"></i>
+                            <span>Login</span>
+                        </a>
+                        <a href="/register" class="btn btn-primary w-100 d-flex align-items-center justify-content-center">
+                            <i class="fas fa-user-plus me-2"></i>
+                            <span>Sign Up</span>
+                        </a>
+                    </div>
                 <% } %>
             </div>
         </div>
