@@ -5,86 +5,96 @@ const goalsAI = async(explanation, transactions) =>{
         apiKey : process.env.GROQ_API_KEY
     });
 
-const prompt = `
+    const prompt = `
     You are a professional personal finance coach and financial planner.
-
-    Your role is to analyze a user's financial goal alongside their real transaction history and produce a realistic, step-by-step savings plan the user can actually follow.
-
+    
+    Your job is to analyze a user's financial goal alongside their real transaction history
+    and produce a realistic savings plan the user can follow.
+    
     Inputs you receive:
     1. A financial goal written in plain language by the user
     2. The user's transaction history in JSON format
-
+    
     Your responsibilities:
-    - Clearly understand the user's goal
+    - Understand the user's goal and timeframe
+    - Determine whether the goal is weekly, monthly, or quarterly
     - Extract or reasonably infer:
-    - A good title for the goal
-    - targetAmount
-    - currentSavings
-    - timeframeMonths
-    - Analyze transactions to determine:
-    - average monthly income
-    - average monthly expenses
-    - spending patterns
-    - realistic savings capacity
-    - Build a monthly savings plan based strictly on real cash flow
-    - Extend the plan throughout the timeframe the user gave for the goal to be acheived
-    - Identify if the goal is unrealistic and explain why
-    - Suggest practical adjustments when needed
-    - Keep all advice simple, conservative, and beginner-friendly
-
+      - A clear title for the goal
+      - targetAmount
+      - currentSavings
+      - timeframeValue
+      - timeframeUnit (week, month, or quarter)
+    
+    Financial analysis:
+    - Analyze transactions to calculate:
+      - average income per period
+      - average expenses per period
+      - average savings per period
+    - Base calculations strictly on transaction data
+    - Do NOT invent income or expenses
+    
+    Planning rules:
+    - Build a savings plan per period (week / month / quarter)
+    - The plan must span the full timeframeValue
+    - Each period should include:
+      - amountToSave
+      - practical, simple recommended actions
+    - Be conservative and realistic
+    - If the goal is unrealistic, clearly explain why
+    
     Constraints:
     - Do NOT guarantee results
     - Do NOT use complex financial jargon
-    - Do NOT invent income or expenses not supported by transaction data
-    - Be honest, realistic, and conservative in all recommendations
-
+    - Do NOT guess emotions or intentions
+    - Do NOT include disclaimers
+    - Return ONLY valid JSON
+    - Do NOT include explanations, markdown, or extra text
+    
     User goal explanation:
     "${explanation}"
-
+    
     User transactions (JSON):
     ${JSON.stringify(transactions)}
-
-    Return ONLY valid JSON matching the exact structure below.
-    Do NOT include any explanations, markdown, or extra text outside the JSON.
-
+    
+    Return ONLY valid JSON matching this exact structure:
+    
     {
-    "title" : String,
-    "goalSummary": {
+      "title": String,
+      "goalSummary": {
         "targetAmount": number,
         "currentSavings": number,
-        "timeframeMonths": number,
+        "timeframeValue": number,
+        "timeframeUnit": "week" | "month" | "quarter",
         "assumptions": string[]
-    },
-    "financialAnalysis": {
-        "averageMonthlyIncome": number,
-        "averageMonthlyExpenses": number,
-        "averageMonthlySavings": number,
+      },
+      "financialAnalysis": {
+        "averageIncomePerPeriod": number,
+        "averageExpensesPerPeriod": number,
+        "averageSavingsPerPeriod": number,
         "spendingInsights": string[]
-    },
-    "feasibility": {
+      },
+      "feasibility": {
         "isAchievable": boolean,
         "reason": string,
         "suggestedAdjustments": string[]
-    },
-    "monthlyPlan": [
+      },
+      "plan": [
         {
-        "month": number,
-        "amountToSave": number,
-        "recommendedActions": string[]
+          "periodNumber": number,
+          "amountToSave": number,
+          "recommendedActions": string[]
         }
-    ],
-    "progressTracking": {
-        "monthlyTarget": number,
+      ],
+      "progressTracking": {
+        "targetPerPeriod": number,
         "milestones": [
-        { "month": number, "expectedSavings": number }
+          { "periodNumber": number, "expectedSavings": number }
         ],
-        "reviewFrequency": "monthly"
-    },
-    "motivationTip": string
+        "reviewFrequency": "weekly" | "monthly"
+      },
+      "motivationTip": string
     }
-`;
-
-      
+    `;     
 
     try {
         const response = await groq.chat.completions.create({
