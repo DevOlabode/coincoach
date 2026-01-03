@@ -1,9 +1,6 @@
-# Currency Conversion Page Styling Enhancement
-
-## Tasks
-- [ ] Add vibrant background gradients and color schemes
-- [ ] Enhance form styling with better visual hierarchy
-- [ ] Add more sophisticated animations and transitions
-- [ ] Improve the features section with better icons and layouts
-- [ ] Add glassmorphism effects and modern design elements
-- [ ] Optimize responsive design and mobile experience
+# APP FINAL TODO
+[] Edit the content of the landing page
+[] Dashboard
+[] Make the goals update as the user follows the plan given
+[] Make the chat message more make sense
+[] Settings Page (eg https://solabode499.bubbleapps.io/version-test/profile_settings?debug_mode=true) so no edirprofile/editAcct, everything will be in the settings.

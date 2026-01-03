@@ -1,6 +1,6 @@
 <header class="bg-white shadow-lg" style="position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.9) 100%); border-bottom: 1px solid rgba(0, 0, 0, 0.05); font-family: 'Mozilla Headline', sans-serif;">
     <nav class="container d-flex justify-content-between align-items-center py-3 py-md-4">
-        <a href="/" class="d-flex align-items-center text-decoration-none slide-in-left">
+        <a href="/" class="d-flex align-items-center text-decoration-none slide-in-left logo-link">
             <div class="logo-container me-2 me-md-3">
                 <i class="fas fa-coins text-primary" style="font-size: 1.5rem; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.15));" id="logo-icon"></i>
             </div>
@@ -83,6 +83,10 @@
 .logo-container:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.logo-link:focus {
+    outline: none;
 }
 
 .dropdown-menu {
