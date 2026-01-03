@@ -145,7 +145,27 @@ const currencies = [
         .forEach(c => {
           const div = document.createElement("div");
           div.className = "dropdown-item";
-          div.textContent = `${c.flag} ${c.code} — ${c.name}`;
+
+          // Create flag span
+          const flagSpan = document.createElement("span");
+          flagSpan.className = "flag";
+          flagSpan.textContent = c.flag;
+
+          // Create code span
+          const codeSpan = document.createElement("span");
+          codeSpan.className = "code";
+          codeSpan.textContent = c.code;
+
+          // Create name span
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "name";
+          nameSpan.textContent = c.name;
+
+          // Append elements
+          div.appendChild(flagSpan);
+          div.appendChild(codeSpan);
+          div.appendChild(nameSpan);
+
           div.onclick = () => {
             input.value = `${c.code} — ${c.name}`;
             hiddenInput.value = c.code;
