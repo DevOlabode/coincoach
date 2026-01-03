@@ -1,1 +1,77 @@
 <% layout('./layout/boilerplate') %>
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="text-center mb-4">
+                <i class="fas fa-tachometer-alt text-primary me-2"></i>
+                Dashboard
+            </h1>
+        </div>
+    </div>
+
+    <!-- User Info Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        User Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Name:</strong> <%= user.name %></p>
+                            <p><strong>Email:</strong> <%= user.email %></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Member Since:</strong> <%= new Date(user.createdAt).toLocaleDateString() %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Financial Metrics Section -->
+    <div class="row">
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-exchange-alt fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Transactions</h5>
+                    <h2 class="text-info"><%= TransactionCount %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-bullseye fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Goals</h5>
+                    <h2 class="text-warning"><%= GoalCount %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-arrow-up fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Income</h5>
+                    <h2 class="text-success"><%= income.length %></h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-arrow-down fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Expense</h5>
+                    <h2 class="text-danger"><%= expense.length %></h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
