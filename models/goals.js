@@ -10,8 +10,15 @@ const PlanStepSchema = new Schema({
     type: Number,
     required: true
   },
-  recommendedActions: [String]
+  recommendedActions: [String],
+
+completed: {
+    type: Boolean,
+    default: false
+  },
+  completedAt: Date
 });
+
 
 const MilestoneSchema = new Schema({
   periodNumber: {

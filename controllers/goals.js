@@ -3,6 +3,9 @@ const Transactions = require('../models/transactions');
 const goalsAI = require('../services/goalsAI');
 const validator = require('validator');
 
+const recalculateGoalProgress = require('../utils/recalculateGoalProgress');
+
+
 /**
  * =========================
  * INDEX
@@ -150,3 +153,44 @@ module.exports.updateGoalStatus = async (req, res) => {
   req.flash('success', `Goal status updated to ${goal.status}`);
   res.redirect(`/goals/${goal._id}`);
 };
+
+/**
+ * =========================
+ * COMPLETE A PLAN PERIOD
+ * =========================
+ */
+module.exports.completePeriod = async (req, res) => {
+    const { id, periodNumber } = req.params;
+  
+    const goal = await Goals.findById(id);
+  
+    if (!goal || goal.user.toString() !== req.user._id.toString()) {
+      req.flash('error', 'Goal not found');
+      return res.redirect('/goals');
+    }
+  
+    const step = goal.plan.find(
+      p => p.periodNumber === Number(periodNumber)
+    );
+  
+    if (!step) {
+      req.flash('error', 'Plan step not found');
+      return res.redirect(`/goals/${id}`);
+    }
+  
+    if (!step.completed) {
+      step.completed = true;
+      step.completedAt = new Date();
+    }
+  
+    recalculateGoalProgress(goal);
+    await goal.save();
+  
+    req.flash(
+      'success',
+      `${goal.goalSummary.timeframeUnit} ${periodNumber} marked as completed`
+    );
+  
+    res.redirect(`/goals/${id}`);
+  };
+  
