@@ -21,16 +21,27 @@ module.exports.register = async (req, res, next) => {
     });
 };
 
+/**
+ * Render the user login form
+ */
 module.exports.loginForm = (req, res) => {
     res.render('auth/login');
 };
 
+/**
+ * Handle user login
+ * Redirects to the intended page or home after successful login
+ */
 module.exports.login = (req, res) => {
     req.flash('success', 'Welcome back to CoinCoach!');
     const returnUrl = res.locals.returnTo || '/';
     res.redirect(returnUrl);
 };
 
+/**
+ * Handle user logout
+ * Logs out the user and redirects to home page
+ */
 module.exports.logout = async(req, res)=>{
     req.logout(err=>{
         if(err) return next(err);

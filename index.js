@@ -1,24 +1,37 @@
+/**
+ * CoinCoach - Financial Management Application
+ * Main entry point for the Express.js application
+ */
+
+// Load environment variables from .env file
 require('dotenv').config();
 
+// Import required modules
 const express = require('express');
 const app = express();
 const path = require('path');
 
+// Import EJS templating engine with layout support
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 
+// Import session and flash message middleware
 const session = require('express-session');
 const flash = require('connect-flash');
 
+// Import Passport.js for authentication
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 
+// Import User model and custom error class
 const User = require('./models/user');
 const ExpressError = require('./utils/ExpressError');
 
+// Import configuration and middleware
 const { sessionConfig } = require('./config/session');
 const { sanitizeInputs, xssProtection } = require('./middleware');
 
+// Import bill scheduling and email services
 const { initializeBillScheduler } = require('./utils/billScheduler');
 const { sendDailyBillAlerts } = require('./services/billEmailService');
 
