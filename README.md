@@ -33,7 +33,7 @@ CoinCoach is a comprehensive financial management application built with Node.js
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/DevOlabode/coincoach
    cd coincoach
    ```
 
